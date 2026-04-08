@@ -441,7 +441,7 @@ export default function HomeClient({ topCities, total, allCities }: Props) {
 
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
             gap: '1px',
             background: 'var(--border)',
             border: '1px solid var(--border)',
