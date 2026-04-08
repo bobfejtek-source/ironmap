@@ -91,12 +91,13 @@ export default async function AllGymsPage() {
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+            alignItems: 'stretch',
             gap: '1px',
             background: 'var(--border)',
             border: '1px solid var(--border)',
           }}>
             {gyms.map((gym) => (
-              <div key={gym.id} style={{ background: 'var(--black)' }}>
+              <div key={gym.id} style={{ background: 'var(--black)', height: '100%' }}>
                 <GymCard gym={gym} />
               </div>
             ))}

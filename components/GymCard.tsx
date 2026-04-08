@@ -15,9 +15,12 @@ export default function GymCard({ gym }: { gym: Gym }) {
       href={gymDetailUrl(gym)}
       className="iron-card iron-card-lime"
       style={{
-        display: 'block',
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
         padding: '1.25rem',
         textDecoration: 'none',
+        boxSizing: 'border-box',
       }}
     >
       <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
@@ -138,7 +141,7 @@ export default function GymCard({ gym }: { gym: Gym }) {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginTop: '1rem',
+        marginTop: 'auto',
         paddingTop: '0.75rem',
         borderTop: '1px solid var(--border)',
       }}>
