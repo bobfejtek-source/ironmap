@@ -342,7 +342,7 @@ export default function HomeClient({ topCities, total, allCities }: Props) {
         }}>
           <Stat number={`${total}+`} label={t.hero.gymsCount} />
           <div style={{ width: '1px', background: 'var(--border)' }} />
-          <Stat number="207+" label={t.hero.citiesCount} />
+          <Stat number="190+" label={t.hero.citiesCount} />
         </div>
       </section>
 
@@ -509,7 +509,7 @@ export default function HomeClient({ topCities, total, allCities }: Props) {
             ) : (
               <>
                 <p style={{ color: 'var(--muted)', fontSize: '0.88rem', fontWeight: 300, lineHeight: 1.7, marginBottom: '1.5rem' }}>
-                  Domlouváme partnerství s posilovnami, aby ses mohl platit vstup přímo z mobilu.
+                  Domlouváme partnerství s posilovnami, abys mohl/a zaplatit vstupné přímo z mobilu.
                   Dej nám email a dáme ti vědět jako prvnímu.
                 </p>
                 <form onSubmit={handleEntrySubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -564,7 +564,7 @@ export default function HomeClient({ topCities, total, allCities }: Props) {
             ) : (
               <>
                 <p style={{ color: 'var(--muted)', fontSize: '0.85rem', fontWeight: 300, lineHeight: 1.6, marginBottom: '1.5rem' }}>
-                  Řekni nám co hledáš a my tě spojíme s trenérem ve tvém městě.
+                  Řekni nám, co hledáš a my tě spojíme s trenérem ve tvém městě.
                 </p>
                 <form onSubmit={handleTrainerSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem' }}>
                   <div>
@@ -579,7 +579,7 @@ export default function HomeClient({ topCities, total, allCities }: Props) {
                     <label style={intentLabelStyle}>Co hledáš?</label>
                     <div style={{ position: 'relative' }}>
                       <select className="iron-select" value={trainerGoal} onChange={e => setTrainerGoal(e.target.value)}>
-                        <option value="">— Vyberte cíl —</option>
+                        <option value="">— Vyber cíl —</option>
                         {TRAINER_GOALS.map(g => <option key={g} value={g}>{g}</option>)}
                       </select>
                       <div style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)', pointerEvents: 'none', fontSize: '0.7rem' }}>▼</div>

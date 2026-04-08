@@ -103,7 +103,7 @@ export default function AddGymModal() {
                   <label style={labelStyle}>{t.addGym.category}</label>
                   <div style={{ position: 'relative' }}>
                     <select name="category" className="iron-select">
-                      <option value="">— Vyberte kategorii —</option>
+                      <option value="">— Vyber kategorii —</option>
                       {t.addGym.categories.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
                     <div style={{

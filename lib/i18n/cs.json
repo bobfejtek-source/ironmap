@@ -33,7 +33,7 @@
   },
   "cities": {
     "title": "Posilovny podle města",
-    "subtitle": "Vyberte město a najděte gym ve svém okolí.",
+    "subtitle": "Vyber město a najdi gym ve svém okolí.",
     "viewAll": "Zobrazit všechna města →",
     "gymsLabel": "gymů"
   },
@@ -57,7 +57,7 @@
   },
   "addGym": {
     "title": "Přidat gym",
-    "subtitle": "Vyplňte co nejvíce informací. Gym přidáme do 48 hodin.",
+    "subtitle": "Vyplň co nejvíce informací. Gym přidáme do 48 hodin.",
     "name": "Název gymu",
     "category": "Kategorie",
     "city": "Město",

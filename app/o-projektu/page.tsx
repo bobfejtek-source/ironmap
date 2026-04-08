@@ -57,22 +57,22 @@ export default function OProjektuPage() {
           Půl roku jsem váhal začít posilovat.
         </p>
         <p>
-          Každé ráno jsem si říkal, dnes to zkusím. A pak jsem otevřel prohlížeč, našel tři fitka, žádné pořádné info, jedno číslo které nikdo nebral a zavřel to. Zítra.
+          Každé ráno jsem si říkal: dnes to zkusím. A pak jsem otevřel prohlížeč, našel tři fitka, žádné pořádné info, jedno číslo, které nikdo nebral a zavřel to. Zítra.
         </p>
         <p>
-          Když jsem konečně přišel, zaplatil jsem hotově, protože karty nebrali. Nikde to nepsali. Kolem mě chodili chlapi co tam cvičí deset let, znají se, smějí se. A já stál u dveří v tričku z H&M, bez tušení jak to tu funguje. Ptal jsem se na základní věci a cítil jsem se jak debil. Všichni si tykají, já vykám, všichni vědí kde co je, já ne.
+          Když jsem konečně přišel, zaplatil jsem hotově, protože karty nebrali. Nikde to nepsali. Kolem mě chodili chlapi co tam cvičí deset let, znají se, smějí se. A já stál u dveří v tričku z H&M, bez tušení, jak to tu funguje. Ptal jsem se na základní věci a cítil jsem se jako debil. Všichni si tykají, já vykám, všichni vědí, kde co je, já ne.
         </p>
         <p>
           Odešel jsem s červenými ušima. Měsíc jsem tam nešel.
         </p>
         <p>
-          A víte co bylo nejhorší? Druhý týden jsem zapomněl hotovost. Přijel jsem, otočil se ve dveřích, zajel na bankomat na druhý konec vesnice a když jsem se vrátil bylo zavřeno. Prostě zavřeno. Bez varování.
+          A víš, co bylo nejhorší? Druhý týden jsem zapomněl hotovost. Přijel jsem, otočil se ve dveřích, zajel na bankomat na druhý konec vesnice a když jsem se vrátil bylo zavřeno. Prostě zavřeno. Bez varování.
         </p>
         <p>
-          Rozhodnout se poprvé v životě jít cvičit je jedno z nejtěžších rozhodnutí. A tehdy jsem si řekl, tohle nesmí být takhle složité.
+          Rozhodnout se poprvé v životě jít cvičit je jedno z nejtěžších rozhodnutí. A tehdy jsem si řekl: tohle nesmí být takhle složité.
         </p>
         <p>
-          Chtěl jsem jediné. Koupit vstup předem z mobilu. Vědět že mě pustí. Přijít připravený. Bez hotovosti, bez červených uší, bez otáčení ve dveřích.
+          Chtěl jsem jediné. Koupit vstup předem z mobilu. Vědět, že mě pustí. Přijít připravený. Bez hotovosti, bez červených uší, bez otáčení ve dveřích.
         </p>
 
         {/* Pull quote */}
@@ -101,8 +101,8 @@ export default function OProjektuPage() {
           flexWrap: 'wrap',
         }}>
           {[
-            { num: '836', label: 'posiloven' },
-            { num: '207', label: 'měst' },
+            { num: '780', label: 'posiloven' },
+            { num: '190', label: 'měst' },
           ].map(({ num, label }) => (
             <div key={label}>
               <div style={{
@@ -127,7 +127,7 @@ export default function OProjektuPage() {
         </div>
 
         <p>
-          Dnes máme 836 posiloven ve 207 městech. Přidáváme každý týden. A jednoho dne chceme být místem kde v ČR najdeš úplně každý sport, od posilovny přes jógu až po lezeckou stěnu. A kde si vstup koupíš dřív než nasedneš do auta.
+          Dnes máme 780 posiloven ve 190 městech. Přidáváme každý týden. A jednoho dne chceme být místem kde v ČR najdeš úplně každý sport, od posilovny přes jógu až po lezeckou stěnu. A kde si vstup koupíš dřív než nasedneš do auta.
         </p>
         <p>
           Aby ten první krok nezabolel. Pro nikoho.
