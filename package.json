@@ -1,0 +1,46 @@
+{
+  "name": "gymie",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "import": "node scripts/import-pg.js",
+    "import:custom": "node scripts/import-pg.js",
+    "db:init": "node scripts/init-db.js",
+    "db:migrate": "node scripts/migrate-sqlite-to-pg.js",
+    "db:categorize": "node scripts/categorize.js",
+    "db:categorize-ai": "node scripts/categorize-ai.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.82.0",
+    "@neondatabase/serverless": "^1.0.2",
+    "@types/leaflet": "^1.9.21",
+    "@vercel/postgres": "^0.10.0",
+    "leaflet": "^1.9.4",
+    "next": "14.2.35",
+    "next-auth": "^4.24.10",
+    "puppeteer": "^24.40.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "react": "^18",
+    "react-dom": "^18"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^20",
+    "@types/pg": "^8.11.10",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "better-sqlite3": "^12.8.0",
+    "dotenv": "^17.4.1",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.35",
+    "pg": "^8.13.3",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}

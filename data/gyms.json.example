@@ -1,0 +1,44 @@
+[
+  {
+    "name": "FitGym Praha Centrum",
+    "slug": "fitgym-praha-centrum",
+    "city": "Praha",
+    "address": "Václavské náměstí 1, 110 00 Praha 1",
+    "rating": 4.5,
+    "phone": "+420 123 456 789",
+    "website": "https://fitgym.cz",
+    "opening_hours": {
+      "monday": "6:00–22:00",
+      "tuesday": "6:00–22:00",
+      "wednesday": "6:00–22:00",
+      "thursday": "6:00–22:00",
+      "friday": "6:00–21:00",
+      "saturday": "8:00–20:00",
+      "sunday": "9:00–18:00"
+    },
+    "coordinates": { "lat": 50.0804, "lng": 14.4289 },
+    "description": "Moderní fitness centrum v srdci Prahy s nejnovějším vybavením.",
+    "verified": true
+  },
+  {
+    "name": "PowerZone Brno",
+    "slug": "powerzone-brno",
+    "city": "Brno",
+    "address": "Nám. Svobody 10, 602 00 Brno",
+    "rating": 4.2,
+    "phone": "+420 987 654 321",
+    "website": "https://powerzone.cz",
+    "opening_hours": {
+      "monday": "7:00–22:00",
+      "tuesday": "7:00–22:00",
+      "wednesday": "7:00–22:00",
+      "thursday": "7:00–22:00",
+      "friday": "7:00–21:00",
+      "saturday": "9:00–19:00",
+      "sunday": "10:00–18:00"
+    },
+    "coordinates": { "lat": 49.1951, "lng": 16.6068 },
+    "description": "Největší posilovna v Brně s kompletním vybavením pro silový trénink.",
+    "verified": true
+  }
+]

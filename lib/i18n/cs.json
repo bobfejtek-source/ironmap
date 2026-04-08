@@ -1,0 +1,107 @@
+{
+  "nav": {
+    "gyms": "Všechny posilovny",
+    "addGym": "Přidat gym",
+    "lang": "EN",
+    "profile": "Profil",
+    "signIn": "Přihlásit se",
+    "signOut": "Odhlásit se"
+  },
+  "hero": {
+    "tag": "Česká republika / fitness directory",
+    "h1": "NAJDI.",
+    "h2": "MAKEJ.",
+    "h3": "OPAKUJ.",
+    "sub": "Jeden vyhledávač pro všechny posilovny v České republice. Srovnej vybavení, ceny, otevírací dobu. Začni trénovat — ne hledat.",
+    "searchPlaceholder": "Město nebo adresa...",
+    "locationBtn": "Použít moji polohu",
+    "intents": ["Jednorázový vstup", "Najít poblíž", "Porovnat posilovny", "Jiné"],
+    "gymsCount": "posiloven v ČR",
+    "citiesCount": "měst pokryto"
+  },
+  "categories": {
+    "title": "Kategorie",
+    "all": "Vše",
+    "gym": "Posilovna",
+    "crossfit": "CrossFit",
+    "yoga": "Jóga",
+    "pilates": "Pilates",
+    "outdoor": "Outdoor",
+    "martial": "Bojové sporty",
+    "spinning": "Spinning",
+    "pool": "Bazén"
+  },
+  "cities": {
+    "title": "Posilovny podle města",
+    "subtitle": "Vyberte město a najděte gym ve svém okolí.",
+    "viewAll": "Zobrazit všechna města →",
+    "gymsLabel": "gymů"
+  },
+  "banner": {
+    "text": "Chybí tvůj oblíbený gym?",
+    "sub": "Přidej ho do databáze a pomoz ostatním ho najít.",
+    "btn": "Přidat gym"
+  },
+  "feedback": {
+    "btn": "Zpětná vazba",
+    "title": "Co jsi hledal a nenašel?",
+    "options": [
+      "Nenašel/a jsem svůj gym",
+      "Chybí otevírací doba",
+      "Špatné kontaktní info",
+      "Jiné"
+    ],
+    "placeholder": "Řekni nám více...",
+    "submit": "Odeslat",
+    "success": "Díky za zpětnou vazbu!"
+  },
+  "addGym": {
+    "title": "Přidat gym",
+    "subtitle": "Vyplňte co nejvíce informací. Gym přidáme do 48 hodin.",
+    "name": "Název gymu",
+    "category": "Kategorie",
+    "city": "Město",
+    "address": "Adresa",
+    "website": "Web",
+    "phone": "Telefon",
+    "ownerEmail": "Email provozovatele",
+    "submit": "Odeslat",
+    "submitting": "Odesílám...",
+    "success": "Děkujeme! Gym přidáme do 48 hodin.",
+    "successSub": "Zkontrolujeme informace a gym přidáme co nejdříve.",
+    "categories": ["Posilovna", "CrossFit", "Jóga", "Pilates", "Outdoor", "Bojové sporty", "Spinning", "Bazén", "Jiné"]
+  },
+  "listing": {
+    "found": "posiloven",
+    "foundIn": "ve",
+    "noResults": "Žádné gymy neodpovídají filtrům.",
+    "filters": {
+      "category": "Kategorie",
+      "openNow": "Otevřeno teď",
+      "equipment": "Vybavení",
+      "reset": "Zrušit filtry"
+    },
+    "dailyEntry": "Denní vstup →",
+    "allGyms": "Všechny posilovny v ČR"
+  },
+  "detail": {
+    "contact": "Kontakt",
+    "hours": "Otevírací doba",
+    "map": "Mapa",
+    "openInMaps": "Otevřít v Google Maps",
+    "similar": "Podobné gymy v okolí",
+    "contribute": "Znáš toto místo? Doplň informace",
+    "phone": "Telefon",
+    "web": "Web",
+    "email": "E-mail",
+    "address": "Adresa",
+    "price": "Cenová úroveň",
+    "rating": "Hodnocení",
+    "verified": "Ověřeno"
+  },
+  "common": {
+    "close": "Zavřít",
+    "back": "Zpět",
+    "loading": "Načítám..."
+  }
+}

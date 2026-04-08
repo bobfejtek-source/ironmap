@@ -1,0 +1,74 @@
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import { getAllGyms, getGymBySlug, getSimilarGyms } from '@/lib/db';
+import { cityToSlug, gymDetailUrl, formatRating } from '@/lib/utils';
+import GymDetailClient from '@/components/GymDetailClient';
+
+export const dynamicParams = true;
+
+type Props = { params: { city: string; slug: string } };
+
+export async function generateStaticParams() {
+  const gyms = await getAllGyms();
+  return gyms.map((g) => ({
+    city: cityToSlug(g.city),
+    slug: g.slug,
+  }));
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const gym = await getGymBySlug(params.slug);
+  if (!gym) return {};
+
+  const title = `${gym.name} — posilovna ${gym.city}`;
+  const description =
+    gym.description ??
+    `${gym.name} – fitness centrum v ${gym.city}. ${gym.address ?? ''} Hodnocení: ${formatRating(gym.rating)}/5.`;
+
+  return {
+    title,
+    description,
+    alternates: { canonical: gymDetailUrl(gym) },
+    openGraph: { title, description, type: 'website' },
+  };
+}
+
+export default async function GymDetailPage({ params }: Props) {
+  const gym = await getGymBySlug(params.slug);
+  if (!gym || cityToSlug(gym.city) !== params.city) notFound();
+
+  const similar = await getSimilarGyms(gym.city, gym.slug, 4);
+
+  return (
+    <>
+      <GymDetailClient gym={gym} similarGyms={similar} />
+
+      {/* Structured data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'ExerciseGym',
+            name: gym.name,
+            address: gym.address ? {
+              '@type': 'PostalAddress',
+              streetAddress: gym.address,
+              addressLocality: gym.city,
+              addressCountry: 'CZ',
+            } : undefined,
+            telephone: gym.phone ?? undefined,
+            url: gym.website ?? undefined,
+            aggregateRating: gym.rating ? {
+              '@type': 'AggregateRating',
+              ratingValue: gym.rating,
+              bestRating: 5,
+              worstRating: 1,
+            } : undefined,
+            description: gym.description ?? undefined,
+          }),
+        }}
+      />
+    </>
+  );
+}

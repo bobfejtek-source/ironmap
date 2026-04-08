@@ -1,0 +1,46 @@
+[
+  {
+    "name": "Fittsport",
+    "city": "Rožnov pod Radhoštěm",
+    "address": "Meziříčská 1710, Rožnov pod Radhoštěm",
+    "phone": null,
+    "website": null,
+    "ico": null,
+    "tags": "Fitness centra",
+    "source": "firmy.cz",
+    "detail_url": "https://www.firmy.cz/detail/2283725-fittsport-roznov-pod-radhostem.html"
+  },
+  {
+    "name": "Sport centrum LIFT & FIT",
+    "city": "Rožnov pod Radhoštěm",
+    "address": "Kulturní 1790, Rožnov pod Radhoštěm",
+    "phone": null,
+    "website": null,
+    "ico": null,
+    "tags": "Fitness centra",
+    "source": "firmy.cz",
+    "detail_url": "https://www.firmy.cz/detail/13332649-sport-centrum-lift-fit-roznov-pod-radhostem.html"
+  },
+  {
+    "name": "Box-Fit Gym",
+    "city": "Rožnov pod Radhoštěm",
+    "address": "Svazarmovská 2638, Rožnov pod Radhoštěm",
+    "phone": null,
+    "website": null,
+    "ico": "07462824",
+    "tags": "Fitness centra",
+    "source": "firmy.cz",
+    "detail_url": "https://www.firmy.cz/detail/12982174-box-fit-gym-roznov-pod-radhostem.html"
+  },
+  {
+    "name": "Michaela Karbanová - sport & lifestyle",
+    "city": "Rožnov pod Radhoštěm",
+    "address": "Frenštátská 646, Rožnov pod Radhoštěm",
+    "phone": null,
+    "website": null,
+    "ico": null,
+    "tags": "Osobní trenéři fitness",
+    "source": "firmy.cz",
+    "detail_url": "https://www.firmy.cz/detail/13313202-michaela-karbanova-sport-lifestyle-roznov-pod-radhostem.html"
+  }
+]

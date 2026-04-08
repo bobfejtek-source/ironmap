@@ -1,0 +1,107 @@
+{
+  "nav": {
+    "gyms": "All gyms",
+    "addGym": "Add gym",
+    "lang": "CS",
+    "profile": "Profile",
+    "signIn": "Sign in",
+    "signOut": "Sign out"
+  },
+  "hero": {
+    "tag": "Czech Republic / fitness directory",
+    "h1": "FIND.",
+    "h2": "GRIND.",
+    "h3": "REPEAT.",
+    "sub": "One search engine for every gym in the Czech Republic. Compare equipment, pricing, opening hours. Start training — not searching.",
+    "searchPlaceholder": "City or address...",
+    "locationBtn": "Use my location",
+    "intents": ["Drop-in entry", "Find nearby", "Compare gyms", "Other"],
+    "gymsCount": "gyms in CZ",
+    "citiesCount": "cities covered"
+  },
+  "categories": {
+    "title": "Categories",
+    "all": "All",
+    "gym": "Gym",
+    "crossfit": "CrossFit",
+    "yoga": "Yoga",
+    "pilates": "Pilates",
+    "outdoor": "Outdoor",
+    "martial": "Martial arts",
+    "spinning": "Spinning",
+    "pool": "Pool"
+  },
+  "cities": {
+    "title": "Gyms by city",
+    "subtitle": "Pick a city and find a gym near you.",
+    "viewAll": "View all cities →",
+    "gymsLabel": "gyms"
+  },
+  "banner": {
+    "text": "Missing your favourite gym?",
+    "sub": "Add it to the database and help others find it.",
+    "btn": "Add gym"
+  },
+  "feedback": {
+    "btn": "Feedback",
+    "title": "What were you looking for and couldn't find?",
+    "options": [
+      "Couldn't find my gym",
+      "Missing opening hours",
+      "Wrong contact info",
+      "Other"
+    ],
+    "placeholder": "Tell us more...",
+    "submit": "Send",
+    "success": "Thanks for the feedback!"
+  },
+  "addGym": {
+    "title": "Add a gym",
+    "subtitle": "Fill in as much information as possible. We'll add the gym within 48 hours.",
+    "name": "Gym name",
+    "category": "Category",
+    "city": "City",
+    "address": "Address",
+    "website": "Website",
+    "phone": "Phone",
+    "ownerEmail": "Owner's email",
+    "submit": "Submit",
+    "submitting": "Sending...",
+    "success": "Thank you! We'll add the gym within 48 hours.",
+    "successSub": "We'll verify the information and add the gym as soon as possible.",
+    "categories": ["Gym", "CrossFit", "Yoga", "Pilates", "Outdoor", "Martial arts", "Spinning", "Pool", "Other"]
+  },
+  "listing": {
+    "found": "gyms",
+    "foundIn": "in",
+    "noResults": "No gyms match the current filters.",
+    "filters": {
+      "category": "Category",
+      "openNow": "Open now",
+      "equipment": "Equipment",
+      "reset": "Clear filters"
+    },
+    "dailyEntry": "Drop-in →",
+    "allGyms": "All gyms in Czech Republic"
+  },
+  "detail": {
+    "contact": "Contact",
+    "hours": "Opening hours",
+    "map": "Map",
+    "openInMaps": "Open in Google Maps",
+    "similar": "Similar gyms nearby",
+    "contribute": "Know this place? Add info",
+    "phone": "Phone",
+    "web": "Website",
+    "email": "Email",
+    "address": "Address",
+    "price": "Price level",
+    "rating": "Rating",
+    "verified": "Verified"
+  },
+  "common": {
+    "close": "Close",
+    "back": "Back",
+    "loading": "Loading..."
+  }
+}
