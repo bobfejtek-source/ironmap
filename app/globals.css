@@ -293,7 +293,16 @@ input, textarea, select { cursor: text; }
 .hero-search-item:last-child { border-bottom: none; }
 
 /* ─── Map ────────────────────────────────────────────────────── */
-.leaflet-container { cursor: crosshair !important; }
+.leaflet-container {
+  cursor: crosshair !important;
+  /* Prevent 0-height init on iOS before parent height settles */
+  min-height: 200px;
+  /* Force GPU compositing layer — fixes black/blank tiles on iOS Safari */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  /* Prevent tap highlight flash on iOS */
+  -webkit-tap-highlight-color: transparent;
+}
 .leaflet-popup-content-wrapper {
   background: var(--card-bg) !important;
   border: 1px solid var(--border) !important;

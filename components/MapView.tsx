@@ -104,20 +104,42 @@ export default function MapView({
 
       mapRef.current = map;
 
-      // Fix white-squares: force tile recalculation after CSS/layout settles
-      setTimeout(() => map.invalidateSize(), 150);
+      // Belt-and-suspenders invalidateSize schedule:
+      // 100ms — catches most desktop/Android cases after CSS settles
+      // 500ms — catches slow iOS Safari paint cycles and deferred layout
+      const t1 = setTimeout(() => { if (mapRef.current) map.invalidateSize(); }, 100);
+      const t2 = setTimeout(() => { if (mapRef.current) map.invalidateSize(); }, 500);
 
-      // Re-invalidate whenever the container is resized (e.g. mobile layout shift)
-      const ro = new ResizeObserver(() => map.invalidateSize());
+      // ResizeObserver — fires on container dimension changes (layout shifts, panel
+      // resizing, CityListing switching from sticky to stacked on mobile)
+      const ro = new ResizeObserver(() => { if (mapRef.current) map.invalidateSize(); });
       ro.observe(containerRef.current!);
-      (map as unknown as { _ro: ResizeObserver })._ro = ro;
+
+      // window resize — iOS address bar show/hide changes window.innerHeight and
+      // breaks height:100% chains; a resize event is fired each time
+      const onResize = () => { if (mapRef.current) map.invalidateSize(); };
+      window.addEventListener('resize', onResize);
+
+      // orientationchange — rotate phone: wait for layout to settle then re-check
+      const onOrient = () => {
+        setTimeout(() => { if (mapRef.current) map.invalidateSize(); }, 300);
+      };
+      window.addEventListener('orientationchange', onOrient);
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (map as any)._cleanup = { ro, t1, t2, onResize, onOrient };
     });
 
     return () => {
       active = false;
       if (mapRef.current) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (mapRef.current as any)._ro?.disconnect();
+        const { ro, t1, t2, onResize, onOrient } = (mapRef.current as any)._cleanup ?? {};
+        clearTimeout(t1);
+        clearTimeout(t2);
+        ro?.disconnect();
+        if (onResize) window.removeEventListener('resize', onResize);
+        if (onOrient) window.removeEventListener('orientationchange', onOrient);
         mapRef.current.remove();
         mapRef.current = null;
       }
