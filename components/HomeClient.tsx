@@ -67,7 +67,7 @@ const CITIES_MARQUEE = [
 
 type IntentModal = 'entry' | 'compare' | 'trainer' | null;
 
-const FORMSPREE = 'https://formspree.io/f/FORMSPREE_ID';
+const FORMSPREE = 'https://formspree.io/f/xgopqqvz';
 const TRAINER_GOALS = ['Silový trénink', 'Hubnutí', 'Kondice', 'Rehabilitace', 'Výživa a strava', 'Jiné'];
 
 export default function HomeClient({ topCities, total, allCities }: Props) {

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useModal } from './ModalContext';
 import { useT } from '@/lib/i18n';
 
-const FORMSPREE_ENDPOINT = 'https://formspree.io/f/FORMSPREE_ID';
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xgopqqvz';
 
 export default function AddGymModal() {
   const { isAddGymOpen, closeAddGym } = useModal();

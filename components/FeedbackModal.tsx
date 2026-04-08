@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useT } from '@/lib/i18n';
 import { useModal } from './ModalContext';
 
-const FORMSPREE_ENDPOINT = 'https://formspree.io/f/FORMSPREE_ID';
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xgopqqvz';
 
 export default function FeedbackModal() {
   const { t } = useT();
