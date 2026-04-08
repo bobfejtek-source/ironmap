@@ -154,12 +154,12 @@ export default function HomeClient({ topCities, total, allCities }: Props) {
   const handleLocation = () => {
     setGeoError('');
     if (!navigator.geolocation) {
-      setGeoError('Geolokace není dostupná ve vašem prohlížeči.');
+      setGeoError(t.geo.notSupported);
       return;
     }
     navigator.geolocation.getCurrentPosition(
       () => { router.push('/posilovny'); },
-      () => { setGeoError('Povol přístup k poloze v nastavení prohlížeče.'); }
+      () => { setGeoError(t.geo.permissionDenied); }
     );
   };
 
@@ -299,16 +299,16 @@ export default function HomeClient({ topCities, total, allCities }: Props) {
           justifyContent: 'center',
         }}>
           <button className="chip" onClick={() => { setGeoError(''); setIntentModal('entry'); }}>
-            ◇ Jednorázový vstup
+            ◇ {t.hero.intents[0]}
           </button>
           <button className="chip" onClick={handleLocation}>
-            ⊕ Najít poblíž
+            ⊕ {t.hero.intents[1]}
           </button>
           <button className="chip" onClick={() => { setGeoError(''); setIntentModal('compare'); }}>
-            ≡ Porovnat posilovny
+            ≡ {t.hero.intents[2]}
           </button>
           <button className="chip" onClick={() => { setGeoError(''); setIntentModal('trainer'); }}>
-            <TrainerIcon /> Najít trenéra
+            <TrainerIcon /> {t.hero.intents[3]}
           </button>
         </div>
 
@@ -532,28 +532,27 @@ export default function HomeClient({ topCities, total, allCities }: Props) {
       {intentModal === 'entry' && (
         <IntentModalShell onClose={closeIntent}>
           <div className="iron-modal-header">
-            <div className="iron-modal-title" style={{ fontSize: '1.1rem' }}>Pracujeme na tom!</div>
+            <div className="iron-modal-title" style={{ fontSize: '1.1rem' }}>{t.intent.entry.title}</div>
             <button className="iron-modal-close" onClick={closeIntent}>×</button>
           </div>
           <div className="iron-modal-body">
             {entrySent ? (
-              <SuccessBlock title="Díky!" sub="Dáme ti vědět jako prvnímu, až bude jednorázový vstup dostupný." onClose={() => { closeIntent(); setEntrySent(false); setEntryEmail(''); }} />
+              <SuccessBlock title={t.common.thanks} sub={t.intent.entry.successSub} onClose={() => { closeIntent(); setEntrySent(false); setEntryEmail(''); }} />
             ) : (
               <>
                 <p style={{ color: 'var(--muted)', fontSize: '0.88rem', fontWeight: 300, lineHeight: 1.7, marginBottom: '1.5rem' }}>
-                  Domlouváme partnerství s posilovnami, abys mohl/a zaplatit vstupné přímo z mobilu.
-                  Dej nám email a dáme ti vědět jako prvnímu.
+                  {t.intent.entry.body}
                 </p>
                 <form onSubmit={handleEntrySubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                   <input
                     type="email" required
                     value={entryEmail} onChange={e => setEntryEmail(e.target.value)}
-                    placeholder="tvuj@email.cz"
+                    placeholder={t.intent.entry.placeholder}
                     className="iron-input"
                   />
                   <button type="submit" disabled={entryLoading} className="iron-btn iron-btn-primary"
                     style={{ width: '100%', opacity: entryLoading ? 0.6 : 1 }}>
-                    {entryLoading ? 'Odesílám...' : 'Chci být první →'}
+                    {entryLoading ? t.intent.entry.loading : t.intent.entry.cta}
                   </button>
                 </form>
               </>
@@ -565,16 +564,16 @@ export default function HomeClient({ topCities, total, allCities }: Props) {
       {intentModal === 'compare' && (
         <IntentModalShell onClose={closeIntent}>
           <div className="iron-modal-header">
-            <div className="iron-modal-title" style={{ fontSize: '1.1rem' }}>Brzy!</div>
+            <div className="iron-modal-title" style={{ fontSize: '1.1rem' }}>{t.intent.compare.title}</div>
             <button className="iron-modal-close" onClick={closeIntent}>×</button>
           </div>
           <div className="iron-modal-body">
             <div style={{ padding: '1rem 0 0.5rem', textAlign: 'center' }}>
               <div style={{ fontSize: '2.5rem', marginBottom: '1.25rem', color: 'var(--lime)', fontFamily: 'var(--font-display)', fontWeight: 900, letterSpacing: '-0.02em' }}>≡≡</div>
               <p style={{ color: 'var(--muted)', fontSize: '0.9rem', fontWeight: 300, lineHeight: 1.7, maxWidth: '30ch', margin: '0 auto 1.75rem' }}>
-                Pracujeme na srovnávači posiloven — ceny, vybavení, hodnocení na jednom místě.
+                {t.intent.compare.body}
               </p>
-              <button onClick={closeIntent} className="iron-btn iron-btn-outline">Zavřít</button>
+              <button onClick={closeIntent} className="iron-btn iron-btn-outline">{t.common.close}</button>
             </div>
           </div>
         </IntentModalShell>
@@ -583,35 +582,35 @@ export default function HomeClient({ topCities, total, allCities }: Props) {
       {intentModal === 'trainer' && (
         <IntentModalShell onClose={closeIntent}>
           <div className="iron-modal-header">
-            <div className="iron-modal-title" style={{ fontSize: '1.1rem' }}>Najdi svého trenéra</div>
+            <div className="iron-modal-title" style={{ fontSize: '1.1rem' }}>{t.intent.trainer.title}</div>
             <button className="iron-modal-close" onClick={closeIntent}>×</button>
           </div>
           <div className="iron-modal-body">
             {trainerSent ? (
               <SuccessBlock
-                title="Díky!"
-                sub="Ozveme se ti brzy s doporučením."
+                title={t.common.thanks}
+                sub={t.intent.trainer.successSub}
                 onClose={() => { closeIntent(); setTrainerSent(false); setTrainerEmail(''); setTrainerCity(''); setTrainerGoal(''); }}
               />
             ) : (
               <>
                 <p style={{ color: 'var(--muted)', fontSize: '0.85rem', fontWeight: 300, lineHeight: 1.6, marginBottom: '1.5rem' }}>
-                  Řekni nám, co hledáš a my tě spojíme s trenérem ve tvém městě.
+                  {t.intent.trainer.body}
                 </p>
                 <form onSubmit={handleTrainerSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem' }}>
                   <div>
-                    <label style={intentLabelStyle}>Email *</label>
-                    <input type="email" required className="iron-input" value={trainerEmail} onChange={e => setTrainerEmail(e.target.value)} placeholder="tvuj@email.cz" />
+                    <label style={intentLabelStyle}>{t.intent.trainer.emailLabel}</label>
+                    <input type="email" required className="iron-input" value={trainerEmail} onChange={e => setTrainerEmail(e.target.value)} placeholder={t.intent.entry.placeholder} />
                   </div>
                   <div>
-                    <label style={intentLabelStyle}>Město *</label>
+                    <label style={intentLabelStyle}>{t.intent.trainer.cityLabel}</label>
                     <input required className="iron-input" value={trainerCity} onChange={e => setTrainerCity(e.target.value)} placeholder="Praha" />
                   </div>
                   <div>
-                    <label style={intentLabelStyle}>Co hledáš?</label>
+                    <label style={intentLabelStyle}>{t.intent.trainer.goalLabel}</label>
                     <div style={{ position: 'relative' }}>
                       <select className="iron-select" value={trainerGoal} onChange={e => setTrainerGoal(e.target.value)}>
-                        <option value="">— Vyber cíl —</option>
+                        <option value="">{t.intent.trainer.goalPlaceholder}</option>
                         {TRAINER_GOALS.map(g => <option key={g} value={g}>{g}</option>)}
                       </select>
                       <div style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)', pointerEvents: 'none', fontSize: '0.7rem' }}>▼</div>
@@ -619,7 +618,7 @@ export default function HomeClient({ topCities, total, allCities }: Props) {
                   </div>
                   <button type="submit" disabled={trainerLoading} className="iron-btn iron-btn-primary"
                     style={{ width: '100%', marginTop: '0.25rem', opacity: trainerLoading ? 0.6 : 1 }}>
-                    {trainerLoading ? 'Odesílám...' : 'Najít trenéra →'}
+                    {trainerLoading ? t.intent.trainer.loading : t.intent.trainer.cta}
                   </button>
                 </form>
               </>

@@ -1,8 +1,10 @@
 'use client';
 
 import Link from 'next/link';
+import { useT } from '@/lib/i18n';
 
 export default function IronFooter() {
+  const { t } = useT();
   return (
     <footer style={{
       borderTop: '1px solid var(--border)',
@@ -39,10 +41,10 @@ export default function IronFooter() {
         flexWrap: 'wrap',
       }}>
         {[
-          { label: 'Posilovny', href: '/posilovny' },
-          { label: 'O projektu', href: '/o-projektu' },
-          { label: 'Kontakt', href: '/kontakt' },
-          { label: 'Ochrana soukromí', href: '/ochrana-soukromi' },
+          { label: t.footer.gyms, href: '/posilovny' },
+          { label: t.footer.about, href: '/o-projektu' },
+          { label: t.footer.contact, href: '/kontakt' },
+          { label: t.footer.privacy, href: '/ochrana-soukromi' },
         ].map(({ label, href }) => (
           <li key={label}>
             <Link
@@ -63,7 +65,7 @@ export default function IronFooter() {
         color: 'var(--muted)',
         letterSpacing: '0.06em',
       }}>
-        &copy; {new Date().getFullYear()} IRON. Největší adresář posiloven v ČR.
+        &copy; {new Date().getFullYear()} IRON. {t.footer.tagline}
       </div>
     </footer>
   );

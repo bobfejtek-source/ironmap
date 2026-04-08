@@ -1,9 +1,11 @@
 'use client';
 
 import { useModal } from '@/components/ModalContext';
+import { useT } from '@/lib/i18n';
 
 export default function KontaktPage() {
   const { openAddGym, openFeedback } = useModal();
+  const { t } = useT();
 
   return (
     <div style={{
@@ -21,7 +23,7 @@ export default function KontaktPage() {
         color: 'var(--lime)',
         marginBottom: '2.5rem',
       }}>
-        Kontakt
+        {t.contact.tag}
       </div>
 
       {/* Headline */}
@@ -35,7 +37,9 @@ export default function KontaktPage() {
         marginBottom: '2.5rem',
         color: 'var(--text)',
       }}>
-        Napiš<br />nám.
+        {t.contact.headline.split('\n').map((line, i) => (
+          <span key={i}>{line}{i === 0 && <br />}</span>
+        ))}
       </h1>
 
       <p style={{
@@ -46,7 +50,7 @@ export default function KontaktPage() {
         color: 'var(--muted)',
         marginBottom: '2.5rem',
       }}>
-        Máš otázku, nápad nebo chceš přidat gym? Napiš nám.
+        {t.contact.body}
       </p>
 
       {/* Email */}
@@ -65,7 +69,7 @@ export default function KontaktPage() {
           color: 'var(--muted)',
           marginBottom: '0.5rem',
         }}>
-          Email
+          {t.contact.emailLabel}
         </div>
         <a
           href="mailto:info@ironmap.cz"
@@ -91,13 +95,13 @@ export default function KontaktPage() {
           onClick={openAddGym}
           className="iron-btn iron-btn-primary"
         >
-          Přidat gym
+          {t.contact.addGymBtn}
         </button>
         <button
           onClick={openFeedback}
           className="iron-btn iron-btn-outline"
         >
-          Zpětná vazba
+          {t.contact.feedbackBtn}
         </button>
       </div>
     </div>

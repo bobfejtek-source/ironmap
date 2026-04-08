@@ -2,12 +2,14 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useModal } from './ModalContext';
+import { useT } from '@/lib/i18n';
 
 const STORAGE_KEY = 'pilot-banner-dismissed';
 
 export default function PilotBanner() {
   const [visible, setVisible] = useState(false);
   const { openFeedback } = useModal();
+  const { t } = useT();
   const ref = useRef<HTMLDivElement>(null);
 
   // Check localStorage after hydration to avoid SSR mismatch
@@ -78,7 +80,7 @@ export default function PilotBanner() {
         color: 'var(--muted)',
         lineHeight: 1.6,
       }}>
-        Pilotní provoz — web se neustále zlepšuje. Některé funkce ještě nejsou dostupné.{' '}
+        {t.pilot.text}{' '}
         <button
           onClick={openFeedback}
           style={{
@@ -99,9 +101,9 @@ export default function PilotBanner() {
           onMouseEnter={e => (e.currentTarget.style.textDecorationColor = '#C8FF00')}
           onMouseLeave={e => (e.currentTarget.style.textDecorationColor = 'rgba(200,255,0,0.35)')}
         >
-          Napište nám
+          {t.pilot.cta}
         </button>
-        , budeme rádi za zpětnou vazbu!
+        {t.pilot.suffix}
       </p>
 
       {/* Dismiss */}

@@ -4,9 +4,11 @@ import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { useT } from '@/lib/i18n';
 
 export default function PrihlaseniClient() {
   const searchParams = useSearchParams();
+  const { t } = useT();
   const callbackUrl = searchParams.get('callbackUrl') ?? '/profil';
   const error = searchParams.get('error');
 
@@ -62,7 +64,7 @@ export default function PrihlaseniClient() {
             Přihlášení
           </h1>
           <p style={{ color: 'var(--muted)', fontSize: '0.88rem', fontWeight: 300 }}>
-            Check-in, odznaky, profil — vše na jednom místě.
+            {t.auth.subtitle}
           </p>
         </div>
 
@@ -78,7 +80,7 @@ export default function PrihlaseniClient() {
             fontWeight: 700,
             letterSpacing: '0.05em',
           }}>
-            Chyba přihlášení. Zkus to znovu.
+            {t.auth.error}
           </div>
         )}
 
@@ -98,11 +100,10 @@ export default function PrihlaseniClient() {
               fontWeight: 900,
               letterSpacing: '0.05em',
             }}>
-              ✓ ODESLÁNO
+              ✓ {t.auth.emailSentTitle}
             </div>
             <p style={{ color: 'var(--muted)', fontSize: '0.88rem', fontWeight: 300, lineHeight: 1.7 }}>
-              Zkontroluj email <strong style={{ color: 'var(--text)' }}>{email}</strong>.
-              Klikni na odkaz a budeš přihlášen.
+              {t.auth.emailSentBody.replace('{email}', '')}<strong style={{ color: 'var(--text)' }}>{email}</strong>.
             </p>
           </div>
         ) : (
@@ -125,7 +126,7 @@ export default function PrihlaseniClient() {
                   <path d="M3.964 10.71A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 000 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
                   <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
                 </svg>
-                {googleLoading ? 'Přihlašuji...' : 'Pokračovat přes Google'}
+                {googleLoading ? t.auth.googleLoading : t.auth.googleBtn}
               </button>
             </div>
 
@@ -170,7 +171,7 @@ export default function PrihlaseniClient() {
                 className="iron-btn iron-btn-ghost"
                 style={{ width: '100%', justifyContent: 'center' }}
               >
-                {emailLoading ? 'Odesílám...' : 'Poslat přihlašovací odkaz →'}
+                {emailLoading ? t.auth.emailSendLoading : t.auth.emailSendBtn}
               </button>
             </form>
           </div>
@@ -180,9 +181,9 @@ export default function PrihlaseniClient() {
           textAlign: 'center', marginTop: '1.5rem',
           fontSize: '0.75rem', color: 'var(--muted)', fontWeight: 300,
         }}>
-          Přihlášením souhlasíš s{' '}
-          <Link href="/ochrana-dat" style={{ color: 'var(--muted)', textDecoration: 'underline' }}>
-            podmínkami ochrany dat
+          {t.auth.consent}{' '}
+          <Link href="/ochrana-soukromi" style={{ color: 'var(--muted)', textDecoration: 'underline' }}>
+            {t.auth.consentLink}
           </Link>.
         </p>
       </div>

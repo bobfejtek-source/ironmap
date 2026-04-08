@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { useSession, signIn } from 'next-auth/react';
+import { useT } from '@/lib/i18n';
 
 function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const R = 6_371_000; // metres
@@ -30,6 +31,7 @@ interface NewBadge {
 
 export default function CheckinButton({ gymSlug, gymLat, gymLng }: Props) {
   const { data: session, status } = useSession();
+  const { t } = useT();
   const [phase, setPhase] = useState<Phase>('idle');
   const [fallbackMsg, setFallbackMsg] = useState('');
   const [newBadges, setNewBadges] = useState<NewBadge[]>([]);
@@ -49,11 +51,11 @@ export default function CheckinButton({ gymSlug, gymLat, gymLng }: Props) {
         setNewBadges(data.newBadges ?? []);
         setPhase('done');
       } else {
-        setErrorMsg(data.error ?? 'Chyba serveru');
+        setErrorMsg(data.error ?? t.checkin.serverError);
         setPhase('error');
       }
     } catch {
-      setErrorMsg('Nepodařilo se připojit k serveru.');
+      setErrorMsg(t.checkin.connectionError);
       setPhase('error');
     }
   }
@@ -70,7 +72,7 @@ export default function CheckinButton({ gymSlug, gymLat, gymLng }: Props) {
 
     if (!navigator.geolocation) {
       pendingCoords.current = null;
-      setFallbackMsg('Tvůj prohlížeč nepodporuje geolokaci. Přesto zaznamenat návštěvu?');
+      setFallbackMsg(t.checkin.noGeolocation);
       setPhase('fallback');
       return;
     }
@@ -89,9 +91,7 @@ export default function CheckinButton({ gymSlug, gymLat, gymLng }: Props) {
       if (gymLat !== null && gymLng !== null) {
         const dist = haversineDistance(lat, lng, gymLat, gymLng);
         if (dist > 300) {
-          setFallbackMsg(
-            `Zdá se, že nejsi v této posilovně (${Math.round(dist)} m daleko). Přesto zaznamenat návštěvu?`,
-          );
+          setFallbackMsg(t.checkin.tooFar.replace('{dist}', String(Math.round(dist))));
           setPhase('fallback');
           return;
         }
@@ -100,7 +100,7 @@ export default function CheckinButton({ gymSlug, gymLat, gymLng }: Props) {
       await submitCheckin(lat, lng);
     } catch {
       pendingCoords.current = null;
-      setFallbackMsg('Nepodařilo se zjistit tvou polohu. Přesto zaznamenat návštěvu?');
+      setFallbackMsg(t.checkin.locationError);
       setPhase('fallback');
     }
   }
@@ -123,7 +123,7 @@ export default function CheckinButton({ gymSlug, gymLat, gymLng }: Props) {
           color: 'var(--lime)',
           marginBottom: newBadges.length ? '1rem' : 0,
         }}>
-          ✓ Check-in zaznamenán!
+          ✓ {t.checkin.success}
         </div>
 
         {newBadges.length > 0 && (
@@ -133,7 +133,7 @@ export default function CheckinButton({ gymSlug, gymLat, gymLng }: Props) {
               color: 'var(--muted)', fontFamily: 'var(--font-display)', fontWeight: 700,
               marginBottom: '0.75rem',
             }}>
-              Nové odznaky
+              {t.checkin.newBadges}
             </div>
             <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
               {newBadges.map((b) => (
@@ -179,14 +179,14 @@ export default function CheckinButton({ gymSlug, gymLat, gymLng }: Props) {
             className="iron-btn iron-btn-ghost"
             style={{ fontSize: '0.8rem', padding: '0.6rem 1.25rem' }}
           >
-            Ano, zaznamenat →
+            {t.checkin.confirm}
           </button>
           <button
             onClick={() => { setPhase('idle'); pendingCoords.current = null; }}
             className="iron-btn iron-btn-outline"
             style={{ fontSize: '0.8rem', padding: '0.6rem 1.25rem' }}
           >
-            Zrušit
+            {t.checkin.cancel}
           </button>
         </div>
       </div>
@@ -205,7 +205,7 @@ export default function CheckinButton({ gymSlug, gymLat, gymLng }: Props) {
           className="iron-btn iron-btn-outline"
           style={{ fontSize: '0.75rem', padding: '0.4rem 0.9rem' }}
         >
-          Zkusit znovu
+          {t.checkin.retry}
         </button>
       </div>
     );
@@ -213,10 +213,10 @@ export default function CheckinButton({ gymSlug, gymLat, gymLng }: Props) {
 
   const isLocating = phase === 'locating' || phase === 'submitting';
   const label = !session
-    ? 'Přihlásit se a zaznamenat návštěvu'
+    ? t.checkin.signInPrompt
     : isLocating
-      ? phase === 'locating' ? 'Zjišťuji polohu...' : 'Ukládám...'
-      : 'Byl jsem tady';
+      ? phase === 'locating' ? t.checkin.locating : t.checkin.saving
+      : t.checkin.btn;
 
   return (
     <button

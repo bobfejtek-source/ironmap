@@ -4,9 +4,11 @@ import { useSession, signIn, signOut } from 'next-auth/react';
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useT } from '@/lib/i18n';
 
 export default function UserMenu() {
   const { data: session, status } = useSession();
+  const { t } = useT();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -35,7 +37,7 @@ export default function UserMenu() {
         className="iron-btn iron-btn-outline"
         style={{ fontSize: '0.72rem', padding: '0.4rem 1rem' }}
       >
-        Přihlásit se
+        {t.nav.signIn}
       </button>
     );
   }
@@ -108,7 +110,7 @@ export default function UserMenu() {
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
             }}>
-              {session.user?.name ?? 'Uživatel'}
+              {session.user?.name ?? t.common.user}
             </div>
             <div style={{
               fontSize: '0.72rem',
@@ -150,7 +152,7 @@ export default function UserMenu() {
                 e.currentTarget.style.background = 'transparent';
               }}
             >
-              ◈ Můj profil
+              ◈ {t.common.myProfile}
             </Link>
 
             <button
@@ -181,7 +183,7 @@ export default function UserMenu() {
                 e.currentTarget.style.background = 'transparent';
               }}
             >
-              ↩ Odhlásit se
+              ↩ {t.nav.signOut}
             </button>
           </div>
         </div>

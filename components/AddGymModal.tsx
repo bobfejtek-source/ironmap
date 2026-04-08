@@ -97,13 +97,13 @@ export default function AddGymModal() {
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div>
                   <label style={labelStyle}>{t.addGym.name} *</label>
-                  <input name="name" required className="iron-input" placeholder="Např. FitZone Praha" />
+                  <input name="name" required className="iron-input" placeholder={t.addGym.namePlaceholder} />
                 </div>
                 <div>
                   <label style={labelStyle}>{t.addGym.category}</label>
                   <div style={{ position: 'relative' }}>
                     <select name="category" className="iron-select">
-                      <option value="">— Vyber kategorii —</option>
+                      <option value="">{t.addGym.categoryPlaceholder}</option>
                       {t.addGym.categories.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
                     <div style={{
@@ -124,7 +124,7 @@ export default function AddGymModal() {
                 </div>
                 <div>
                   <label style={labelStyle}>{t.addGym.address}</label>
-                  <input name="address" className="iron-input" placeholder="Ulice 1, 110 00 Praha" />
+                  <input name="address" className="iron-input" placeholder={t.addGym.addressPlaceholder} />
                 </div>
                 <div>
                   <label style={labelStyle}>{t.addGym.website}</label>

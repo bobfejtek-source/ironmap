@@ -59,9 +59,12 @@
     "title": "Add a gym",
     "subtitle": "Fill in as much information as possible. We'll add the gym within 48 hours.",
     "name": "Gym name",
+    "namePlaceholder": "e.g. FitZone Prague",
     "category": "Category",
+    "categoryPlaceholder": "— Pick a category —",
     "city": "City",
     "address": "Address",
+    "addressPlaceholder": "Street 1, 110 00 Prague",
     "website": "Website",
     "phone": "Phone",
     "ownerEmail": "Owner's email",
@@ -91,17 +94,144 @@
     "openInMaps": "Open in Google Maps",
     "similar": "Similar gyms nearby",
     "contribute": "Know this place? Add info",
+    "contributeBtn": "Add info →",
     "phone": "Phone",
     "web": "Website",
     "email": "Email",
     "address": "Address",
     "price": "Price level",
     "rating": "Rating",
-    "verified": "Verified"
+    "verified": "Verified",
+    "checkinHeading": "Check-in",
+    "checkinDesc": "Been to {name} today? Log your visit, collect badges and track your progress.",
+    "loadingMap": "Loading map..."
   },
   "common": {
     "close": "Close",
     "back": "Back",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "user": "User",
+    "myProfile": "My profile",
+    "thanks": "Thanks!"
+  },
+  "pilot": {
+    "text": "Beta — we're constantly improving. Some features aren't available yet.",
+    "cta": "Write to us",
+    "suffix": ", we'd love your feedback!"
+  },
+  "footer": {
+    "gyms": "Gyms",
+    "about": "About",
+    "contact": "Contact",
+    "privacy": "Privacy",
+    "tagline": "The largest gym directory in the Czech Republic."
+  },
+  "geo": {
+    "notSupported": "Geolocation is not available in your browser.",
+    "permissionDenied": "Allow location access in your browser settings."
+  },
+  "intent": {
+    "entry": {
+      "title": "Working on it!",
+      "body": "We're partnering with gyms so you can pay for a drop-in directly from your phone. Leave your email and we'll let you know first.",
+      "placeholder": "your@email.com",
+      "loading": "Sending...",
+      "cta": "Notify me first →",
+      "successSub": "We'll let you know as soon as drop-in entry is available."
+    },
+    "compare": {
+      "title": "Coming soon!",
+      "body": "We're building a gym comparison tool — pricing, equipment, ratings all in one place."
+    },
+    "trainer": {
+      "title": "Find your trainer",
+      "body": "Tell us what you're looking for and we'll match you with a trainer in your city.",
+      "emailLabel": "Email *",
+      "cityLabel": "City *",
+      "goalLabel": "What are you looking for?",
+      "goalPlaceholder": "— Pick a goal —",
+      "loading": "Sending...",
+      "cta": "Find a trainer →",
+      "successSub": "We'll get back to you soon with a recommendation."
+    }
+  },
+  "checkin": {
+    "serverError": "Server error",
+    "connectionError": "Could not connect to the server.",
+    "noGeolocation": "Your browser doesn't support geolocation. Check in anyway?",
+    "tooFar": "You don't seem to be at this gym ({dist} m away). Check in anyway?",
+    "locationError": "Could not determine your location. Check in anyway?",
+    "confirm": "Yes, check in →",
+    "cancel": "Cancel",
+    "retry": "Try again",
+    "signInPrompt": "Sign in to check in",
+    "locating": "Getting location...",
+    "saving": "Saving...",
+    "success": "Checked in!",
+    "newBadges": "New badges",
+    "btn": "I was here"
+  },
+  "profile": {
+    "title": "Profile",
+    "checkins": "check-ins",
+    "gyms": "gyms",
+    "cities": "cities",
+    "badges": "badges",
+    "visitedGyms": "Visited gyms",
+    "badgesTitle": "Badges",
+    "recentCheckins": "Recent check-ins",
+    "accountManagement": "Account management",
+    "noCheckins": "No check-ins yet",
+    "noCheckinsDesc": "Visit a gym and tap \"I was here\".",
+    "findGym": "Find a gym →",
+    "deleteAccount": "Delete account",
+    "deleteConfirm": "Are you sure? This action is irreversible.",
+    "deleteYes": "Yes, delete",
+    "deleteCancel": "Cancel",
+    "deleting": "Deleting…",
+    "deleteError": "Could not delete account. Try again."
+  },
+  "auth": {
+    "subtitle": "Check-ins, badges, profile — all in one place.",
+    "error": "Login error. Please try again.",
+    "emailSentTitle": "SENT",
+    "emailSentBody": "Check your inbox at {email}. Click the link to sign in.",
+    "googleLoading": "Signing in...",
+    "googleBtn": "Continue with Google",
+    "emailSendLoading": "Sending...",
+    "emailSendBtn": "Send login link →",
+    "consent": "By signing in you agree to our",
+    "consentLink": "data protection terms"
+  },
+  "cityPage": {
+    "breadcrumb": "Gyms",
+    "heading": "Gyms in",
+    "count": "fitness centres"
+  },
+  "about": {
+    "tag": "Czech Republic / fitness directory",
+    "headline": "Why\nIRONMAP?",
+    "p1": "I grew up in a small town. Just under ten thousand people. One square, a few pubs, three gyms.",
+    "p2": "For half a year, I put off starting to work out.",
+    "p3": "Every morning I told myself: today's the day. Then I'd open my browser, find the three gyms, zero useful info, one phone number nobody picked up — and close the tab. Tomorrow.",
+    "p4": "When I finally walked through the door, I paid cash because they didn't take cards. Nobody mentioned that anywhere. Around me were guys who'd been training there for ten years — laughing, greeting each other by name. And I stood in the doorway in my H&M t-shirt, clueless. I asked basic questions and felt like an idiot. Everyone knew each other; I knew no one. Everyone knew where everything was; I didn't.",
+    "p5": "I left red-faced. Didn't go back for a month.",
+    "p6": "And you know what the worst part was? The second week I forgot my cash. I drove over, turned around in the doorway, found a cash machine on the other side of town — and when I got back, it was closed. Just closed. No warning.",
+    "p7": "Deciding to go to the gym for the first time in your life is one of the hardest decisions. And that day I said to myself: this can't be this hard.",
+    "p8": "All I wanted was one thing. To buy a drop-in pass from my phone. To know they'd let me in. To arrive prepared. No cash, no red face, no walk of shame back to the car.",
+    "pullQuote": "IRONMAP was born from that walk-away moment.",
+    "statsGyms": "gyms",
+    "statsCities": "cities",
+    "p9": "Today we have 780 gyms in 190 cities. We add more every week. One day we want to be the place where you find every sport in the Czech Republic — from lifting to yoga to climbing walls. And where you can buy your entry before you start the car.",
+    "p10": "So that first step doesn't hurt. For anyone.",
+    "founder": "Founder"
+  },
+  "contact": {
+    "tag": "Contact",
+    "headline": "Get in\ntouch.",
+    "body": "Have a question, an idea, or want to add a gym? Get in touch.",
+    "emailLabel": "Email",
+    "addGymBtn": "Add a gym",
+    "feedbackBtn": "Feedback"
   }
 }

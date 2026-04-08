@@ -9,6 +9,7 @@ import type { CheckinRow, BadgeRow, UserStats } from '@/lib/db-users';
 import type { BadgeProgressMap } from '@/lib/badges';
 import { parseCoordinates } from '@/lib/utils';
 import BadgeGrid from './BadgeGrid';
+import { useT } from '@/lib/i18n';
 
 const MapView = dynamic(() => import('./MapView'), {
   ssr: false,
@@ -19,7 +20,7 @@ const MapView = dynamic(() => import('./MapView'), {
       letterSpacing: '0.15em', textTransform: 'uppercase',
       fontFamily: 'var(--font-display)', fontWeight: 700,
     }}>
-      Načítám mapu...
+      Loading...
     </div>
   ),
 });
@@ -38,6 +39,7 @@ interface Props {
 }
 
 export default function ProfilClient({ user, checkins, badges, stats, badgeProgress }: Props) {
+  const { t } = useT();
   const earnedBadgeIds = badges.map((b) => b.badge_type);
 
   // Build map pins from visited gyms (unique per gym)
@@ -61,7 +63,7 @@ export default function ProfilClient({ user, checkins, badges, stats, badgeProgr
 
       {/* Header */}
       <div style={{ marginBottom: '3rem' }}>
-        <div className="iron-label" style={{ marginBottom: '1.5rem' }}>Profil</div>
+        <div className="iron-label" style={{ marginBottom: '1.5rem' }}>{t.profile.title}</div>
 
         <div style={{
           background: 'var(--card-bg)',
@@ -103,7 +105,7 @@ export default function ProfilClient({ user, checkins, badges, stats, badgeProgr
               lineHeight: 0.95,
               marginBottom: '0.35rem',
             }}>
-              {user.name ?? 'Uživatel'}
+              {user.name ?? t.common.user}
             </h1>
             <p style={{ color: 'var(--muted)', fontSize: '0.85rem', fontWeight: 300 }}>
               {user.email}
@@ -112,10 +114,10 @@ export default function ProfilClient({ user, checkins, badges, stats, badgeProgr
 
           {/* Stats row */}
           <div style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap', width: '100%' }}>
-            <Stat value={stats.totalCheckins} label="check-inů" />
-            <Stat value={stats.uniqueGyms} label="gymů" />
-            <Stat value={stats.uniqueCities} label="měst" />
-            <Stat value={badges.length} label="odznaků" />
+            <Stat value={stats.totalCheckins} label={t.profile.checkins} />
+            <Stat value={stats.uniqueGyms} label={t.profile.gyms} />
+            <Stat value={stats.uniqueCities} label={t.profile.cities} />
+            <Stat value={badges.length} label={t.profile.badges} />
           </div>
         </div>
       </div>
@@ -123,7 +125,7 @@ export default function ProfilClient({ user, checkins, badges, stats, badgeProgr
       {/* Map of visited gyms */}
       {mapPins.length > 0 && (
         <section style={{ marginBottom: '3rem' }}>
-          <div className="iron-label" style={{ marginBottom: '1.25rem' }}>Navštívené posilovny</div>
+          <div className="iron-label" style={{ marginBottom: '1.25rem' }}>{t.profile.visitedGyms}</div>
           <div style={{ border: '1px solid var(--border)', overflow: 'hidden' }}>
             <MapView pins={mapPins} height="360px" />
           </div>
@@ -132,14 +134,14 @@ export default function ProfilClient({ user, checkins, badges, stats, badgeProgr
 
       {/* Badges */}
       <section style={{ marginBottom: '3rem' }}>
-        <div className="iron-label" style={{ marginBottom: '1.25rem' }}>Odznaky</div>
+        <div className="iron-label" style={{ marginBottom: '1.25rem' }}>{t.profile.badgesTitle}</div>
         <BadgeGrid earnedIds={earnedBadgeIds} progress={badgeProgress} />
       </section>
 
       {/* Recent check-ins */}
       {checkins.length > 0 && (
         <section>
-          <div className="iron-label" style={{ marginBottom: '1.25rem' }}>Poslední check-iny</div>
+          <div className="iron-label" style={{ marginBottom: '1.25rem' }}>{t.profile.recentCheckins}</div>
           <div style={{
             display: 'flex', flexDirection: 'column',
             border: '1px solid var(--border)',
@@ -203,7 +205,7 @@ export default function ProfilClient({ user, checkins, badges, stats, badgeProgr
 
       {/* Danger zone */}
       <section style={{ marginTop: '4rem', borderTop: '1px solid var(--border)', paddingTop: '2rem' }}>
-        <div className="iron-label" style={{ marginBottom: '1rem', color: 'var(--muted)' }}>Správa účtu</div>
+        <div className="iron-label" style={{ marginBottom: '1rem', color: 'var(--muted)' }}>{t.profile.accountManagement}</div>
         <DeleteAccountButton />
       </section>
 
@@ -219,17 +221,17 @@ export default function ProfilClient({ user, checkins, badges, stats, badgeProgr
             fontSize: '1.25rem', textTransform: 'uppercase', color: 'var(--muted)',
             marginBottom: '0.75rem',
           }}>
-            Žádné check-iny
+            {t.profile.noCheckins}
           </div>
           <p style={{ color: 'var(--muted)', fontSize: '0.85rem', fontWeight: 300 }}>
-            Navštiv posilovnu a klikni na tlačítko &quot;Byl jsem tady&quot;.
+            {t.profile.noCheckinsDesc}
           </p>
           <Link
             href="/posilovny"
             className="iron-btn iron-btn-ghost"
             style={{ display: 'inline-flex', marginTop: '1.5rem', fontSize: '0.85rem' }}
           >
-            Najít posilovnu →
+            {t.profile.findGym}
           </Link>
         </div>
       )}
@@ -263,6 +265,7 @@ function Stat({ value, label }: { value: number; label: string }) {
 }
 
 function DeleteAccountButton() {
+  const { t } = useT();
   const [step, setStep] = useState<'idle' | 'confirm' | 'loading'>('idle');
 
   async function handleDelete() {
@@ -273,7 +276,7 @@ function DeleteAccountButton() {
       await signOut({ callbackUrl: '/' });
     } catch {
       setStep('confirm');
-      alert('Nepodařilo se smazat účet. Zkus to znovu.');
+      alert(t.profile.deleteError);
     }
   }
 
@@ -291,7 +294,7 @@ function DeleteAccountButton() {
         onMouseEnter={e => { e.currentTarget.style.borderColor = '#c0392b'; e.currentTarget.style.color = '#c0392b'; }}
         onMouseLeave={e => { e.currentTarget.style.borderColor = '#333'; e.currentTarget.style.color = 'var(--muted)'; }}
       >
-        Smazat účet
+        {t.profile.deleteAccount}
       </button>
     );
   }
@@ -300,7 +303,7 @@ function DeleteAccountButton() {
     return (
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
         <span style={{ fontSize: '0.82rem', color: 'var(--muted)', fontWeight: 300 }}>
-          Opravdu smazat? Tato akce je nevratná.
+          {t.profile.deleteConfirm}
         </span>
         <button
           onClick={handleDelete}
@@ -312,7 +315,7 @@ function DeleteAccountButton() {
             cursor: 'pointer',
           }}
         >
-          Ano, smazat
+          {t.profile.deleteYes}
         </button>
         <button
           onClick={() => setStep('idle')}
@@ -324,14 +327,14 @@ function DeleteAccountButton() {
             cursor: 'pointer',
           }}
         >
-          Zrušit
+          {t.profile.deleteCancel}
         </button>
       </div>
     );
   }
 
   return (
-    <span style={{ fontSize: '0.8rem', color: 'var(--muted)' }}>Mazání…</span>
+    <span style={{ fontSize: '0.8rem', color: 'var(--muted)' }}>{t.profile.deleting}</span>
   );
 }
 

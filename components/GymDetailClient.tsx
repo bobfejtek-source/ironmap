@@ -9,18 +9,23 @@ import { useT } from '@/lib/i18n';
 import GymCard from './GymCard';
 import CheckinButton from './CheckinButton';
 
-const MapView = dynamic(() => import('./MapView'), {
-  ssr: false,
-  loading: () => (
+function MapLoader() {
+  const { t } = useT();
+  return (
     <div style={{
       height: 320, background: '#111', display: 'flex', alignItems: 'center',
       justifyContent: 'center', color: 'var(--muted)', fontSize: '0.75rem',
       letterSpacing: '0.15em', textTransform: 'uppercase',
       fontFamily: 'var(--font-display)', fontWeight: 700,
     }}>
-      Načítám mapu...
+      {t.detail.loadingMap}
     </div>
-  ),
+  );
+}
+
+const MapView = dynamic(() => import('./MapView'), {
+  ssr: false,
+  loading: MapLoader,
 });
 
 const DAY_ORDER = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
@@ -322,13 +327,13 @@ export default function GymDetailClient({ gym, similarGyms }: Props) {
           color: 'var(--lime)',
           marginBottom: '1rem',
         }}>
-          Check-in
+          {t.detail.checkinHeading}
         </div>
         <p style={{
           color: 'var(--muted)', fontSize: '0.85rem', fontWeight: 300,
           lineHeight: 1.6, marginBottom: '1.25rem',
         }}>
-          Byl jsi dnes v {gym.name}? Zaznamenej návštěvu, sbírej odznaky a sleduj svůj pokrok.
+          {t.detail.checkinDesc.replace('{name}', gym.name)}
         </p>
         <CheckinButton
           gymSlug={gym.slug}
@@ -357,7 +362,7 @@ export default function GymDetailClient({ gym, similarGyms }: Props) {
           className="iron-btn iron-btn-ghost"
           style={{ fontSize: '0.78rem', padding: '0.55rem 1.25rem' }}
         >
-          Doplnit →
+          {t.detail.contributeBtn}
         </button>
       </div>
 

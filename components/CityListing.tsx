@@ -7,21 +7,27 @@ import GymCard from './GymCard';
 import { useT } from '@/lib/i18n';
 import type { MapPin } from './MapView';
 
-const MapView = dynamic(() => import('./MapView'), {
-  ssr: false,
-  loading: () => (
+function CityMapLoader() {
+  const { t } = useT();
+  return (
     <div style={{
       width: '100%', height: '100%', background: '#111',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       color: 'var(--muted)', fontSize: '0.75rem', letterSpacing: '0.15em',
       textTransform: 'uppercase', fontFamily: 'var(--font-display)', fontWeight: 700,
     }}>
-      Načítám mapu...
+      {t.detail.loadingMap}
     </div>
-  ),
+  );
+}
+
+const MapView = dynamic(() => import('./MapView'), {
+  ssr: false,
+  loading: CityMapLoader,
 });
 
-const CATEGORIES = ['Vše', 'Posilovna', 'CrossFit', 'Jóga', 'Pilates', 'Outdoor', 'Bojové sporty', 'Spinning', 'Bazén'];
+// Czech DB values used for filtering — display labels come from t.categories
+const CATEGORY_VALUES = ['Vše', 'Posilovna', 'CrossFit', 'Jóga', 'Pilates', 'Outdoor', 'Bojové sporty', 'Spinning', 'Bazén'];
 
 function isOpenNow(raw: string | null): boolean | null {
   if (!raw) return null;
@@ -52,6 +58,18 @@ export default function CityListing({ gyms, cityName }: Props) {
   const [openNow, setOpenNow] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
+
+  const categoryLabels: Record<string, string> = {
+    'Vše': t.categories.all,
+    'Posilovna': t.categories.gym,
+    'CrossFit': t.categories.crossfit,
+    'Jóga': t.categories.yoga,
+    'Pilates': t.categories.pilates,
+    'Outdoor': t.categories.outdoor,
+    'Bojové sporty': t.categories.martial,
+    'Spinning': t.categories.spinning,
+    'Bazén': t.categories.pool,
+  };
 
   const filtered = useMemo(() => {
     return gyms.filter(g => {
@@ -111,13 +129,13 @@ export default function CityListing({ gyms, cityName }: Props) {
           {t.listing.filters.category}:
         </span>
 
-        {CATEGORIES.map(cat => (
+        {CATEGORY_VALUES.map(cat => (
           <button
             key={cat}
             className={`chip${category === cat ? ' active' : ''}`}
             onClick={() => setCategory(cat)}
           >
-            {cat}
+            {categoryLabels[cat] ?? cat}
           </button>
         ))}
 

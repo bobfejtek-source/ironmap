@@ -59,9 +59,12 @@
     "title": "Přidat gym",
     "subtitle": "Vyplň co nejvíce informací. Gym přidáme do 48 hodin.",
     "name": "Název gymu",
+    "namePlaceholder": "Např. FitZone Praha",
     "category": "Kategorie",
+    "categoryPlaceholder": "— Vyber kategorii —",
     "city": "Město",
     "address": "Adresa",
+    "addressPlaceholder": "Ulice 1, 110 00 Praha",
     "website": "Web",
     "phone": "Telefon",
     "ownerEmail": "Email provozovatele",
@@ -91,17 +94,144 @@
     "openInMaps": "Otevřít v Google Maps",
     "similar": "Podobné gymy v okolí",
     "contribute": "Znáš toto místo? Doplň informace",
+    "contributeBtn": "Doplnit →",
     "phone": "Telefon",
     "web": "Web",
     "email": "E-mail",
     "address": "Adresa",
     "price": "Cenová úroveň",
     "rating": "Hodnocení",
-    "verified": "Ověřeno"
+    "verified": "Ověřeno",
+    "checkinHeading": "Check-in",
+    "checkinDesc": "Byl jsi dnes v {name}? Zaznamenej návštěvu, sbírej odznaky a sleduj svůj pokrok.",
+    "loadingMap": "Načítám mapu..."
   },
   "common": {
     "close": "Zavřít",
     "back": "Zpět",
-    "loading": "Načítám..."
+    "loading": "Načítám...",
+    "user": "Uživatel",
+    "myProfile": "Můj profil",
+    "thanks": "Díky!"
+  },
+  "pilot": {
+    "text": "Pilotní provoz — web se neustále zlepšuje. Některé funkce ještě nejsou dostupné.",
+    "cta": "Napiš nám",
+    "suffix": ", budeme rádi za zpětnou vazbu!"
+  },
+  "footer": {
+    "gyms": "Posilovny",
+    "about": "O projektu",
+    "contact": "Kontakt",
+    "privacy": "Ochrana soukromí",
+    "tagline": "Největší adresář posiloven v ČR."
+  },
+  "geo": {
+    "notSupported": "Geolokace není dostupná ve vašem prohlížeči.",
+    "permissionDenied": "Povol přístup k poloze v nastavení prohlížeče."
+  },
+  "intent": {
+    "entry": {
+      "title": "Pracujeme na tom!",
+      "body": "Domlouváme partnerství s posilovnami, abys mohl/a zaplatit vstupné přímo z mobilu. Dej nám email a dáme ti vědět jako prvnímu.",
+      "placeholder": "tvuj@email.cz",
+      "loading": "Odesílám...",
+      "cta": "Chci být první →",
+      "successSub": "Dáme ti vědět jako prvnímu, až bude jednorázový vstup dostupný."
+    },
+    "compare": {
+      "title": "Brzy!",
+      "body": "Pracujeme na srovnávači posiloven — ceny, vybavení, hodnocení na jednom místě."
+    },
+    "trainer": {
+      "title": "Najdi svého trenéra",
+      "body": "Řekni nám, co hledáš a my tě spojíme s trenérem ve tvém městě.",
+      "emailLabel": "Email *",
+      "cityLabel": "Město *",
+      "goalLabel": "Co hledáš?",
+      "goalPlaceholder": "— Vyber cíl —",
+      "loading": "Odesílám...",
+      "cta": "Najít trenéra →",
+      "successSub": "Ozveme se ti brzy s doporučením."
+    }
+  },
+  "checkin": {
+    "serverError": "Chyba serveru",
+    "connectionError": "Nepodařilo se připojit k serveru.",
+    "noGeolocation": "Tvůj prohlížeč nepodporuje geolokaci. Přesto zaznamenat návštěvu?",
+    "tooFar": "Zdá se, že nejsi v této posilovně ({dist} m daleko). Přesto zaznamenat návštěvu?",
+    "locationError": "Nepodařilo se zjistit tvou polohu. Přesto zaznamenat návštěvu?",
+    "confirm": "Ano, zaznamenat →",
+    "cancel": "Zrušit",
+    "retry": "Zkusit znovu",
+    "signInPrompt": "Přihlásit se a zaznamenat návštěvu",
+    "locating": "Zjišťuji polohu...",
+    "saving": "Ukládám...",
+    "success": "Check-in zaznamenán!",
+    "newBadges": "Nové odznaky",
+    "btn": "Byl jsem tady"
+  },
+  "profile": {
+    "title": "Profil",
+    "checkins": "check-inů",
+    "gyms": "gymů",
+    "cities": "měst",
+    "badges": "odznaků",
+    "visitedGyms": "Navštívené posilovny",
+    "badgesTitle": "Odznaky",
+    "recentCheckins": "Poslední check-iny",
+    "accountManagement": "Správa účtu",
+    "noCheckins": "Žádné check-iny",
+    "noCheckinsDesc": "Navštiv posilovnu a klikni na tlačítko \"Byl jsem tady\".",
+    "findGym": "Najít posilovnu →",
+    "deleteAccount": "Smazat účet",
+    "deleteConfirm": "Opravdu smazat? Tato akce je nevratná.",
+    "deleteYes": "Ano, smazat",
+    "deleteCancel": "Zrušit",
+    "deleting": "Mazání…",
+    "deleteError": "Nepodařilo se smazat účet. Zkus to znovu."
+  },
+  "auth": {
+    "subtitle": "Check-in, odznaky, profil — vše na jednom místě.",
+    "error": "Chyba přihlášení. Zkus to znovu.",
+    "emailSentTitle": "ODESLÁNO",
+    "emailSentBody": "Zkontroluj email {email}. Klikni na odkaz a budeš přihlášen.",
+    "googleLoading": "Přihlašuji...",
+    "googleBtn": "Pokračovat přes Google",
+    "emailSendLoading": "Odesílám...",
+    "emailSendBtn": "Poslat přihlašovací odkaz →",
+    "consent": "Přihlášením souhlasíš s",
+    "consentLink": "podmínkami ochrany dat"
+  },
+  "cityPage": {
+    "breadcrumb": "Posilovny",
+    "heading": "Posilovny",
+    "count": "fitness center"
+  },
+  "about": {
+    "tag": "Česká republika / fitness directory",
+    "headline": "Proč\nIRONMAP?",
+    "p1": "Bydlím v malém městě. Sotva deset tisíc lidí, jedno náměstí, pár hospod a tři fitka.",
+    "p2": "Půl roku jsem váhal začít posilovat.",
+    "p3": "Každé ráno jsem si říkal: dnes to zkusím. A pak jsem otevřel prohlížeč, našel tři fitka, žádné pořádné info, jedno číslo, které nikdo nebral a zavřel to. Zítra.",
+    "p4": "Když jsem konečně přišel, zaplatil jsem hotově, protože karty nebrali. Nikde to nepsali. Kolem mě chodili chlapi co tam cvičí deset let, znají se, smějí se. A já stál u dveří v tričku z H&M, bez tušení, jak to tu funguje. Ptal jsem se na základní věci a cítil jsem se jako debil. Všichni si tykají, já vykám, všichni vědí, kde co je, já ne.",
+    "p5": "Odešel jsem s červenými ušima. Měsíc jsem tam nešel.",
+    "p6": "A víš, co bylo nejhorší? Druhý týden jsem zapomněl hotovost. Přijel jsem, otočil se ve dveřích, zajel na bankomat na druhý konec vesnice a když jsem se vrátil bylo zavřeno. Prostě zavřeno. Bez varování.",
+    "p7": "Rozhodnout se poprvé v životě jít cvičit je jedno z nejtěžších rozhodnutí. A tehdy jsem si řekl: tohle nesmí být takhle složité.",
+    "p8": "Chtěl jsem jediné. Koupit vstup předem z mobilu. Vědět, že mě pustí. Přijít připravený. Bez hotovosti, bez červených uší, bez otáčení ve dveřích.",
+    "pullQuote": "IRONMAP vznikl z toho otočení ve dveřích.",
+    "statsGyms": "posiloven",
+    "statsCities": "měst",
+    "p9": "Dnes máme 780 posiloven ve 190 městech. Přidáváme každý týden. A jednoho dne chceme být místem kde v ČR najdeš úplně každý sport, od posilovny přes jógu až po lezeckou stěnu. A kde si vstup koupíš dřív než nasedneš do auta.",
+    "p10": "Aby ten první krok nezabolel. Pro nikoho.",
+    "founder": "Zakladatel"
+  },
+  "contact": {
+    "tag": "Kontakt",
+    "headline": "Napiš\nnám.",
+    "body": "Máš otázku, nápad nebo chceš přidat gym? Napiš nám.",
+    "emailLabel": "Email",
+    "addGymBtn": "Přidat gym",
+    "feedbackBtn": "Zpětná vazba"
   }
 }
