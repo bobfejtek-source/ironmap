@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default async function HomePage() {
   const [topCities, total, allCities] = await Promise.all([
-    getTopCities(24),
+    getTopCities(10),
     getTotalCount(),
     getCities(),
   ]);

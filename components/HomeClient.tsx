@@ -408,8 +408,77 @@ export default function HomeClient({ topCities, total, allCities }: Props) {
         </div>
       </section>
 
-      {/* ── Cities grid ───────────────────────────────────────────── */}
+      {/* ── Cities list ───────────────────────────────────────────── */}
       <section className="section-hpad" style={{ paddingTop: '5rem', paddingBottom: '5rem', borderBottom: '1px solid var(--border)' }}>
+        <style>{`
+          .cities-two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0 4rem;
+            border: 1px solid var(--border);
+          }
+          @media (max-width: 600px) {
+            .cities-two-col {
+              grid-template-columns: 1fr;
+              gap: 0;
+            }
+          }
+          .city-row {
+            display: flex;
+            align-items: baseline;
+            gap: 0.75rem;
+            padding: 0.9rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            text-decoration: none;
+            background: var(--black);
+            transition: background 0.15s;
+          }
+          .city-row:last-child {
+            border-bottom: none;
+          }
+          @media (max-width: 600px) {
+            .city-row:last-child {
+              border-bottom: 1px solid var(--border);
+            }
+            .city-row:nth-child(10) {
+              border-bottom: none;
+            }
+          }
+          .city-row:hover {
+            background: var(--card-bg);
+          }
+          .city-row:hover .city-row-name {
+            color: var(--lime);
+          }
+          .city-row-rank {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 0.6rem;
+            letter-spacing: 0.12em;
+            color: var(--border-mid);
+            width: 1.25rem;
+            flex-shrink: 0;
+          }
+          .city-row-name {
+            font-family: var(--font-display);
+            font-weight: 900;
+            font-size: clamp(0.95rem, 2vw, 1.15rem);
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: var(--text);
+            flex: 1;
+            transition: color 0.15s;
+          }
+          .city-row-count {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 0.75rem;
+            letter-spacing: 0.08em;
+            color: var(--lime);
+            flex-shrink: 0;
+          }
+        `}</style>
+
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '2.5rem', flexWrap: 'wrap', gap: '1rem' }}>
             <div>
@@ -439,56 +508,19 @@ export default function HomeClient({ topCities, total, allCities }: Props) {
             </Link>
           </div>
 
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-            gap: '1px',
-            background: 'var(--border)',
-            border: '1px solid var(--border)',
-          }}>
-            {topCities.map(({ city, count }) => (
-              <Link
-                key={city}
-                href={cityUrl(city)}
-                style={{
-                  background: 'var(--black)',
-                  padding: '1.5rem',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '0.3rem',
-                  transition: 'background 0.2s',
-                  textDecoration: 'none',
-                }}
-                onMouseEnter={e => {
-                  (e.currentTarget as HTMLElement).style.background = 'var(--card-bg)';
-                  (e.currentTarget.querySelector('.city-name') as HTMLElement)!.style.color = 'var(--lime)';
-                }}
-                onMouseLeave={e => {
-                  (e.currentTarget as HTMLElement).style.background = 'var(--black)';
-                  (e.currentTarget.querySelector('.city-name') as HTMLElement)!.style.color = 'var(--text)';
-                }}
-              >
-                <span
-                  className="city-name"
-                  style={{
-                    fontFamily: 'var(--font-display)',
-                    fontWeight: 700,
-                    fontSize: '1rem',
-                    letterSpacing: '0.04em',
-                    textTransform: 'uppercase',
-                    color: 'var(--text)',
-                    transition: 'color 0.2s',
-                  }}
-                >
-                  {city}
-                </span>
-                <span style={{
-                  fontSize: '0.72rem',
-                  color: 'var(--muted)',
-                  letterSpacing: '0.06em',
-                }}>
-                  {count} {t.cities.gymsLabel}
-                </span>
+          <div className="cities-two-col">
+            {topCities.slice(0, 5).map(({ city, count }, i) => (
+              <Link key={city} href={cityUrl(city)} className="city-row">
+                <span className="city-row-rank">{i + 1}</span>
+                <span className="city-row-name">{city}</span>
+                <span className="city-row-count">{count}</span>
+              </Link>
+            ))}
+            {topCities.slice(5, 10).map(({ city, count }, i) => (
+              <Link key={city} href={cityUrl(city)} className="city-row">
+                <span className="city-row-rank">{i + 6}</span>
+                <span className="city-row-name">{city}</span>
+                <span className="city-row-count">{count}</span>
               </Link>
             ))}
           </div>
