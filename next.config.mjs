@@ -6,8 +6,8 @@ const CSP = [
   "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com",
-  // Google profile pictures + OpenStreetMap tiles (Leaflet)
-  "img-src 'self' data: blob: https://lh3.googleusercontent.com https://*.googleusercontent.com https://*.tile.openstreetmap.org",
+  // Google profile pictures + map tiles (Leaflet: OSM primary, CartoDB fallback)
+  "img-src 'self' data: blob: https://lh3.googleusercontent.com https://*.googleusercontent.com https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com",
   // API calls: weather + Neon DB edge
   "connect-src 'self' https://api.open-meteo.com",
   "frame-ancestors 'none'",

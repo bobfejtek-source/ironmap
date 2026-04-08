@@ -55,11 +55,12 @@ export default function MapView({
         scrollWheelZoom: !singlePin,
       });
 
-      // CartoDB Dark Matter tiles - matches the IRON dark aesthetic
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        attribution: '© <a href="https://www.openstreetmap.org/copyright">OSM</a> © <a href="https://carto.com/">CARTO</a>',
-        subdomains: 'abcd',
-        maxZoom: 20,
+      // OpenStreetMap standard tiles — CSP-safe (basemaps.cartocdn.com was blocked
+      // by img-src on mobile; *.tile.openstreetmap.org is explicitly allowed)
+      const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19,
+        crossOrigin: '',
       }).addTo(map);
 
       // Custom lime marker
@@ -104,26 +105,30 @@ export default function MapView({
 
       mapRef.current = map;
 
-      // Belt-and-suspenders invalidateSize schedule:
+      const refresh = () => {
+        if (!mapRef.current) return;
+        map.invalidateSize();
+        tileLayer.redraw();
+      };
+
+      // Belt-and-suspenders refresh schedule:
       // 100ms — catches most desktop/Android cases after CSS settles
       // 500ms — catches slow iOS Safari paint cycles and deferred layout
-      const t1 = setTimeout(() => { if (mapRef.current) map.invalidateSize(); }, 100);
-      const t2 = setTimeout(() => { if (mapRef.current) map.invalidateSize(); }, 500);
+      const t1 = setTimeout(refresh, 100);
+      const t2 = setTimeout(refresh, 500);
 
       // ResizeObserver — fires on container dimension changes (layout shifts, panel
       // resizing, CityListing switching from sticky to stacked on mobile)
-      const ro = new ResizeObserver(() => { if (mapRef.current) map.invalidateSize(); });
+      const ro = new ResizeObserver(refresh);
       ro.observe(containerRef.current!);
 
       // window resize — iOS address bar show/hide changes window.innerHeight and
       // breaks height:100% chains; a resize event is fired each time
-      const onResize = () => { if (mapRef.current) map.invalidateSize(); };
+      const onResize = refresh;
       window.addEventListener('resize', onResize);
 
       // orientationchange — rotate phone: wait for layout to settle then re-check
-      const onOrient = () => {
-        setTimeout(() => { if (mapRef.current) map.invalidateSize(); }, 300);
-      };
+      const onOrient = () => { setTimeout(refresh, 300); };
       window.addEventListener('orientationchange', onOrient);
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
