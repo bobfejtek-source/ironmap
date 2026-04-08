@@ -11,6 +11,7 @@ export default function IronNav() {
 
   return (
     <header
+      className="iron-nav-header"
       style={{
         position: 'fixed',
         top: 0, left: 0, right: 0,
@@ -18,7 +19,6 @@ export default function IronNav() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0 3rem',
         height: '64px',
         background: 'rgba(8,8,8,0.92)',
         backdropFilter: 'blur(12px)',
@@ -38,8 +38,8 @@ export default function IronNav() {
       </Link>
 
       {/* Links */}
-      <nav style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-        <Link href="/posilovny" style={{
+      <nav style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <Link href="/posilovny" className="iron-nav-hide-mobile" style={{
           fontSize: '0.72rem',
           letterSpacing: '0.18em',
           textTransform: 'uppercase',
@@ -57,6 +57,7 @@ export default function IronNav() {
         {/* Lang toggle */}
         <button
           onClick={() => setLang(lang === 'cs' ? 'en' : 'cs')}
+          className="iron-nav-hide-mobile"
           style={{
             fontSize: '0.72rem',
             letterSpacing: '0.18em',

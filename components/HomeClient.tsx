@@ -272,20 +272,18 @@ export default function HomeClient({ topCities, total, allCities }: Props) {
       </div>
 
       {/* ── Categories ────────────────────────────────────────────── */}
-      <section style={{
-        padding: '4rem 3rem',
-        borderBottom: '1px solid var(--border)',
-        background: 'var(--off-black)',
-      }}>
+      <section
+        className="section-hpad"
+        style={{
+          paddingTop: '4rem',
+          paddingBottom: '4rem',
+          borderBottom: '1px solid var(--border)',
+          background: 'var(--off-black)',
+        }}
+      >
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
           <div className="iron-label" style={{ marginBottom: '2rem' }}>{t.categories.title}</div>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(8, 1fr)',
-            gap: '1px',
-            background: 'var(--border)',
-            border: '1px solid var(--border)',
-          }}>
+          <div className="cat-grid">
             {CATEGORY_NAMES.map((cat) => (
               <button
                 key={cat}
@@ -325,7 +323,7 @@ export default function HomeClient({ topCities, total, allCities }: Props) {
       </section>
 
       {/* ── Cities grid ───────────────────────────────────────────── */}
-      <section style={{ padding: '5rem 3rem', borderBottom: '1px solid var(--border)' }}>
+      <section className="section-hpad" style={{ paddingTop: '5rem', paddingBottom: '5rem', borderBottom: '1px solid var(--border)' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '2.5rem', flexWrap: 'wrap', gap: '1rem' }}>
             <div>
@@ -412,9 +410,12 @@ export default function HomeClient({ topCities, total, allCities }: Props) {
       </section>
 
       {/* ── Add gym banner ────────────────────────────────────────── */}
-      <section style={{
-        padding: '4rem 3rem',
-        background: 'var(--off-black)',
+      <section
+        className="section-hpad"
+        style={{
+          paddingTop: '4rem',
+          paddingBottom: '4rem',
+          background: 'var(--off-black)',
         borderBottom: '1px solid var(--border)',
         display: 'flex',
         alignItems: 'center',

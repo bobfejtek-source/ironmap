@@ -15,7 +15,7 @@ export default async function AllGymsPage() {
   const [gyms, cities] = await Promise.all([getAllGyms(), getCities()]);
 
   return (
-    <div style={{ maxWidth: 1400, margin: '0 auto', padding: '3rem 2rem 6rem' }}>
+    <div style={{ maxWidth: 1400, margin: '0 auto', padding: '2rem 1.25rem 6rem' }}>
 
       {/* Breadcrumb */}
       <nav style={{
@@ -35,17 +35,10 @@ export default async function AllGymsPage() {
         <span style={{ color: 'var(--text)' }}>Posilovny</span>
       </nav>
 
-      <div style={{ display: 'flex', gap: '3rem', alignItems: 'flex-start' }}>
+      <div className="gyms-layout">
 
         {/* Sidebar */}
-        <aside style={{
-          width: 200,
-          flexShrink: 0,
-          position: 'sticky',
-          top: '5rem',
-          maxHeight: 'calc(100vh - 6rem)',
-          overflowY: 'auto',
-        }}>
+        <aside className="gyms-sidebar">
           <div style={{
             fontSize: '0.65rem',
             letterSpacing: '0.2em',

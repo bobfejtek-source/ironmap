@@ -57,7 +57,7 @@ export default function ProfilClient({ user, checkins, badges, stats, badgeProgr
     : user.email?.[0]?.toUpperCase() ?? '?';
 
   return (
-    <div style={{ maxWidth: 900, margin: '0 auto', padding: '3rem 2rem 6rem' }}>
+    <div style={{ maxWidth: 900, margin: '0 auto', padding: 'clamp(1.5rem, 4vw, 3rem) clamp(1rem, 4vw, 2rem) 6rem' }}>
 
       {/* Header */}
       <div style={{ marginBottom: '3rem' }}>
@@ -66,10 +66,10 @@ export default function ProfilClient({ user, checkins, badges, stats, badgeProgr
         <div style={{
           background: 'var(--card-bg)',
           border: '1px solid var(--border)',
-          padding: '2rem 2.5rem',
+          padding: 'clamp(1rem, 3vw, 2rem) clamp(1rem, 4vw, 2.5rem)',
           display: 'flex',
           alignItems: 'center',
-          gap: '2rem',
+          gap: '1.25rem',
           flexWrap: 'wrap',
         }}>
           {/* Avatar */}
@@ -111,7 +111,7 @@ export default function ProfilClient({ user, checkins, badges, stats, badgeProgr
           </div>
 
           {/* Stats row */}
-          <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap', width: '100%' }}>
             <Stat value={stats.totalCheckins} label="check-inů" />
             <Stat value={stats.uniqueGyms} label="gymů" />
             <Stat value={stats.uniqueCities} label="měst" />
@@ -148,8 +148,8 @@ export default function ProfilClient({ user, checkins, badges, stats, badgeProgr
               <div
                 key={c.id}
                 style={{
-                  display: 'flex', alignItems: 'center', gap: '1.25rem',
-                  padding: '0.9rem 1.5rem',
+                  display: 'flex', alignItems: 'center', gap: '0.75rem',
+                  padding: '0.75rem 1rem',
                   borderBottom: '1px solid var(--border)',
                   background: 'var(--card-bg)',
                 }}

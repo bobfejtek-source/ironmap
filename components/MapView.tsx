@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import 'leaflet/dist/leaflet.css';
 
 export interface MapPin {
   lat: number;
@@ -37,14 +38,6 @@ export default function MapView({
 
     import('leaflet').then((L) => {
       if (!active || !containerRef.current || mapRef.current) return;
-
-      // Fix leaflet CSS
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-      if (!document.querySelector('link[href*="leaflet"]')) {
-        document.head.appendChild(link);
-      }
 
       const defaultCenter: [number, number] = center || (
         pins.length === 1
@@ -110,11 +103,21 @@ export default function MapView({
       });
 
       mapRef.current = map;
+
+      // Fix white-squares: force tile recalculation after CSS/layout settles
+      setTimeout(() => map.invalidateSize(), 150);
+
+      // Re-invalidate whenever the container is resized (e.g. mobile layout shift)
+      const ro = new ResizeObserver(() => map.invalidateSize());
+      ro.observe(containerRef.current!);
+      (map as unknown as { _ro: ResizeObserver })._ro = ro;
     });
 
     return () => {
       active = false;
       if (mapRef.current) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (mapRef.current as any)._ro?.disconnect();
         mapRef.current.remove();
         mapRef.current = null;
       }

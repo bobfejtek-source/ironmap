@@ -360,3 +360,40 @@ input, textarea, select { cursor: text; }
 ::-webkit-scrollbar-track { background: var(--off-black); }
 ::-webkit-scrollbar-thumb { background: var(--border-mid); }
 ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+/* ─── Mobile responsive helpers ──────────────────────────────── */
+
+/* Nav */
+.iron-nav-header { padding: 0 3rem; }
+
+/* Categories grid */
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+
+/* Gyms all-page layout */
+.gyms-layout { display: flex; gap: 3rem; align-items: flex-start; }
+.gyms-sidebar {
+  width: 200px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 5rem;
+  max-height: calc(100vh - 6rem);
+  overflow-y: auto;
+}
+
+/* Section horizontal padding */
+.section-hpad { padding-left: 3rem; padding-right: 3rem; }
+
+@media (max-width: 768px) {
+  .iron-nav-header { padding: 0 1rem; }
+  .iron-nav-hide-mobile { display: none; }
+  .cat-grid { grid-template-columns: repeat(4, 1fr); }
+  .gyms-layout { flex-direction: column; gap: 1.5rem; }
+  .gyms-sidebar { display: none; }
+  .section-hpad { padding-left: 1.25rem; padding-right: 1.25rem; }
+}

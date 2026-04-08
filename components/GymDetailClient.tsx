@@ -40,7 +40,7 @@ export default function GymDetailClient({ gym, similarGyms }: Props) {
   const mapPins = coords ? [{ lat: coords.lat, lng: coords.lng, name: gym.name }] : [];
 
   return (
-    <div style={{ maxWidth: 900, margin: '0 auto', padding: '3rem 2rem 6rem' }}>
+    <div style={{ maxWidth: 900, margin: '0 auto', padding: 'clamp(1.5rem, 4vw, 3rem) clamp(1rem, 4vw, 2rem) 6rem' }}>
 
       {/* Breadcrumb */}
       <nav style={{
@@ -69,7 +69,7 @@ export default function GymDetailClient({ gym, similarGyms }: Props) {
       <div style={{
         background: 'var(--card-bg)',
         border: '1px solid var(--border)',
-        padding: '2rem 2.5rem',
+        padding: 'clamp(1.25rem, 3vw, 2rem) clamp(1rem, 4vw, 2.5rem)',
         marginBottom: '1.5rem',
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '2rem', flexWrap: 'wrap' }}>
@@ -198,7 +198,7 @@ export default function GymDetailClient({ gym, similarGyms }: Props) {
             <div style={{
               background: 'var(--card-bg)',
               border: '1px solid var(--border)',
-              padding: '1.75rem 2rem',
+              padding: 'clamp(1rem, 3vw, 1.75rem) clamp(0.875rem, 3vw, 2rem)',
             }}>
               <SectionTitle>{t.detail.contact}</SectionTitle>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
@@ -251,7 +251,7 @@ export default function GymDetailClient({ gym, similarGyms }: Props) {
             <div style={{
               background: 'var(--card-bg)',
               border: '1px solid var(--border)',
-              padding: '1.75rem 2rem',
+              padding: 'clamp(1rem, 3vw, 1.75rem) clamp(0.875rem, 3vw, 2rem)',
             }}>
               <SectionTitle>{t.detail.hours}</SectionTitle>
               {hours ? (
