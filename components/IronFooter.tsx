@@ -40,8 +40,8 @@ export default function IronFooter() {
       }}>
         {[
           { label: 'Posilovny', href: '/posilovny' },
-          { label: 'O projektu', href: '#' },
-          { label: 'Kontakt', href: '#' },
+          { label: 'O projektu', href: '/o-projektu' },
+          { label: 'Kontakt', href: '/kontakt' },
           { label: 'Ochrana soukromí', href: '/ochrana-soukromi' },
         ].map(({ label, href }) => (
           <li key={label}>
