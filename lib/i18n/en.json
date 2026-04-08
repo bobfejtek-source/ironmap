@@ -15,7 +15,7 @@
     "sub": "One search engine for every gym in the Czech Republic. Compare equipment, pricing, opening hours. Start training — not searching.",
     "searchPlaceholder": "City or address...",
     "locationBtn": "Use my location",
-    "intents": ["Drop-in entry", "Find nearby", "Compare gyms", "Other"],
+    "intents": ["Drop-in entry", "Find nearby", "Compare gyms", "Find a trainer"],
     "gymsCount": "gyms in CZ",
     "citiesCount": "cities covered"
   },

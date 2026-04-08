@@ -15,7 +15,7 @@
     "sub": "Jeden vyhledávač pro všechny posilovny v České republice. Srovnej vybavení, ceny, otevírací dobu. Začni trénovat — ne hledat.",
     "searchPlaceholder": "Město nebo adresa...",
     "locationBtn": "Použít moji polohu",
-    "intents": ["Jednorázový vstup", "Najít poblíž", "Porovnat posilovny", "Jiné"],
+    "intents": ["Jednorázový vstup", "Najít poblíž", "Porovnat posilovny", "Najít trenéra"],
     "gymsCount": "posiloven v ČR",
     "citiesCount": "měst pokryto"
   },
