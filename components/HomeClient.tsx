@@ -87,11 +87,9 @@ export default function HomeClient({ topCities, total, allCities }: Props) {
   const [entrySent, setEntrySent] = useState(false);
 
   // "Najít trenéra" form
-  const [trainerName, setTrainerName] = useState('');
   const [trainerEmail, setTrainerEmail] = useState('');
   const [trainerCity, setTrainerCity] = useState('');
   const [trainerGoal, setTrainerGoal] = useState('');
-  const [trainerDesc, setTrainerDesc] = useState('');
   const [trainerLoading, setTrainerLoading] = useState(false);
   const [trainerSent, setTrainerSent] = useState(false);
 
@@ -112,7 +110,7 @@ export default function HomeClient({ topCities, total, allCities }: Props) {
       await fetch(FORMSPREE, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({ type: 'jednorázový-vstup', email: entryEmail }),
+        body: JSON.stringify({ source: 'entry-waitlist', type: 'jednorázový-vstup', email: entryEmail }),
       });
     } catch { /* show success anyway */ }
     setEntryLoading(false);
@@ -127,12 +125,11 @@ export default function HomeClient({ topCities, total, allCities }: Props) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
+          source: 'trainer-lead',
           type: 'najít-trenéra',
-          name: trainerName,
           email: trainerEmail,
           city: trainerCity,
           goal: trainerGoal,
-          description: trainerDesc,
         }),
       });
     } catch { /* show success anyway */ }
@@ -561,8 +558,8 @@ export default function HomeClient({ topCities, total, allCities }: Props) {
             {trainerSent ? (
               <SuccessBlock
                 title="Díky!"
-                sub="Ozveme se ti do 48 hodin s doporučením."
-                onClose={() => { closeIntent(); setTrainerSent(false); setTrainerName(''); setTrainerEmail(''); setTrainerCity(''); setTrainerGoal(''); setTrainerDesc(''); }}
+                sub="Ozveme se ti brzy s doporučením."
+                onClose={() => { closeIntent(); setTrainerSent(false); setTrainerEmail(''); setTrainerCity(''); setTrainerGoal(''); }}
               />
             ) : (
               <>
@@ -570,19 +567,13 @@ export default function HomeClient({ topCities, total, allCities }: Props) {
                   Řekni nám co hledáš a my tě spojíme s trenérem ve tvém městě.
                 </p>
                 <form onSubmit={handleTrainerSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem' }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.9rem' }}>
-                    <div>
-                      <label style={intentLabelStyle}>Jméno</label>
-                      <input className="iron-input" value={trainerName} onChange={e => setTrainerName(e.target.value)} placeholder="Jan Novák" />
-                    </div>
-                    <div>
-                      <label style={intentLabelStyle}>Město</label>
-                      <input className="iron-input" value={trainerCity} onChange={e => setTrainerCity(e.target.value)} placeholder="Praha" />
-                    </div>
-                  </div>
                   <div>
                     <label style={intentLabelStyle}>Email *</label>
                     <input type="email" required className="iron-input" value={trainerEmail} onChange={e => setTrainerEmail(e.target.value)} placeholder="tvuj@email.cz" />
+                  </div>
+                  <div>
+                    <label style={intentLabelStyle}>Město *</label>
+                    <input required className="iron-input" value={trainerCity} onChange={e => setTrainerCity(e.target.value)} placeholder="Praha" />
                   </div>
                   <div>
                     <label style={intentLabelStyle}>Co hledáš?</label>
@@ -593,15 +584,6 @@ export default function HomeClient({ topCities, total, allCities }: Props) {
                       </select>
                       <div style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)', pointerEvents: 'none', fontSize: '0.7rem' }}>▼</div>
                     </div>
-                  </div>
-                  <div>
-                    <label style={intentLabelStyle}>Krátký popis</label>
-                    <textarea
-                      className="iron-input" rows={3}
-                      value={trainerDesc} onChange={e => setTrainerDesc(e.target.value)}
-                      placeholder="Např. hledám trenéra 2× týdně, jsem začátečník..."
-                      style={{ resize: 'vertical' }}
-                    />
                   </div>
                   <button type="submit" disabled={trainerLoading} className="iron-btn iron-btn-primary"
                     style={{ width: '100%', marginTop: '0.25rem', opacity: trainerLoading ? 0.6 : 1 }}>

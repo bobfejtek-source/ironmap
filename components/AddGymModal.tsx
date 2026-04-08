@@ -33,6 +33,7 @@ export default function AddGymModal() {
     setLoading(true);
     try {
       const data = new FormData(e.currentTarget);
+      data.set('source', 'add-gym');
       await fetch(FORMSPREE_ENDPOINT, {
         method: 'POST',
         body: data,

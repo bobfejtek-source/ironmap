@@ -26,7 +26,7 @@ export default function FeedbackModal() {
       await fetch(FORMSPREE_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({ type: 'feedback', option: selected, message: text }),
+        body: JSON.stringify({ source: 'feedback', type: 'feedback', option: selected, message: text }),
       });
       setSuccess(true);
     } catch {
