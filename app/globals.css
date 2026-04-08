@@ -4,6 +4,7 @@
 
 /* ─── IRON Design System ─────────────────────────────────────── */
 :root {
+  --pilot-banner-h: 0px;
   --lime:        #C8FF00;
   --lime-dim:    #a3cc00;
   --black:       #080808;

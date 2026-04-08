@@ -2,22 +2,23 @@
 
 import { useState, useEffect } from 'react';
 import { useT } from '@/lib/i18n';
+import { useModal } from './ModalContext';
 
 const FORMSPREE_ENDPOINT = 'https://formspree.io/f/FORMSPREE_ID';
 
 export default function FeedbackModal() {
   const { t } = useT();
-  const [isOpen, setIsOpen] = useState(false);
+  const { isFeedbackOpen, openFeedback, closeFeedback } = useModal();
   const [selected, setSelected] = useState<string | null>(null);
   const [text, setText] = useState('');
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') setIsOpen(false); };
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') closeFeedback(); };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, []);
+  }, [closeFeedback]);
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -36,7 +37,7 @@ export default function FeedbackModal() {
   };
 
   const handleClose = () => {
-    setIsOpen(false);
+    closeFeedback();
     setTimeout(() => { setSuccess(false); setSelected(null); setText(''); }, 300);
   };
 
@@ -44,7 +45,7 @@ export default function FeedbackModal() {
     <>
       {/* Floating button */}
       <button
-        onClick={() => setIsOpen(true)}
+        onClick={openFeedback}
         style={{
           position: 'fixed',
           bottom: '2rem',
@@ -74,7 +75,7 @@ export default function FeedbackModal() {
       </button>
 
       {/* Modal */}
-      {isOpen && (
+      {isFeedbackOpen && (
         <div className="iron-modal-overlay" onClick={handleClose}>
           <div
             className="iron-modal"

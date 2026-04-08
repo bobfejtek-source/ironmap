@@ -4,6 +4,7 @@ import './globals.css';
 import { LangProvider } from '@/lib/i18n';
 import { ModalProvider } from '@/components/ModalContext';
 import IronNav from '@/components/IronNav';
+import PilotBanner from '@/components/PilotBanner';
 import IronFooter from '@/components/IronFooter';
 import AddGymModal from '@/components/AddGymModal';
 import FeedbackModal from '@/components/FeedbackModal';
@@ -54,8 +55,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Providers>
           <LangProvider>
             <ModalProvider>
+              <PilotBanner />
               <IronNav />
-              <main style={{ flex: 1, paddingTop: 64 }}>
+              <main style={{ flex: 1, paddingTop: 'calc(64px + var(--pilot-banner-h))' }}>
                 {children}
               </main>
               <IronFooter />
