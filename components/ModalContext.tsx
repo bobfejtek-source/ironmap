@@ -5,6 +5,7 @@ import { createContext, useContext, useState, type ReactNode } from 'react';
 interface DoplnitGym {
   id: number;
   name: string;
+  note?: string;
 }
 
 interface ModalState {

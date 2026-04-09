@@ -26,6 +26,7 @@ const PROGRESS_PATH = path.join(__dirname, 'enrich-progress.json');
 // ── CLI args ──────────────────────────────────────────────────────────────────
 
 const DRY_RUN = process.argv.includes('--dry-run');
+const FIX_RATING_COUNT = process.argv.includes('--fix-rating-count');
 const LIMIT_ARG = process.argv.indexOf('--limit');
 const LIMIT = LIMIT_ARG !== -1 ? parseInt(process.argv[LIMIT_ARG + 1], 10) : (DRY_RUN ? 20 : Infinity);
 
@@ -62,6 +63,7 @@ async function getGymsToEnrich() {
     FROM gyms
     WHERE coordinates IS NOT NULL
       AND name != 'Unnamed Gym'
+      ${FIX_RATING_COUNT ? 'AND rating IS NOT NULL AND rating_count IS NULL' : ''}
     ORDER BY id
   `);
   return rows;
@@ -292,7 +294,7 @@ async function rateLimitedFetch(fn) {
 async function main() {
   console.log(`\n${'═'.repeat(60)}`);
   console.log(`  IRONMAP — Google Places Enrichment`);
-  console.log(`  Mode: ${DRY_RUN ? 'DRY RUN (no DB writes)' : 'LIVE'}`);
+  console.log(`  Mode: ${DRY_RUN ? 'DRY RUN (no DB writes)' : 'LIVE'}${FIX_RATING_COUNT ? ' — fix rating_count only' : ''}`);
   console.log(`  Limit: ${isFinite(LIMIT) ? LIMIT : 'all'} gyms`);
   console.log(`${'═'.repeat(60)}\n`);
 
@@ -300,7 +302,8 @@ async function main() {
   console.log('DB columns verified.\n');
 
   const allGyms = await getGymsToEnrich();
-  const done    = DRY_RUN ? new Set() : loadProgress();
+  // --fix-rating-count ignores progress: re-processes all matching gyms fresh
+  const done    = (DRY_RUN || FIX_RATING_COUNT) ? new Set() : loadProgress();
 
   const toProcess = allGyms
     .filter(g => !done.has(g.id))

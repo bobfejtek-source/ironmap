@@ -28,6 +28,7 @@
     "@types/leaflet": "^1.9.21",
     "@vercel/postgres": "^0.10.0",
     "leaflet": "^1.9.4",
+    "lucide-react": "^1.8.0",
     "next": "14.2.35",
     "next-auth": "^4.24.10",
     "puppeteer": "^24.40.0",

@@ -2,8 +2,9 @@
 
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
+import { Phone, Globe, MapPin } from 'lucide-react';
 import type { Gym } from '@/lib/db';
-import { cityUrl, getDayLabel, parseOpeningHours, parseCoordinates } from '@/lib/utils';
+import { cityUrl, getDayLabel, parseOpeningHours, parseCoordinates, formatHoursShort } from '@/lib/utils';
 import { useModal } from './ModalContext';
 import { useT } from '@/lib/i18n';
 import GymCard from './GymCard';
@@ -43,6 +44,13 @@ export default function GymDetailClient({ gym, similarGyms }: Props) {
   const category = gym.category ?? 'Posilovna';
 
   const mapPins = coords ? [{ lat: coords.lat, lng: coords.lng, name: gym.name }] : [];
+
+  const websiteHref = gym.website
+    ? gym.website.startsWith('http') ? gym.website : `https://${gym.website}`
+    : null;
+  const websiteDomain = websiteHref
+    ? websiteHref.replace(/^https?:\/\/(www\.)?/, '').replace(/\/.*$/, '')
+    : null;
 
   return (
     <div style={{ maxWidth: 900, margin: '0 auto', padding: 'clamp(1.5rem, 4vw, 3rem) clamp(1rem, 4vw, 2rem) 6rem' }}>
@@ -190,95 +198,165 @@ export default function GymDetailClient({ gym, similarGyms }: Props) {
       </div>
 
       {/* Grid: contact + hours */}
-      {(gym.phone || gym.website || gym.email || gym.address || gym.price_level || gym.opening_hours) && (
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: '1.5rem',
-          marginBottom: '1.5rem',
-        }}>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+        gap: '1.5rem',
+        marginBottom: '1.5rem',
+      }}>
 
-          {/* Contact */}
-          {(gym.phone || gym.website || gym.email || gym.address || gym.price_level) && (
-            <div style={{
-              background: 'var(--card-bg)',
-              border: '1px solid var(--border)',
-              padding: 'clamp(1rem, 3vw, 1.75rem) clamp(0.875rem, 3vw, 2rem)',
-            }}>
-              <SectionTitle>{t.detail.contact}</SectionTitle>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-                {gym.phone && (
-                  <ContactRow icon="◎" label={t.detail.phone}>
-                    <a href={`tel:${gym.phone}`} style={{ color: 'var(--lime)', fontWeight: 400 }}>
-                      {gym.phone}
-                    </a>
-                  </ContactRow>
-                )}
-                {gym.website && (
-                  <ContactRow icon="↗" label={t.detail.web}>
-                    <a
-                      href={gym.website.startsWith('http') ? gym.website : `https://${gym.website}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+        {/* Contact — always show (at minimum the address row) */}
+        {(gym.phone || gym.website || gym.email || gym.address || gym.price_level || !gym.address) && (
+          <div style={{
+            background: 'var(--card-bg)',
+            border: '1px solid var(--border)',
+            padding: 'clamp(1rem, 3vw, 1.75rem) clamp(0.875rem, 3vw, 2rem)',
+          }}>
+            <SectionTitle>{t.detail.contact}</SectionTitle>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+              {gym.phone && (
+                <ContactRow icon={<Phone size={14} />} label={t.detail.phone}>
+                  <a href={`tel:${gym.phone}`} style={{ color: 'var(--lime)', fontWeight: 400 }}>
+                    {gym.phone}
+                  </a>
+                </ContactRow>
+              )}
+              {websiteHref && websiteDomain && (
+                <ContactRow icon={<Globe size={14} />} label={t.detail.web}>
+                  <a
+                    href={websiteHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: 'var(--lime)', fontWeight: 400 }}
+                  >
+                    {websiteDomain}
+                  </a>
+                </ContactRow>
+              )}
+              <ContactRow icon={<MapPin size={14} />} label={t.detail.address}>
+                {gym.address ? (
+                  <span style={{ color: 'var(--muted)', fontWeight: 300 }}>{gym.address}</span>
+                ) : (
+                  <span style={{ color: 'var(--muted)', fontWeight: 300 }}>
+                    Adresu zatím neznáme{' '}
+                    <button
+                      onClick={() => openDoplnit({ id: gym.id, name: gym.name, note: 'Chybí adresa' })}
                       style={{
-                        color: 'var(--lime)', fontWeight: 400,
-                        overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                        maxWidth: 200, display: 'block',
+                        background: 'none', border: 'none', padding: 0,
+                        color: 'var(--lime)', fontWeight: 700, cursor: 'pointer',
+                        fontSize: 'inherit', fontFamily: 'inherit',
                       }}
                     >
-                      {gym.website.replace(/^https?:\/\/(www\.)?/, '')}
-                    </a>
-                  </ContactRow>
+                      Doplnit →
+                    </button>
+                  </span>
                 )}
-                {gym.address && (
-                  <ContactRow icon="◈" label={t.detail.address}>
-                    <span style={{ color: 'var(--muted)', fontWeight: 300 }}>{gym.address}</span>
-                  </ContactRow>
-                )}
-                {gym.price_level && (
-                  <ContactRow icon="◇" label={t.detail.price}>
-                    <span style={{ color: 'var(--muted)', fontWeight: 300 }}>{gym.price_level}</span>
-                  </ContactRow>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Opening hours */}
-          {gym.opening_hours && (
-            <div style={{
-              background: 'var(--card-bg)',
-              border: '1px solid var(--border)',
-              padding: 'clamp(1rem, 3vw, 1.75rem) clamp(0.875rem, 3vw, 2rem)',
-            }}>
-              <SectionTitle>{t.detail.hours}</SectionTitle>
-              {hours ? (
-                <table style={{ width: '100%', fontSize: '0.85rem', borderCollapse: 'collapse' }}>
-                  <tbody>
-                    {DAY_ORDER.filter(d => hours[d]).map(day => (
-                      <tr key={day} style={{ borderBottom: '1px solid var(--border)' }}>
-                        <td style={{ padding: '0.5rem 0', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.78rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--muted)', width: 90 }}>
-                          {getDayLabel(day)}
-                        </td>
-                        <td style={{ padding: '0.5rem 0', textAlign: 'right', color: 'var(--text)', fontWeight: 300, fontVariantNumeric: 'tabular-nums' }}>
-                          {hours[day]}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              ) : (
-                <p style={{ color: 'var(--muted)', fontSize: '0.88rem', fontWeight: 300 }}>
-                  {(() => {
-                    try { const p = JSON.parse(gym.opening_hours!); if (typeof p === 'string') return p; } catch {}
-                    return gym.opening_hours;
-                  })()}
-                </p>
+              </ContactRow>
+              {gym.price_level && (
+                <ContactRow icon={<span style={{ fontSize: '0.85rem' }}>◇</span>} label={t.detail.price}>
+                  <span style={{ color: 'var(--muted)', fontWeight: 300 }}>{gym.price_level}</span>
+                </ContactRow>
               )}
             </div>
+          </div>
+        )}
+
+        {/* Opening hours — always shown, all 7 days */}
+        <div style={{
+          background: 'var(--card-bg)',
+          border: '1px solid var(--border)',
+          padding: 'clamp(1rem, 3vw, 1.75rem) clamp(0.875rem, 3vw, 2rem)',
+        }}>
+          <SectionTitle>{t.detail.hours}</SectionTitle>
+          {hours ? (
+            <table style={{ width: '100%', fontSize: '0.85rem', borderCollapse: 'collapse' }}>
+              <tbody>
+                {DAY_ORDER.map(day => {
+                  const raw = hours[day];
+                  const fmt = raw ? formatHoursShort(raw) : null;
+                  const isNonstop = fmt === 'Nonstop';
+                  const isClosed = fmt === null || fmt === 'Zavřeno';
+                  return (
+                    <tr key={day} style={{ borderBottom: '1px solid var(--border)' }}>
+                      <td style={{
+                        padding: '0.5rem 0',
+                        fontFamily: 'var(--font-display)',
+                        fontWeight: 700,
+                        fontSize: '0.78rem',
+                        letterSpacing: '0.06em',
+                        textTransform: 'uppercase',
+                        color: 'var(--muted)',
+                        width: 90,
+                      }}>
+                        {getDayLabel(day)}
+                      </td>
+                      <td style={{
+                        padding: '0.5rem 0',
+                        textAlign: 'right',
+                        color: isNonstop ? 'var(--lime)' : isClosed ? 'var(--muted)' : 'var(--text)',
+                        fontWeight: isNonstop ? 700 : 300,
+                        fontVariantNumeric: 'tabular-nums',
+                      }}>
+                        {fmt ?? 'Zavřeno'}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          ) : (
+            <>
+              <table style={{ width: '100%', fontSize: '0.85rem', borderCollapse: 'collapse' }}>
+                <tbody>
+                  {DAY_ORDER.map(day => (
+                    <tr key={day} style={{ borderBottom: '1px solid var(--border)' }}>
+                      <td style={{
+                        padding: '0.5rem 0',
+                        fontFamily: 'var(--font-display)',
+                        fontWeight: 700,
+                        fontSize: '0.78rem',
+                        letterSpacing: '0.06em',
+                        textTransform: 'uppercase',
+                        color: 'var(--muted)',
+                        width: 90,
+                      }}>
+                        {getDayLabel(day)}
+                      </td>
+                      <td style={{
+                        padding: '0.5rem 0',
+                        textAlign: 'right',
+                        color: 'var(--muted)',
+                        fontWeight: 300,
+                        fontStyle: 'italic',
+                      }}>
+                        Zatím neznáme
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <button
+                onClick={() => openDoplnit({ id: gym.id, name: gym.name, note: 'Chybí otevírací doba' })}
+                style={{
+                  marginTop: '1.25rem',
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--lime)',
+                  fontSize: '0.78rem',
+                  fontFamily: 'var(--font-display)',
+                  fontWeight: 700,
+                  letterSpacing: '0.06em',
+                  cursor: 'pointer',
+                  padding: 0,
+                  textAlign: 'left',
+                }}
+              >
+                Znáte otevírací dobu? Pomozte nám doplnit databázi →
+              </button>
+            </>
           )}
         </div>
-      )}
+      </div>
 
       {/* Ceník link */}
       {gym.cenik_url && (
@@ -409,10 +487,12 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
   );
 }
 
-function ContactRow({ icon, label, children }: { icon: string; label: string; children: React.ReactNode }) {
+function ContactRow({ icon, label, children }: { icon: React.ReactNode; label: string; children: React.ReactNode }) {
   return (
     <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
-      <span style={{ color: 'var(--muted)', fontSize: '0.9rem', flexShrink: 0, marginTop: '0.1rem' }}>{icon}</span>
+      <span style={{ color: 'var(--muted)', flexShrink: 0, marginTop: '0.1rem', display: 'flex', alignItems: 'center' }}>
+        {icon}
+      </span>
       <div>
         <div style={{ fontSize: '0.62rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--muted)', fontFamily: 'var(--font-display)', fontWeight: 700, marginBottom: '0.15rem' }}>
           {label}

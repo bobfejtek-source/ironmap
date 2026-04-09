@@ -167,6 +167,7 @@ export default function DoplnitModal() {
                     className="iron-input"
                     placeholder={t.doplnit.notesPlaceholder}
                     style={{ resize: 'vertical' }}
+                    defaultValue={doplnitGym.note ?? ''}
                   />
                 </div>
 
