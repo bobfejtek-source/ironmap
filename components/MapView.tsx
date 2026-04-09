@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef } from 'react';
+import type * as Leaflet from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
 export interface MapPin {
@@ -19,8 +20,15 @@ interface MapViewProps {
   height?: string;
 }
 
+interface MapCleanup {
+  ro: ResizeObserver;
+  t1: ReturnType<typeof setTimeout>;
+  t2: ReturnType<typeof setTimeout>;
+  onOrient: () => void;
+}
+
 // Standalone helpers — no closure over component props
-function makeIcon(L: any, active: boolean, large: boolean) {
+function makeIcon(L: typeof Leaflet, active: boolean): Leaflet.DivIcon {
   const size = active ? 12 : 8;
   return L.divIcon({
     html: `<div style="
@@ -37,18 +45,18 @@ function makeIcon(L: any, active: boolean, large: boolean) {
 }
 
 function addMarkersToMap(
-  L: any,
-  map: any,
+  L: typeof Leaflet,
+  map: Leaflet.Map,
   pins: MapPin[],
   singlePin: boolean,
-  markersRef: React.MutableRefObject<any[]>,
+  markersRef: React.MutableRefObject<Leaflet.Marker[]>,
   onPinClickRef: React.MutableRefObject<((id: string) => void) | undefined>,
 ) {
   markersRef.current.forEach(m => m.remove());
   markersRef.current = [];
 
   pins.forEach((pin) => {
-    const marker = L.marker([pin.lat, pin.lng], { icon: makeIcon(L, singlePin, singlePin) })
+    const marker = L.marker([pin.lat, pin.lng], { icon: makeIcon(L, singlePin) })
       .addTo(map);
 
     if (pin.name) {
@@ -64,8 +72,8 @@ function addMarkersToMap(
       marker.openPopup();
     }
 
-    marker.on('mouseover', function(this: any) { this.setIcon(makeIcon(L, true, singlePin)); });
-    marker.on('mouseout',  function(this: any) { this.setIcon(makeIcon(L, singlePin, singlePin)); });
+    marker.on('mouseover', function(this: Leaflet.Marker) { this.setIcon(makeIcon(L, true)); });
+    marker.on('mouseout',  function(this: Leaflet.Marker) { this.setIcon(makeIcon(L, singlePin)); });
 
     markersRef.current.push(marker);
   });
@@ -80,9 +88,9 @@ function MapView({
   height = '100%',
 }: MapViewProps) {
   const containerRef  = useRef<HTMLDivElement>(null);
-  const mapRef        = useRef<any>(null);
-  const leafletRef    = useRef<any>(null);
-  const markersRef    = useRef<any[]>([]);
+  const mapRef        = useRef<Leaflet.Map | null>(null);
+  const leafletRef    = useRef<typeof Leaflet | null>(null);
+  const markersRef    = useRef<Leaflet.Marker[]>([]);
   const pinsRef       = useRef(pins);
   const singlePinRef  = useRef(singlePin);
   const onPinClickRef = useRef(onPinClick);
@@ -149,17 +157,20 @@ function MapView({
       const onOrient = () => setTimeout(() => map.invalidateSize(), 300);
       window.addEventListener('orientationchange', onOrient);
 
-      (map as any)._cleanup = { ro, t1, t2, onOrient };
+      // _cleanup is a custom property — eslint-disable required for the cast
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (map as any)._cleanup = { ro, t1, t2, onOrient } satisfies MapCleanup;
     });
 
     return () => {
       active = false;
       if (mapRef.current) {
-        const { ro, t1, t2, onOrient } = (mapRef.current as any)._cleanup ?? {};
-        clearTimeout(t1);
-        clearTimeout(t2);
-        ro?.disconnect();
-        window.removeEventListener('orientationchange', onOrient);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const cleanup = (mapRef.current as any)._cleanup as MapCleanup | undefined;
+        clearTimeout(cleanup?.t1);
+        clearTimeout(cleanup?.t2);
+        cleanup?.ro.disconnect();
+        if (cleanup?.onOrient) window.removeEventListener('orientationchange', cleanup.onOrient);
         mapRef.current.remove();
         mapRef.current = null;
         leafletRef.current = null;
