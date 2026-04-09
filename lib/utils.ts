@@ -23,11 +23,30 @@ export function formatRating(rating: number | null): string {
   return rating.toFixed(1);
 }
 
+const GOOGLE_DAY_MAP: Record<string, string> = {
+  monday: 'monday', tuesday: 'tuesday', wednesday: 'wednesday',
+  thursday: 'thursday', friday: 'friday', saturday: 'saturday', sunday: 'sunday',
+};
+
 export function parseOpeningHours(raw: string | null): Record<string, string> | null {
   if (!raw) return null;
   try {
     const parsed = JSON.parse(raw);
+    // Legacy format: plain object {monday: "6:00–22:00", ...}
     if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) return parsed;
+    // Google Places format: ["Monday: 6:00 AM – 10:00 PM", "Tuesday: Closed", ...]
+    if (Array.isArray(parsed)) {
+      const result: Record<string, string> = {};
+      for (const entry of parsed) {
+        const colon = entry.indexOf(':');
+        if (colon === -1) continue;
+        const dayRaw = entry.slice(0, colon).trim().toLowerCase();
+        const hours  = entry.slice(colon + 1).trim();
+        const dayKey = GOOGLE_DAY_MAP[dayRaw];
+        if (dayKey) result[dayKey] = hours;
+      }
+      return Object.keys(result).length > 0 ? result : null;
+    }
     return null;
   } catch {
     return null;

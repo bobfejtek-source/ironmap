@@ -262,10 +262,14 @@ function extractFields(place) {
   return { phone, website, opening_hours, price_level, rating, rating_count, place_id };
 }
 
+function isEmpty(v) {
+  return v === null || v === undefined || v === 'N/A' || v === '';
+}
+
 function pickNullFields(gym, extracted) {
   const updates = {};
   for (const [k, v] of Object.entries(extracted)) {
-    if (v !== null && (gym[k] === null || gym[k] === undefined)) {
+    if (v !== null && isEmpty(gym[k])) {
       updates[k] = v;
     }
   }
