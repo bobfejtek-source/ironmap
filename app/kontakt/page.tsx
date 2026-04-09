@@ -53,42 +53,6 @@ export default function KontaktPage() {
         {t.contact.body}
       </p>
 
-      {/* Email */}
-      <div style={{
-        borderTop: '1px solid var(--border)',
-        borderBottom: '1px solid var(--border)',
-        padding: '1.75rem 0',
-        marginBottom: '2.5rem',
-      }}>
-        <div style={{
-          fontFamily: 'var(--font-display)',
-          fontWeight: 700,
-          fontSize: '0.68rem',
-          letterSpacing: '0.18em',
-          textTransform: 'uppercase',
-          color: 'var(--muted)',
-          marginBottom: '0.5rem',
-        }}>
-          {t.contact.emailLabel}
-        </div>
-        <a
-          href="mailto:info@ironmap.cz"
-          style={{
-            fontFamily: 'var(--font-display)',
-            fontWeight: 900,
-            fontSize: '1.4rem',
-            letterSpacing: '0.04em',
-            color: 'var(--lime)',
-            textDecoration: 'none',
-            transition: 'opacity 0.2s',
-          }}
-          onMouseEnter={e => (e.currentTarget.style.opacity = '0.75')}
-          onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
-        >
-          info@ironmap.cz
-        </a>
-      </div>
-
       {/* Action buttons */}
       <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
         <button

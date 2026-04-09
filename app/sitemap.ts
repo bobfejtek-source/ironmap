@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next';
 import { getAllGyms, getCities } from '@/lib/db';
 import { cityUrl, gymDetailUrl } from '@/lib/utils';
 
-const BASE = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://gymie.cz';
+const BASE = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://www.ironmap.cz';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [cities, gyms] = await Promise.all([getCities(), getAllGyms()]);
@@ -19,6 +19,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 0.9,
+    },
+    {
+      url: `${BASE}/kontakt`,
+      lastModified: new Date(),
+      changeFrequency: 'yearly',
+      priority: 0.4,
+    },
+    {
+      url: `${BASE}/o-projektu`,
+      lastModified: new Date(),
+      changeFrequency: 'yearly',
+      priority: 0.4,
     },
   ];
 

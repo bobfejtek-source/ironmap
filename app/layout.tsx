@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   },
   description:
     'Najděte nejlepší posilovnu ve vašem městě. 864 gymů, otevírací doby, kontakty a hodnocení po celé ČR.',
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL ?? 'https://gymie.cz'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL ?? 'https://www.ironmap.cz'),
   openGraph: {
     siteName: 'IRON',
     locale: 'cs_CZ',
@@ -52,6 +52,23 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${barlow.variable} ${barlowCondensed.variable}`}
     >
       <body style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Organization',
+              name: 'IRON',
+              url: 'https://www.ironmap.cz',
+              logo: 'https://www.ironmap.cz/opengraph-image',
+              contactPoint: {
+                '@type': 'ContactPoint',
+                contactType: 'customer support',
+                availableLanguage: 'Czech',
+              },
+            }),
+          }}
+        />
         <Providers>
           <LangProvider>
             <ModalProvider>

@@ -13,7 +13,7 @@ export const authOptions: NextAuthOptions = {
     }),
     EmailProvider({
       server: process.env.EMAIL_SERVER,
-      from: process.env.EMAIL_FROM ?? 'IRON <noreply@gymie.cz>',
+      from: process.env.EMAIL_FROM ?? 'IRON <bob.fejtek@gmail.com>',
     }),
   ],
 

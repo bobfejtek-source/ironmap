@@ -18,7 +18,7 @@ export default function OchranaPage() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', color: 'var(--muted)', fontSize: '0.9rem', fontWeight: 300, lineHeight: 1.7 }}>
 
         <Section title="Správce údajů">
-          Správcem osobních údajů je provozovatel platformy IRON. Kontakt: noreply@gymie.cz
+          Správcem osobních údajů je provozovatel platformy IRON. Kontakt: bob.fejtek@gmail.com
         </Section>
 
         <Section title="Jaké údaje zpracováváme">

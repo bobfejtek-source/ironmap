@@ -70,6 +70,7 @@
     "ownerEmail": "Email provozovatele",
     "submit": "Odeslat",
     "submitting": "Odesílám...",
+    "error": "Něco se nepovedlo. Zkus to prosím znovu.",
     "success": "Děkujeme! Gym přidáme do 48 hodin.",
     "successSub": "Zkontrolujeme informace a gym přidáme co nejdříve.",
     "categories": ["Posilovna", "CrossFit", "Jóga", "Pilates", "Outdoor", "Bojové sporty", "Spinning", "Bazén", "Jiné"]

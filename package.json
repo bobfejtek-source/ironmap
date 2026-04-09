@@ -12,7 +12,11 @@
     "db:init": "node scripts/init-db.js",
     "db:migrate": "node scripts/migrate-sqlite-to-pg.js",
     "db:categorize": "node scripts/categorize.js",
-    "db:categorize-ai": "node scripts/categorize-ai.js"
+    "db:categorize-ai": "node scripts/categorize-ai.js",
+    "enrich:dry": "node scripts/enrich-places.mjs --dry-run",
+    "enrich:run": "node scripts/enrich-places.mjs",
+    "test": "playwright test",
+    "test:ui": "playwright test --ui"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.82.0",
@@ -29,6 +33,7 @@
     "react-dom": "^18"
   },
   "devDependencies": {
+    "@playwright/test": "^1.59.1",
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^20",
     "@types/pg": "^8.11.10",

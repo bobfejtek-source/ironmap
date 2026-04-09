@@ -4,7 +4,7 @@
   "framework": "nextjs",
   "installCommand": "npm install",
   "env": {
-    "NEXT_PUBLIC_BASE_URL": "https://gymie.cz"
+    "NEXT_PUBLIC_BASE_URL": "https://www.ironmap.cz"
   },
   "headers": [
     {

@@ -70,6 +70,7 @@
     "ownerEmail": "Owner's email",
     "submit": "Submit",
     "submitting": "Sending...",
+    "error": "Something went wrong. Please try again.",
     "success": "Thank you! We'll add the gym within 48 hours.",
     "successSub": "We'll verify the information and add the gym as soon as possible.",
     "categories": ["Gym", "CrossFit", "Yoga", "Pilates", "Outdoor", "Martial arts", "Spinning", "Pool", "Other"]

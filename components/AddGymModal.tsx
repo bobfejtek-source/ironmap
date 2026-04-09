@@ -10,6 +10,7 @@ export default function AddGymModal() {
   const { isAddGymOpen, closeAddGym } = useModal();
   const { t } = useT();
   const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
 
   // Close on Escape
@@ -22,7 +23,7 @@ export default function AddGymModal() {
   // Reset on close
   useEffect(() => {
     if (!isAddGymOpen) {
-      setTimeout(() => setSuccess(false), 300);
+      setTimeout(() => { setSuccess(false); setError(false); }, 300);
     }
   }, [isAddGymOpen]);
 
@@ -31,17 +32,22 @@ export default function AddGymModal() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
+    setError(false);
     try {
       const data = new FormData(e.currentTarget);
       data.set('source', 'add-gym');
-      await fetch(FORMSPREE_ENDPOINT, {
+      const res = await fetch(FORMSPREE_ENDPOINT, {
         method: 'POST',
         body: data,
         headers: { Accept: 'application/json' },
       });
-      setSuccess(true);
+      if (res.ok) {
+        setSuccess(true);
+      } else {
+        setError(true);
+      }
     } catch {
-      setSuccess(true); // show success anyway in dev
+      setError(true);
     } finally {
       setLoading(false);
     }
@@ -135,6 +141,11 @@ export default function AddGymModal() {
                   <input name="email" type="email" required className="iron-input" placeholder="info@gym.cz" />
                 </div>
 
+                {error && (
+                  <p style={{ color: '#ff4d4d', fontSize: '0.85rem', fontWeight: 300, margin: 0 }}>
+                    {t.addGym.error}
+                  </p>
+                )}
                 <button
                   type="submit"
                   disabled={loading}

@@ -230,13 +230,6 @@ export default function GymDetailClient({ gym, similarGyms }: Props) {
                     </a>
                   </ContactRow>
                 )}
-                {gym.email && (
-                  <ContactRow icon="✉" label={t.detail.email}>
-                    <a href={`mailto:${gym.email}`} style={{ color: 'var(--lime)', fontWeight: 400 }}>
-                      {gym.email}
-                    </a>
-                  </ContactRow>
-                )}
                 {gym.address && (
                   <ContactRow icon="◈" label={t.detail.address}>
                     <span style={{ color: 'var(--muted)', fontWeight: 300 }}>{gym.address}</span>
