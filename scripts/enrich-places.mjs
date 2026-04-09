@@ -27,6 +27,7 @@ const PROGRESS_PATH = path.join(__dirname, 'enrich-progress.json');
 
 const DRY_RUN = process.argv.includes('--dry-run');
 const FIX_RATING_COUNT = process.argv.includes('--fix-rating-count');
+const UNMATCHED_ONLY = process.argv.includes('--unmatched-only');
 const LIMIT_ARG = process.argv.indexOf('--limit');
 const LIMIT = LIMIT_ARG !== -1 ? parseInt(process.argv[LIMIT_ARG + 1], 10) : (DRY_RUN ? 20 : Infinity);
 
@@ -64,6 +65,7 @@ async function getGymsToEnrich() {
     WHERE coordinates IS NOT NULL
       AND name != 'Unnamed Gym'
       ${FIX_RATING_COUNT ? 'AND rating IS NOT NULL AND rating_count IS NULL' : ''}
+      ${UNMATCHED_ONLY ? 'AND rating IS NULL' : ''}
     ORDER BY id
   `);
   return rows;
@@ -294,7 +296,7 @@ async function rateLimitedFetch(fn) {
 async function main() {
   console.log(`\n${'═'.repeat(60)}`);
   console.log(`  IRONMAP — Google Places Enrichment`);
-  console.log(`  Mode: ${DRY_RUN ? 'DRY RUN (no DB writes)' : 'LIVE'}${FIX_RATING_COUNT ? ' — fix rating_count only' : ''}`);
+  console.log(`  Mode: ${DRY_RUN ? 'DRY RUN (no DB writes)' : 'LIVE'}${FIX_RATING_COUNT ? ' — fix rating_count only' : ''}${UNMATCHED_ONLY ? ' — unmatched gyms only' : ''}`);
   console.log(`  Limit: ${isFinite(LIMIT) ? LIMIT : 'all'} gyms`);
   console.log(`${'═'.repeat(60)}\n`);
 
@@ -302,8 +304,8 @@ async function main() {
   console.log('DB columns verified.\n');
 
   const allGyms = await getGymsToEnrich();
-  // --fix-rating-count ignores progress: re-processes all matching gyms fresh
-  const done    = (DRY_RUN || FIX_RATING_COUNT) ? new Set() : loadProgress();
+  // --fix-rating-count / --unmatched-only ignore progress: re-process all matching gyms fresh
+  const done    = (DRY_RUN || FIX_RATING_COUNT || UNMATCHED_ONLY) ? new Set() : loadProgress();
 
   const toProcess = allGyms
     .filter(g => !done.has(g.id))
@@ -335,8 +337,23 @@ async function main() {
       candidates = await rateLimitedFetch(() => nearbySearch(coords.lat, coords.lng, gym.name));
 
       if (candidates.length === 0) {
+        // Nearby found nothing — try text search
         searchType = 'text';
         candidates = await rateLimitedFetch(() => textSearch(gym.name, gym.city));
+      } else {
+        // Nearby found results but check if best name match is acceptable.
+        // Many gyms are classified as 'spa'/'health' in Places and won't appear
+        // in type-filtered nearby search — text search finds them by name directly.
+        const bestSim = scoreCandidates(candidates, gym.name, coords.lat, coords.lng)[0].sim;
+        if (bestSim < MIN_NAME_SIMILARITY) {
+          searchType = 'nearby+text';
+          const textCandidates = await rateLimitedFetch(() => textSearch(gym.name, gym.city));
+          // Merge, deduplicate by place id
+          const seen = new Set(candidates.map(p => p.id));
+          for (const p of textCandidates) {
+            if (!seen.has(p.id)) candidates.push(p);
+          }
+        }
       }
     } catch (err) {
       process.stdout.write(`${prefix} — FAILED: ${err.message}\n`);
