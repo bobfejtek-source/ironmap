@@ -36,7 +36,7 @@ interface Props {
 }
 
 export default function GymDetailClient({ gym, similarGyms }: Props) {
-  const { openAddGym } = useModal();
+  const { openDoplnit } = useModal();
   const { t } = useT();
   const hours = parseOpeningHours(gym.opening_hours);
   const coords = parseCoordinates(gym.coordinates);
@@ -280,6 +280,21 @@ export default function GymDetailClient({ gym, similarGyms }: Props) {
         </div>
       )}
 
+      {/* Ceník link */}
+      {gym.cenik_url && (
+        <div style={{ marginBottom: '1.5rem' }}>
+          <a
+            href={gym.cenik_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="iron-btn iron-btn-outline"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
+          >
+            {t.detail.cenikBtn}
+          </a>
+        </div>
+      )}
+
       {/* Map */}
       {coords && (
         <div style={{
@@ -351,7 +366,7 @@ export default function GymDetailClient({ gym, similarGyms }: Props) {
           {t.detail.contribute}
         </div>
         <button
-          onClick={openAddGym}
+          onClick={() => openDoplnit({ id: gym.id, name: gym.name })}
           className="iron-btn iron-btn-ghost"
           style={{ fontSize: '0.78rem', padding: '0.55rem 1.25rem' }}
         >

@@ -2,6 +2,11 @@
 
 import { createContext, useContext, useState, type ReactNode } from 'react';
 
+interface DoplnitGym {
+  id: number;
+  name: string;
+}
+
 interface ModalState {
   isAddGymOpen: boolean;
   openAddGym: () => void;
@@ -9,6 +14,9 @@ interface ModalState {
   isFeedbackOpen: boolean;
   openFeedback: () => void;
   closeFeedback: () => void;
+  doplnitGym: DoplnitGym | null;
+  openDoplnit: (gym: DoplnitGym) => void;
+  closeDoplnit: () => void;
 }
 
 const ModalCtx = createContext<ModalState>({
@@ -18,11 +26,15 @@ const ModalCtx = createContext<ModalState>({
   isFeedbackOpen: false,
   openFeedback: () => {},
   closeFeedback: () => {},
+  doplnitGym: null,
+  openDoplnit: () => {},
+  closeDoplnit: () => {},
 });
 
 export function ModalProvider({ children }: { children: ReactNode }) {
   const [isAddGymOpen, setIsAddGymOpen] = useState(false);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+  const [doplnitGym, setDoplnitGym] = useState<DoplnitGym | null>(null);
 
   return (
     <ModalCtx.Provider
@@ -33,6 +45,9 @@ export function ModalProvider({ children }: { children: ReactNode }) {
         isFeedbackOpen,
         openFeedback: () => setIsFeedbackOpen(true),
         closeFeedback: () => setIsFeedbackOpen(false),
+        doplnitGym,
+        openDoplnit: (gym) => setDoplnitGym(gym),
+        closeDoplnit: () => setDoplnitGym(null),
       }}
     >
       {children}

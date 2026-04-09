@@ -5,9 +5,22 @@ import type { Gym } from '@/lib/db';
 import { gymDetailUrl, getInitials } from '@/lib/utils';
 import { useT } from '@/lib/i18n';
 
+const CATEGORY_KEY: Record<string, string> = {
+  'Posilovna': 'gym',
+  'CrossFit': 'crossfit',
+  'Jóga': 'yoga',
+  'Pilates': 'pilates',
+  'Outdoor': 'outdoor',
+  'Bojové sporty': 'martial',
+  'Spinning': 'spinning',
+  'Bazén': 'pool',
+};
+
 export default function GymCard({ gym }: { gym: Gym }) {
   const { t } = useT();
   const category = gym.category ?? 'Posilovna';
+  const key = CATEGORY_KEY[category];
+  const categoryLabel = key ? (t.categories as Record<string, string>)[key] ?? category : category;
   const initials = getInitials(gym.name);
 
   return (
@@ -74,7 +87,7 @@ export default function GymCard({ gym }: { gym: Gym }) {
               fontWeight: 700,
               flexShrink: 0,
             }}>
-              {category}
+              {categoryLabel}
             </span>
             {gym.address && (
               <span style={{
@@ -163,11 +176,17 @@ export default function GymCard({ gym }: { gym: Gym }) {
           fontSize: '0.7rem',
           letterSpacing: '0.1em',
           textTransform: 'uppercase',
-          color: 'var(--lime)',
+          color: gym.price_verified && (gym.daily_price || gym.monthly_price) ? 'var(--text)' : 'var(--lime)',
           fontFamily: 'var(--font-display)',
           fontWeight: 700,
         }}>
-          {t.listing.dailyEntry} →
+          {gym.price_verified && gym.daily_price && gym.monthly_price
+            ? `Vstup od ${gym.daily_price} Kč | Členství od ${gym.monthly_price} Kč`
+            : gym.price_verified && gym.daily_price
+            ? `Vstup od ${gym.daily_price} Kč`
+            : gym.price_verified && gym.monthly_price
+            ? `Členství od ${gym.monthly_price} Kč`
+            : `${t.listing.dailyEntry} →`}
         </span>
       </div>
     </Link>

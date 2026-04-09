@@ -140,6 +140,16 @@ export default function AddGymModal() {
                   <label style={labelStyle}>{t.addGym.ownerEmail} *</label>
                   <input name="email" type="email" required className="iron-input" placeholder="info@gym.cz" />
                 </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div>
+                    <label style={labelStyle}>{t.addGym.dailyPrice}</label>
+                    <input name="daily_price" type="number" min={0} max={9999} className="iron-input" placeholder="150" />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>{t.addGym.monthlyPrice}</label>
+                    <input name="monthly_price" type="number" min={0} max={9999} className="iron-input" placeholder="800" />
+                  </div>
+                </div>
 
                 {error && (
                   <p style={{ color: '#ff4d4d', fontSize: '0.85rem', fontWeight: 300, margin: 0 }}>

@@ -8,6 +8,7 @@ import PilotBanner from '@/components/PilotBanner';
 import IronFooter from '@/components/IronFooter';
 import AddGymModal from '@/components/AddGymModal';
 import FeedbackModal from '@/components/FeedbackModal';
+import DoplnitModal from '@/components/DoplnitModal';
 import CookieBanner from '@/components/CookieBanner';
 import Providers from './providers';
 
@@ -80,6 +81,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <IronFooter />
               <AddGymModal />
               <FeedbackModal />
+              <DoplnitModal />
               <CookieBanner />
             </ModalProvider>
           </LangProvider>

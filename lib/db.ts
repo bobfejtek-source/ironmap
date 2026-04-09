@@ -22,6 +22,11 @@ export type Gym = {
   verified: number;
   created_at: string;
   category: string | null;
+  cenik_url: string | null;
+  daily_price: number | null;
+  monthly_price: number | null;
+  price_verified: boolean | null;
+  raw_price_text: string | null;
 };
 
 // ─── Queries ──────────────────────────────────────────────────────────────────
