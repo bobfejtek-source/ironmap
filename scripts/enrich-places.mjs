@@ -59,7 +59,7 @@ async function ensureColumns() {
 
 async function getGymsToEnrich() {
   const { rows } = await db.query(`
-    SELECT id, name, city, coordinates, phone, website, opening_hours,
+    SELECT id, name, city, address, coordinates, phone, website, opening_hours,
            price_level, rating, rating_count, place_id
     FROM gyms
     WHERE coordinates IS NOT NULL
@@ -172,6 +172,7 @@ const FIELDS = [
   'places.id',
   'places.displayName',
   'places.location',
+  'places.formattedAddress',
   'places.internationalPhoneNumber',
   'places.websiteUri',
   'places.regularOpeningHours',
@@ -223,6 +224,26 @@ async function textSearch(gymName, city) {
 }
 
 // ── Match scoring ─────────────────────────────────────────────────────────────
+
+// Returns true if two addresses share enough street-level tokens to be the
+// same location — handles diacritics, postal codes, country suffix differences.
+function addressesMatch(ourAddress, placeAddress) {
+  if (!ourAddress || !placeAddress) return false;
+  const norm = s => s
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')   // strip diacritics
+    .replace(/\b(czech republic|czechia|cr|cz)\b/g, '') // strip country
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ').trim();
+  const a = norm(ourAddress);
+  const b = norm(placeAddress);
+  // Tokens longer than 3 chars carry real signal (skip short words, numbers alone)
+  const tokens = a.split(' ').filter(t => t.length > 3 && !/^\d+$/.test(t));
+  if (tokens.length === 0) return false;
+  const hits = tokens.filter(t => b.includes(t));
+  // Require at least 2 matching tokens, or 100% if there's only 1 significant token
+  return tokens.length === 1 ? hits.length === 1 : hits.length >= 2;
+}
 
 function scoreCandidates(candidates, gymName, ourLat, ourLng) {
   const scored = candidates.map(place => {
@@ -378,7 +399,12 @@ async function main() {
 
     const simThreshold = best.dist < 100 ? 0.45 : MIN_NAME_SIMILARITY;
     const simOk  = best.sim >= simThreshold;
-    const distOk = best.dist <= MAX_DISTANCE_M;
+    // Address match is a strong signal that overrides distance — our coordinates
+    // can be wrong (off by km) but our address field is usually correct.
+    const addrOk = addressesMatch(gym.address, best.place.formattedAddress);
+    // Relax distance cap when name is near-identical OR address confirms location
+    const maxDist = (best.sim >= 0.9 || addrOk) ? 10000 : MAX_DISTANCE_M;
+    const distOk = best.dist <= maxDist;
 
     if (!simOk || !distOk) {
       const reason = !simOk && !distOk ? 'sim+dist'
@@ -404,7 +430,7 @@ async function main() {
 
     process.stdout.write(
       `${prefix} — MATCH "${best.placeName}" ` +
-      `(sim=${best.sim.toFixed(2)}, dist=${Math.round(best.dist)}m, via ${searchType})` +
+      `(sim=${best.sim.toFixed(2)}, dist=${Math.round(best.dist)}m, via ${searchType}${addrOk ? ', addr✓' : ''})` +
       (fieldList.length ? ` +[${fieldList.join(',')}]` : ' no new fields') + '\n'
     );
 
