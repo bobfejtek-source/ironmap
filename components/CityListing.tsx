@@ -244,7 +244,7 @@ export default function CityListing({ gyms, cityName }: Props) {
                   transition: 'outline 0.2s',
                 }}
               >
-                <GymCard gym={gym} />
+                <GymCard gym={gym} hideCity />
               </div>
             ))
           )}

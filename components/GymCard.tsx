@@ -2,7 +2,10 @@
 
 import Link from 'next/link';
 import type { Gym } from '@/lib/db';
-import { gymDetailUrl, getInitials } from '@/lib/utils';
+import {
+  gymDetailUrl, getInitials, getNeighborhood,
+  parseOpeningHours, getTodayKey, getOpenStatus, formatHoursShort,
+} from '@/lib/utils';
 import { useT } from '@/lib/i18n';
 
 const CATEGORY_KEY: Record<string, string> = {
@@ -16,12 +19,37 @@ const CATEGORY_KEY: Record<string, string> = {
   'Bazén': 'pool',
 };
 
-export default function GymCard({ gym }: { gym: Gym }) {
+interface Props {
+  gym: Gym;
+  hideCity?: boolean;
+}
+
+export default function GymCard({ gym, hideCity = false }: Props) {
   const { t } = useT();
   const category = gym.category ?? 'Posilovna';
   const key = CATEGORY_KEY[category];
   const categoryLabel = key ? (t.categories as Record<string, string>)[key] ?? category : category;
   const initials = getInitials(gym.name);
+
+  // Neighborhood
+  const neighborhood = getNeighborhood(gym.address, gym.city);
+
+  // Today's hours + open status
+  const hours    = parseOpeningHours(gym.opening_hours);
+  const todayKey = getTodayKey();
+  const todayRaw = hours?.[todayKey] ?? null;
+  const status   = getOpenStatus(todayRaw);
+  const todayFmt = todayRaw ? formatHoursShort(todayRaw) : null;
+
+  // Price display
+  const hasPrice = gym.price_verified && (gym.daily_price || gym.monthly_price);
+  const priceLabel = gym.price_verified && gym.daily_price && gym.monthly_price
+    ? `Vstup od ${gym.daily_price} Kč | Členství od ${gym.monthly_price} Kč`
+    : gym.price_verified && gym.daily_price
+    ? `Vstup od ${gym.daily_price} Kč`
+    : gym.price_verified && gym.monthly_price
+    ? `Členství od ${gym.monthly_price} Kč`
+    : null;
 
   return (
     <Link
@@ -34,13 +62,54 @@ export default function GymCard({ gym }: { gym: Gym }) {
         padding: '1.25rem',
         textDecoration: 'none',
         boxSizing: 'border-box',
+        gap: '0.75rem',
       }}
     >
-      <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-        {/* Initials box */}
+      {/* Row 1: Category tag + Rating */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span style={{
+          fontSize: '0.6rem',
+          letterSpacing: '0.12em',
+          textTransform: 'uppercase',
+          border: '1px solid var(--border)',
+          padding: '0.15rem 0.5rem',
+          color: 'var(--lime)',
+          fontFamily: 'var(--font-display)',
+          fontWeight: 700,
+        }}>
+          {categoryLabel}
+        </span>
+
+        {gym.rating != null ? (
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.25rem',
+            fontFamily: 'var(--font-display)',
+            fontWeight: 700,
+          }}>
+            <span style={{ color: 'var(--lime)', fontSize: '0.85rem' }}>★</span>
+            <span style={{ color: 'var(--text)', fontSize: '0.95rem' }}>
+              {gym.rating.toFixed(1)}
+            </span>
+            {gym.rating_count != null && (
+              <span style={{ color: 'var(--muted)', fontSize: '0.72rem', fontWeight: 300 }}>
+                · {gym.rating_count}
+              </span>
+            )}
+          </div>
+        ) : (
+          <span style={{ color: 'var(--border-mid)', fontSize: '0.72rem', fontFamily: 'var(--font-display)', fontWeight: 700 }}>
+            —
+          </span>
+        )}
+      </div>
+
+      {/* Row 2: Initials + Name + Neighborhood */}
+      <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
         <div style={{
-          width: 48,
-          height: 48,
+          width: 36,
+          height: 36,
           background: '#1e1e1e',
           border: '1px solid var(--border)',
           display: 'flex',
@@ -48,108 +117,83 @@ export default function GymCard({ gym }: { gym: Gym }) {
           justifyContent: 'center',
           fontFamily: 'var(--font-display)',
           fontWeight: 900,
-          fontSize: '0.95rem',
+          fontSize: '0.78rem',
           letterSpacing: '0.06em',
-          color: 'var(--lime)',
+          color: 'var(--muted)',
           flexShrink: 0,
         }}>
           {initials}
         </div>
 
-        {/* Main info */}
         <div style={{ flex: 1, minWidth: 0 }}>
-          {/* Name */}
           <div style={{
             fontFamily: 'var(--font-display)',
             fontWeight: 700,
-            fontSize: '1.05rem',
+            fontSize: '1rem',
             letterSpacing: '0.04em',
             textTransform: 'uppercase',
             color: 'var(--text)',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
-            marginBottom: '0.25rem',
+            lineHeight: 1.2,
           }}>
             {gym.name}
           </div>
-
-          {/* Category + address */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-            <span style={{
-              fontSize: '0.62rem',
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-              border: '1px solid var(--border)',
-              padding: '0.15rem 0.5rem',
-              color: 'var(--lime)',
-              fontFamily: 'var(--font-display)',
-              fontWeight: 700,
-              flexShrink: 0,
-            }}>
-              {categoryLabel}
-            </span>
-            {gym.address && (
-              <span style={{
-                fontSize: '0.8rem',
-                color: 'var(--muted)',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                fontWeight: 300,
-              }}>
-                {gym.address}
-              </span>
-            )}
-          </div>
-
-          {/* Opening hours snippet */}
-          {gym.opening_hours && (
-            <div style={{
-              fontSize: '0.78rem',
-              color: 'var(--muted)',
-              marginTop: '0.4rem',
-              fontWeight: 300,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}>
-              {getHoursSnippet(gym.opening_hours)}
-            </div>
-          )}
-        </div>
-
-        {/* Rating */}
-        {gym.rating != null && (
           <div style={{
-            flexShrink: 0,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'flex-end',
-            gap: '0.15rem',
+            fontSize: '0.78rem',
+            color: 'var(--muted)',
+            fontWeight: 300,
+            marginTop: '0.15rem',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
           }}>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.3rem',
-              fontFamily: 'var(--font-display)',
-              fontWeight: 700,
-              fontSize: '0.95rem',
-              color: 'var(--lime)',
-            }}>
-              <span style={{
-                width: 6, height: 6,
-                background: 'var(--lime)',
-                borderRadius: '50%',
-                flexShrink: 0,
-              }} />
-              {gym.rating.toFixed(1)}
-            </div>
+            {neighborhood}
           </div>
-        )}
+        </div>
       </div>
 
-      {/* Footer row */}
+      {/* Row 3: Open status + today's hours */}
+      {todayFmt && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          {status !== null ? (
+            <>
+              <span style={{
+                width: 7, height: 7,
+                borderRadius: '50%',
+                background: status.open ? '#6ee96e' : 'var(--muted)',
+                flexShrink: 0,
+              }} />
+              <span style={{
+                fontSize: '0.78rem',
+                fontWeight: 600,
+                color: status.open ? '#6ee96e' : 'var(--muted)',
+                fontFamily: 'var(--font-display)',
+                letterSpacing: '0.06em',
+                textTransform: 'uppercase',
+              }}>
+                {status.open ? 'Otevřeno' : 'Zavřeno'}
+              </span>
+              <span style={{ color: 'var(--border-mid)', fontSize: '0.72rem' }}>·</span>
+              <span style={{ fontSize: '0.78rem', color: 'var(--muted)', fontWeight: 300 }}>
+                {status.open
+                  ? `do ${status.closesAt}`
+                  : status.opensAt ? `otevírá ${status.opensAt}` : todayFmt}
+              </span>
+            </>
+          ) : (
+            <>
+              <span style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--border)', flexShrink: 0 }} />
+              <span style={{ fontSize: '0.78rem', color: 'var(--muted)', fontWeight: 300 }}>
+                {todayFmt}
+              </span>
+            </>
+          )}
+        </div>
+      )}
+
+      {/* Footer */}
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',
@@ -158,52 +202,34 @@ export default function GymCard({ gym }: { gym: Gym }) {
         paddingTop: '0.75rem',
         borderTop: '1px solid var(--border)',
       }}>
-        <span style={{
-          fontSize: '0.7rem',
-          letterSpacing: '0.1em',
-          textTransform: 'uppercase',
-          color: 'var(--muted)',
-          fontFamily: 'var(--font-display)',
-          fontWeight: 700,
-        }}>
-          📍 {gym.city}
-          {gym.verified === 1 && (
-            <span style={{ color: 'var(--lime)', marginLeft: '0.5rem' }}>✓</span>
-          )}
-        </span>
+        {!hideCity && (
+          <span style={{
+            fontSize: '0.68rem',
+            letterSpacing: '0.1em',
+            textTransform: 'uppercase',
+            color: 'var(--muted)',
+            fontFamily: 'var(--font-display)',
+            fontWeight: 700,
+          }}>
+            {gym.city}
+            {gym.verified === 1 && (
+              <span style={{ color: 'var(--lime)', marginLeft: '0.4rem' }}>✓</span>
+            )}
+          </span>
+        )}
 
         <span style={{
-          fontSize: '0.7rem',
-          letterSpacing: '0.1em',
+          fontSize: '0.68rem',
+          letterSpacing: '0.08em',
           textTransform: 'uppercase',
-          color: gym.price_verified && (gym.daily_price || gym.monthly_price) ? 'var(--text)' : 'var(--lime)',
+          color: hasPrice ? 'var(--text)' : 'var(--lime)',
           fontFamily: 'var(--font-display)',
           fontWeight: 700,
+          marginLeft: hideCity ? 'auto' : undefined,
         }}>
-          {gym.price_verified && gym.daily_price && gym.monthly_price
-            ? `Vstup od ${gym.daily_price} Kč | Členství od ${gym.monthly_price} Kč`
-            : gym.price_verified && gym.daily_price
-            ? `Vstup od ${gym.daily_price} Kč`
-            : gym.price_verified && gym.monthly_price
-            ? `Členství od ${gym.monthly_price} Kč`
-            : `${t.listing.dailyEntry} →`}
+          {priceLabel ?? 'Detail →'}
         </span>
       </div>
     </Link>
   );
-}
-
-function getHoursSnippet(raw: string): string {
-  try {
-    const parsed = JSON.parse(raw);
-    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-      const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
-      const weekday = days.find(d => parsed[d]);
-      if (weekday) return `Po–Pá: ${parsed[weekday]}`;
-    }
-    if (typeof parsed === 'string') return parsed;
-  } catch {
-    // plain string
-  }
-  return raw.slice(0, 40);
 }
