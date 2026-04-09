@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import 'leaflet/dist/leaflet.css';
 
 export interface MapPin {
@@ -19,7 +19,59 @@ interface MapViewProps {
   height?: string;
 }
 
-export default function MapView({
+// Standalone helpers — no closure over component props
+function makeIcon(L: any, active: boolean, large: boolean) {
+  const size = active ? 12 : 8;
+  return L.divIcon({
+    html: `<div style="
+      width:${size}px;height:${size}px;
+      background:#C8FF00;
+      outline:2px solid #080808;
+      box-shadow:0 0 ${active ? 12 : 6}px #C8FF00;
+      transition:all 0.2s;
+    "></div>`,
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size / 2],
+    className: '',
+  });
+}
+
+function addMarkersToMap(
+  L: any,
+  map: any,
+  pins: MapPin[],
+  singlePin: boolean,
+  markersRef: React.MutableRefObject<any[]>,
+  onPinClickRef: React.MutableRefObject<((id: string) => void) | undefined>,
+) {
+  markersRef.current.forEach(m => m.remove());
+  markersRef.current = [];
+
+  pins.forEach((pin) => {
+    const marker = L.marker([pin.lat, pin.lng], { icon: makeIcon(L, singlePin, singlePin) })
+      .addTo(map);
+
+    if (pin.name) {
+      marker.bindPopup(
+        `<div style="font-family:sans-serif;font-size:12px;font-weight:600;color:#f0f0f0;padding:2px 0">${pin.name}</div>`,
+        { closeButton: false, offset: [0, -4] },
+      );
+    }
+
+    if (pin.id && onPinClickRef.current) {
+      marker.on('click', () => onPinClickRef.current?.(pin.id!));
+    } else if (singlePin && pin.name) {
+      marker.openPopup();
+    }
+
+    marker.on('mouseover', function(this: any) { this.setIcon(makeIcon(L, true, singlePin)); });
+    marker.on('mouseout',  function(this: any) { this.setIcon(makeIcon(L, singlePin, singlePin)); });
+
+    markersRef.current.push(marker);
+  });
+}
+
+function MapView({
   pins,
   center,
   zoom = 13,
@@ -27,130 +79,105 @@ export default function MapView({
   onPinClick,
   height = '100%',
 }: MapViewProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const mapRef = useRef<any>(null);
+  const containerRef  = useRef<HTMLDivElement>(null);
+  const mapRef        = useRef<any>(null);
+  const leafletRef    = useRef<any>(null);
+  const markersRef    = useRef<any[]>([]);
+  const pinsRef       = useRef(pins);
+  const singlePinRef  = useRef(singlePin);
+  const onPinClickRef = useRef(onPinClick);
 
+  // Keep callback ref current without triggering effects
+  useEffect(() => { onPinClickRef.current = onPinClick; }, [onPinClick]);
+
+  // ── Init map once on mount ─────────────────────────────────────────────────
   useEffect(() => {
-    if (!containerRef.current || mapRef.current || pins.length === 0) return;
+    if (!containerRef.current || mapRef.current) return;
 
     let active = true;
 
     import('leaflet').then((L) => {
       if (!active || !containerRef.current || mapRef.current) return;
 
-      const defaultCenter: [number, number] = center || (
-        pins.length === 1
-          ? [pins[0].lat, pins[0].lng]
+      const currentPins = pinsRef.current;
+      if (currentPins.length === 0) return;
+
+      const defaultCenter: [number, number] = center ?? (
+        currentPins.length === 1
+          ? [currentPins[0].lat, currentPins[0].lng]
           : [
-              pins.reduce((s, p) => s + p.lat, 0) / pins.length,
-              pins.reduce((s, p) => s + p.lng, 0) / pins.length,
+              currentPins.reduce((s, p) => s + p.lat, 0) / currentPins.length,
+              currentPins.reduce((s, p) => s + p.lng, 0) / currentPins.length,
             ]
       );
 
       const map = L.map(containerRef.current!, {
         center: defaultCenter,
-        zoom: singlePin ? 15 : zoom,
+        zoom: singlePinRef.current ? 15 : zoom,
         zoomControl: true,
-        scrollWheelZoom: !singlePin,
+        scrollWheelZoom: !singlePinRef.current,
       });
 
-      // OpenStreetMap standard tiles — CSP-safe (basemaps.cartocdn.com was blocked
-      // by img-src on mobile; *.tile.openstreetmap.org is explicitly allowed)
-      const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         maxZoom: 19,
         crossOrigin: '',
       }).addTo(map);
 
-      // Custom lime marker
-      const makeIcon = (active = false) => L.divIcon({
-        html: `<div style="
-          width: ${active ? 12 : 8}px;
-          height: ${active ? 12 : 8}px;
-          background: #C8FF00;
-          outline: 2px solid #080808;
-          box-shadow: 0 0 ${active ? 12 : 6}px #C8FF00;
-          transition: all 0.2s;
-        "></div>`,
-        iconSize: [active ? 12 : 8, active ? 12 : 8],
-        iconAnchor: [active ? 6 : 4, active ? 6 : 4],
-        className: '',
-      });
-
-      pins.forEach((pin) => {
-        const marker = L.marker([pin.lat, pin.lng], { icon: makeIcon(singlePin) })
-          .addTo(map);
-
-        if (pin.name) {
-          marker.bindPopup(
-            `<div style="font-family:sans-serif;font-size:12px;font-weight:600;color:#f0f0f0;padding:2px 0">${pin.name}</div>`,
-            { closeButton: false, offset: [0, -4] }
-          );
-        }
-
-        if (pin.id && onPinClick) {
-          marker.on('click', () => onPinClick(pin.id!));
-        } else if (singlePin && pin.name) {
-          marker.openPopup();
-        }
-
-        marker.on('mouseover', function(this: L.Marker) {
-          this.setIcon(makeIcon(true));
-        });
-        marker.on('mouseout', function(this: L.Marker) {
-          this.setIcon(makeIcon(singlePin));
-        });
-      });
-
+      leafletRef.current = L;
       mapRef.current = map;
 
-      const refresh = () => {
-        if (!mapRef.current) return;
-        map.invalidateSize();
-        tileLayer.redraw();
+      addMarkersToMap(L, map, currentPins, singlePinRef.current, markersRef, onPinClickRef);
+
+      // Debounced invalidateSize — no tileLayer.redraw() which causes tile flicker
+      let roTimer: ReturnType<typeof setTimeout>;
+      const invalidate = () => {
+        clearTimeout(roTimer);
+        roTimer = setTimeout(() => { map.invalidateSize(); }, 80);
       };
 
-      // Belt-and-suspenders refresh schedule:
-      // 100ms — catches most desktop/Android cases after CSS settles
-      // 500ms — catches slow iOS Safari paint cycles and deferred layout
-      const t1 = setTimeout(refresh, 100);
-      const t2 = setTimeout(refresh, 500);
+      // Initial layout settle
+      const t1 = setTimeout(() => map.invalidateSize(), 100);
+      const t2 = setTimeout(() => map.invalidateSize(), 500);
 
-      // ResizeObserver — fires on container dimension changes (layout shifts, panel
-      // resizing, CityListing switching from sticky to stacked on mobile)
-      const ro = new ResizeObserver(refresh);
+      // ResizeObserver handles all container dimension changes:
+      // window resize, viewport height changes (iOS address bar), panel resize
+      const ro = new ResizeObserver(invalidate);
       ro.observe(containerRef.current!);
 
-      // window resize — iOS address bar show/hide changes window.innerHeight and
-      // breaks height:100% chains; a resize event is fired each time
-      const onResize = refresh;
-      window.addEventListener('resize', onResize);
-
-      // orientationchange — rotate phone: wait for layout to settle then re-check
-      const onOrient = () => { setTimeout(refresh, 300); };
+      // orientationchange: wait for layout to settle after rotation
+      const onOrient = () => setTimeout(() => map.invalidateSize(), 300);
       window.addEventListener('orientationchange', onOrient);
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (map as any)._cleanup = { ro, t1, t2, onResize, onOrient };
+      (map as any)._cleanup = { ro, t1, t2, onOrient };
     });
 
     return () => {
       active = false;
       if (mapRef.current) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const { ro, t1, t2, onResize, onOrient } = (mapRef.current as any)._cleanup ?? {};
+        const { ro, t1, t2, onOrient } = (mapRef.current as any)._cleanup ?? {};
         clearTimeout(t1);
         clearTimeout(t2);
         ro?.disconnect();
-        if (onResize) window.removeEventListener('resize', onResize);
-        if (onOrient) window.removeEventListener('orientationchange', onOrient);
+        window.removeEventListener('orientationchange', onOrient);
         mapRef.current.remove();
         mapRef.current = null;
+        leafletRef.current = null;
+        markersRef.current = [];
       }
     };
+  // center and zoom are only used for initial map setup — intentionally excluded
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pins.length]);
+  }, []);
+
+  // ── Update markers when pins change — no map remount ──────────────────────
+  useEffect(() => {
+    pinsRef.current = pins;
+    // Map not yet initialized (async leaflet import pending) — init effect will
+    // read pinsRef.current when it completes, so markers will be correct
+    if (!mapRef.current || !leafletRef.current) return;
+    addMarkersToMap(leafletRef.current, mapRef.current, pins, singlePinRef.current, markersRef, onPinClickRef);
+  }, [pins]);
 
   if (pins.length === 0) {
     return (
@@ -176,12 +203,19 @@ export default function MapView({
   return (
     <div
       ref={containerRef}
-      style={{
-        width: '100%',
-        height,
-        background: '#111',
-        position: 'relative',
-      }}
+      style={{ width: '100%', height, background: '#111', position: 'relative' }}
     />
   );
 }
+
+// Only re-render when pin IDs/positions actually change — prevents re-renders
+// caused by parent state changes (activeId, filter count labels, etc.)
+export default React.memo(MapView, (prev, next) => {
+  if (prev.height    !== next.height)    return false;
+  if (prev.zoom      !== next.zoom)      return false;
+  if (prev.singlePin !== next.singlePin) return false;
+  if (prev.pins.length !== next.pins.length) return false;
+  const prevKey = prev.pins.map(p => p.id ?? `${p.lat},${p.lng}`).join('|');
+  const nextKey = next.pins.map(p => p.id ?? `${p.lat},${p.lng}`).join('|');
+  return prevKey === nextKey; // true = equal = skip re-render
+});
