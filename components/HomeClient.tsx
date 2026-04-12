@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useT } from '@/lib/i18n';
 import { useModal } from './ModalContext';
 import { cityUrl } from '@/lib/utils';
+import { CATEGORIES } from '@/lib/categories';
 
 interface Props {
   topCities: { city: string; count: number }[];
@@ -74,6 +75,16 @@ export default function HomeClient({ topCities, total, allCities }: Props) {
   const { t } = useT();
   const { openAddGym } = useModal();
   const router = useRouter();
+  const categoryLabels: Record<string, string> = {
+    'Posilovna': t.categories.gym,
+    'CrossFit': t.categories.crossfit,
+    'Jóga': t.categories.yoga,
+    'Pilates': t.categories.pilates,
+    'Outdoor': t.categories.outdoor,
+    'Bojové sporty': t.categories.martial,
+    'Spinning': t.categories.spinning,
+    'Bazén': t.categories.pool,
+  };
   const [query, setQuery] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
 
@@ -370,10 +381,10 @@ export default function HomeClient({ topCities, total, allCities }: Props) {
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
           <div className="iron-label" style={{ marginBottom: '2rem' }}>{t.categories.title}</div>
           <div className="cat-grid">
-            {CATEGORY_NAMES.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => router.push('/posilovny')}
+            {CATEGORIES.map(({ slug, db, labelCs }) => (
+              <Link
+                key={slug}
+                href={`/kategorie/${slug}`}
                 style={{
                   background: 'var(--off-black)',
                   padding: '1.5rem 1rem',
@@ -384,12 +395,13 @@ export default function HomeClient({ topCities, total, allCities }: Props) {
                   border: 'none',
                   cursor: 'crosshair',
                   transition: 'background 0.2s',
+                  textDecoration: 'none',
                 }}
                 onMouseEnter={e => (e.currentTarget.style.background = '#1a1a1a')}
                 onMouseLeave={e => (e.currentTarget.style.background = 'var(--off-black)')}
               >
                 <span style={{ color: 'var(--lime)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <CatIcon category={cat} />
+                  <CatIcon category={db} />
                 </span>
                 <span style={{
                   fontSize: '0.65rem',
@@ -400,9 +412,9 @@ export default function HomeClient({ topCities, total, allCities }: Props) {
                   fontWeight: 700,
                   textAlign: 'center',
                 }}>
-                  {cat}
+                  {categoryLabels[db] ?? labelCs}
                 </span>
-              </button>
+              </Link>
             ))}
           </div>
         </div>

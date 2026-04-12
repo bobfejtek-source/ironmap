@@ -101,3 +101,23 @@ export async function getGymsBySlugs(slugs: string[]): Promise<Gym[]> {
   const rows = await sql`SELECT * FROM gyms WHERE slug = ANY(${slugs as unknown as string})`;
   return rows as Gym[];
 }
+
+export async function getGymsByCategory(category: string): Promise<Gym[]> {
+  if (!HAS_DB) return [];
+  const rows = await sql`
+    SELECT * FROM gyms
+    WHERE category = ${category} AND name != 'Unnamed Gym' AND staging = FALSE
+    ORDER BY CASE WHEN rating IS NOT NULL THEN 0 ELSE 1 END, rating DESC, name
+  `;
+  return rows as Gym[];
+}
+
+export async function getGymsByCityAndCategory(city: string, category: string): Promise<Gym[]> {
+  if (!HAS_DB) return [];
+  const rows = await sql`
+    SELECT * FROM gyms
+    WHERE city = ${city} AND category = ${category} AND name != 'Unnamed Gym' AND staging = FALSE
+    ORDER BY CASE WHEN rating IS NOT NULL THEN 0 ELSE 1 END, rating DESC, name
+  `;
+  return rows as Gym[];
+}

@@ -1,0 +1,161 @@
+[
+  {
+    "id": 1,
+    "name": "Studio Bianca - Sporty Education Center",
+    "city": "Brno",
+    "website": "https://www.studiobianca.cz/",
+    "pagesChecked": [
+      "https://www.studiobianca.cz/",
+      "https://www.studiobianca.cz/cenik",
+      "https://www.studiobianca.cz/ceny"
+    ],
+    "usedPuppeteer": false,
+    "daily": null,
+    "monthly": null,
+    "rawText": null,
+    "status": "not_found"
+  },
+  {
+    "id": 6,
+    "name": "Železná koule",
+    "city": "Praha",
+    "website": "http://zeleznakoule.cz",
+    "pagesChecked": [
+      "http://zeleznakoule.cz/",
+      "http://zeleznakoule.cz/cenik",
+      "http://zeleznakoule.cz/ceny"
+    ],
+    "usedPuppeteer": true,
+    "daily": null,
+    "monthly": null,
+    "rawText": null,
+    "status": "not_found"
+  },
+  {
+    "id": 7,
+    "name": "Insportline",
+    "city": "Vítkov",
+    "website": "https://www.insportline.cz",
+    "pagesChecked": [
+      "https://www.insportline.cz/",
+      "https://www.insportline.cz/cenik",
+      "https://www.insportline.cz/ceny"
+    ],
+    "usedPuppeteer": true,
+    "daily": 4990,
+    "monthly": null,
+    "rawText": "4990 Kč — zí Následující Články a aktuality Dárek pro malé jezdce: k dětskému kolu chytré ",
+    "status": "found"
+  },
+  {
+    "id": 8,
+    "name": "Masáže a osobní tréninky Recovery centrum",
+    "city": "Zábřeh",
+    "website": "https://www.rcentrum.com/",
+    "pagesChecked": [
+      "https://www.rcentrum.com/",
+      "https://www.rcentrum.com/cenik",
+      "https://www.rcentrum.com/ceny"
+    ],
+    "usedPuppeteer": true,
+    "daily": null,
+    "monthly": null,
+    "rawText": null,
+    "status": "not_found"
+  },
+  {
+    "id": 9,
+    "name": "Sokolovna",
+    "city": "Týnec nad Sázavou",
+    "website": "https://badmintontynec.cz",
+    "pagesChecked": [
+      "https://badmintontynec.cz/",
+      "https://badmintontynec.cz/cenik",
+      "https://badmintontynec.cz/ceny"
+    ],
+    "usedPuppeteer": false,
+    "daily": null,
+    "monthly": null,
+    "rawText": null,
+    "status": "not_found"
+  },
+  {
+    "id": 10,
+    "name": "Form Factory Fitness Vinohrady",
+    "city": "Praha",
+    "website": "https://www.formfactory.cz/klub/fitness-vinohradska/",
+    "pagesChecked": [
+      "https://www.formfactory.cz/klub/fitness-vinohradska/",
+      "https://www.formfactory.cz/cenik"
+    ],
+    "usedPuppeteer": false,
+    "daily": 990,
+    "monthly": 1490,
+    "rawText": "990 Kč — úroveň členství (pokud klub nabízí) Vyšší úroveň vám otevře přístup do více klub | 990 Kč — ě &#8211; &#8211; Kamarád (vstup) 1× měsíčně 1× měsíčně &#8211; možnost sdílet v | 1390 Kč — &#8211; Kamarád (vstup) 1× měsíčně 1× měsíčně &#8211; možnost sdílet vstupy při ",
+    "status": "found"
+  },
+  {
+    "id": 11,
+    "name": "BBgym Kladno",
+    "city": "Kladno",
+    "website": "https://www.bbgymkladno.cz",
+    "pagesChecked": [
+      "https://www.bbgymkladno.cz/",
+      "https://www.bbgymkladno.cz/cenik",
+      "https://www.bbgymkladno.cz/ceny"
+    ],
+    "usedPuppeteer": true,
+    "daily": 250,
+    "monthly": null,
+    "rawText": "250 Kč — ový kompenzační trénink Cvičení pro regeneraci, uvolnění a odstranění svalových  | 1600 Kč — vstup do gymu. Úvodní konzultace a trénink jsou ZDARMA. Skupinová Lekce 250,- CZ | 450 Kč — ymu Trenérský dohled Motivace týmu Délka 60 min Mám zájem NEJŽÁDANĚJŠÍ Osobní Tr",
+    "status": "found"
+  },
+  {
+    "id": 12,
+    "name": "Sportovní hala Stochov",
+    "city": "Stochov",
+    "website": "https://www.sportstochov.cz/",
+    "pagesChecked": [
+      "https://www.sportstochov.cz/",
+      "https://www.sportstochov.cz/cenik",
+      "https://www.sportstochov.cz/ceny"
+    ],
+    "usedPuppeteer": true,
+    "daily": null,
+    "monthly": null,
+    "rawText": null,
+    "status": "not_found"
+  },
+  {
+    "id": 14,
+    "name": "Body Diamond",
+    "city": "Brno",
+    "website": "https://bodydiamond.cz/",
+    "pagesChecked": [
+      "https://bodydiamond.cz/",
+      "https://bodydiamond.cz/cenik",
+      "https://bodydiamond.cz/ceny"
+    ],
+    "usedPuppeteer": true,
+    "daily": 200,
+    "monthly": null,
+    "rawText": "200 Kč — m Výhodný EMS trénink v Brně Naše studio Body Diamond se vám snaží vždy poskytno | 590 Kč — tudio Body Diamond se vám snaží vždy poskytnout nejlepší poměr cena/výkon a pomo | 590 Kč — on a pomoci vám tak dosáhnout vysněné postavy. Trénink Zkušební trénink za zkouš",
+    "status": "found"
+  },
+  {
+    "id": 15,
+    "name": "Olympia Fitness & Wellness",
+    "city": "Všenory",
+    "website": "https://www.olympia-wellness.net",
+    "pagesChecked": [
+      "https://www.olympia-wellness.net/",
+      "https://www.olympia-wellness.net/cenik",
+      "https://www.olympia-wellness.net/ceny"
+    ],
+    "usedPuppeteer": true,
+    "daily": null,
+    "monthly": null,
+    "rawText": null,
+    "status": "not_found"
+  }
+]

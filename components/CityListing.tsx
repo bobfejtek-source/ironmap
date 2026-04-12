@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo, useRef } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import type { Gym } from '@/lib/db';
 import GymCard from './GymCard';
@@ -50,12 +51,23 @@ function isOpenNow(raw: string | null): boolean | null {
 interface Props {
   gyms: Gym[];
   cityName: string;
+  initialCategory?: string;
 }
 
-export default function CityListing({ gyms, cityName }: Props) {
+export default function CityListing({ gyms, cityName, initialCategory }: Props) {
   const { t } = useT();
-  const [category, setCategory] = useState('Vše');
+  const router = useRouter();
+  const pathname = usePathname();
+  const [category, setCategory] = useState(initialCategory ?? 'Vše');
   const [openNow, setOpenNow] = useState(false);
+
+  function selectCategory(cat: string) {
+    setCategory(cat);
+    const params = new URLSearchParams();
+    if (cat !== 'Vše') params.set('kategorie', cat);
+    const qs = params.toString();
+    router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+  }
   const [activeId, setActiveId] = useState<string | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -133,7 +145,7 @@ export default function CityListing({ gyms, cityName }: Props) {
           <button
             key={cat}
             className={`chip${category === cat ? ' active' : ''}`}
-            onClick={() => setCategory(cat)}
+            onClick={() => selectCategory(cat)}
           >
             {categoryLabels[cat] ?? cat}
           </button>
@@ -150,7 +162,7 @@ export default function CityListing({ gyms, cityName }: Props) {
 
         {hasFilters && (
           <button
-            onClick={() => { setCategory('Vše'); setOpenNow(false); }}
+            onClick={() => { selectCategory('Vše'); setOpenNow(false); }}
             style={{
               fontSize: '0.65rem',
               letterSpacing: '0.12em',

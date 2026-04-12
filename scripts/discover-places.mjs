@@ -422,8 +422,8 @@ async function insertGym(db, gym) {
     INSERT INTO gyms (
       name, slug, city, address, coordinates, phone, website,
       opening_hours, price_level, rating, rating_count, place_id,
-      discovery_source, discovery_batch, confidence, staging, verified
-    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)
+      discovery_source, discovery_batch, confidence, staging, verified, category
+    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)
     RETURNING id
   `, [
     gym.name, gym.slug, gym.city, gym.address, gym.coordinates,
@@ -432,6 +432,7 @@ async function insertGym(db, gym) {
     'places_discovery', gym.discovery_batch, gym.confidence,
     true, // staging = TRUE
     0,    // verified = 0
+    gym.category,
   ]);
   return rows[0].id;
 }
@@ -536,6 +537,26 @@ function isExcluded(place) {
 
 // ── Candidate builder ─────────────────────────────────────────────────────────
 
+function stripD(s) { return s.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
+
+function categorizeByName(name) {
+  const n = stripD(name.toLowerCase());
+  const has = (...terms) => terms.some(t => n.includes(stripD(t.toLowerCase())));
+
+  if (has('yoga','jóga','joga','jógov','jogov','yogi','iyengar','ashtanga','vinyasa','taiji','tai chi','qigong')) return 'Jóga';
+  if (has('pilates','pilate')) return 'Pilates';
+  if (has('crossfit','cross fit','cross-fit')) return 'CrossFit';
+  if (has('spinning','spin studio','indoor cycling','cyklo studio','cyklostudio')) return 'Spinning';
+  if (has('box','boxing','boxárna','boxarna','kickbox','muay thai','mma','judo','karate','aikido',
+           'taekwondo','bjj','jiu jitsu','jiu-jitsu','bojov','martial','zápas','zapas',
+           'wrestling','budo','kapap','krav maga','combat','šerm','serm','fencing')) return 'Bojové sporty';
+  if (has('outdoor','venkovní','venkovni','street workout','fitpark','fit park',
+           'fitness park','fitness stezka','workout park','outdoor gym',
+           'lezecká stěna','lezecka stena','bouldering','calisthenics')) return 'Outdoor';
+  if (has('bazén','bazen','plaveck','plovárna','plovarna','aqua','swim')) return 'Bazén';
+  return 'Posilovna';
+}
+
 function buildGymRecord(place, targetCity, batchId, usedSlugs) {
   const name    = place.displayName?.text ?? '';
   const lat     = place.location?.latitude ?? null;
@@ -566,6 +587,7 @@ function buildGymRecord(place, targetCity, batchId, usedSlugs) {
     place_id:     place.id ?? null,
     confidence:   computeConfidence(place),
     discovery_batch: batchId,
+    category:     categorizeByName(name),
   };
 }
 

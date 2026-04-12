@@ -8,7 +8,9 @@ import CityListing from '@/components/CityListing';
 export const dynamicParams = true;
 export const revalidate = 3600;
 
-type Props = { params: { city: string } };
+import { CATEGORIES } from '@/lib/categories';
+
+type Props = { params: { city: string }; searchParams: { kategorie?: string } };
 
 export async function generateStaticParams() {
   const cities = await getCities();
@@ -26,12 +28,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function CityGymsPage({ params }: Props) {
+export default async function CityGymsPage({ params, searchParams }: Props) {
   const cityName = await resolveCityName(params.city);
   if (!cityName) notFound();
 
   const gyms = await getGymsByCity(cityName);
   if (gyms.length === 0) notFound();
+
+  // Resolve initialCategory from ?kategorie= param (must be a known DB value)
+  const katParam = searchParams.kategorie;
+  const initialCategory = CATEGORIES.find(c => c.db === katParam)?.db ?? undefined;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -88,7 +94,7 @@ export default async function CityGymsPage({ params }: Props) {
       </div>
 
       {/* Listing with map */}
-      <CityListing gyms={gyms} cityName={cityName} />
+      <CityListing gyms={gyms} cityName={cityName} initialCategory={initialCategory} />
     </div>
   );
 }
