@@ -59,9 +59,10 @@ export default async function GymDetailPage({ params }: Props) {
             } : undefined,
             telephone: gym.phone ?? undefined,
             url: gym.website ?? undefined,
-            aggregateRating: gym.rating ? {
+            aggregateRating: gym.rating && gym.rating_count ? {
               '@type': 'AggregateRating',
               ratingValue: gym.rating,
+              reviewCount: gym.rating_count,
               bestRating: 5,
               worstRating: 1,
             } : undefined,
