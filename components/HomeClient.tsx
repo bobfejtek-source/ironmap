@@ -12,7 +12,6 @@ interface Props {
   topCities: { city: string; count: number }[];
   total: number;
   allCities: { city: string; count: number }[];
-  cityCenters: { city: string; lat: number; lng: number }[];
 }
 
 function CatIcon({ category }: { category: string }) {
@@ -67,7 +66,7 @@ type IntentModal = 'entry' | 'compare' | 'trainer' | null;
 const FORMSPREE = 'https://formspree.io/f/xgopqqvz';
 const TRAINER_GOALS = ['Silový trénink', 'Hubnutí', 'Kondice', 'Rehabilitace', 'Výživa a strava', 'Jiné'];
 
-export default function HomeClient({ topCities, total, allCities, cityCenters }: Props) {
+export default function HomeClient({ topCities, total, allCities }: Props) {
   const { t } = useT();
   const { openAddGym } = useModal();
   const router = useRouter();
