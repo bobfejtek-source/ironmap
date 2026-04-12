@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getTopCities, getTotalCount, getCities } from '@/lib/db';
+import { getTopCities, getTotalCount, getCities, getCityCenters } from '@/lib/db';
 import HomeClient from '@/components/HomeClient';
 
 export const revalidate = 3600;
@@ -12,10 +12,11 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const [topCities, total, allCities] = await Promise.all([
+  const [topCities, total, allCities, cityCenters] = await Promise.all([
     getTopCities(10),
     getTotalCount(),
     getCities(),
+    getCityCenters(),
   ]);
 
   return (
@@ -23,6 +24,7 @@ export default async function HomePage() {
       topCities={topCities}
       total={total}
       allCities={allCities}
+      cityCenters={cityCenters}
     />
   );
 }

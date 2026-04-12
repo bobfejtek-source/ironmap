@@ -10,7 +10,7 @@ export const revalidate = 3600;
 
 import { CATEGORIES } from '@/lib/categories';
 
-type Props = { params: { city: string }; searchParams: { kategorie?: string } };
+type Props = { params: { city: string }; searchParams: { kategorie?: string; lat?: string; lng?: string } };
 
 export async function generateStaticParams() {
   const cities = await getCities();
@@ -38,6 +38,10 @@ export default async function CityGymsPage({ params, searchParams }: Props) {
   // Resolve initialCategory from ?kategorie= param (must be a known DB value)
   const katParam = searchParams.kategorie;
   const initialCategory = CATEGORIES.find(c => c.db === katParam)?.db ?? undefined;
+
+  // Geolocation coords from ?lat=&lng= — passed through from homepage redirect
+  const userLat = searchParams.lat ? parseFloat(searchParams.lat) : undefined;
+  const userLng = searchParams.lng ? parseFloat(searchParams.lng) : undefined;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -94,7 +98,7 @@ export default async function CityGymsPage({ params, searchParams }: Props) {
       </div>
 
       {/* Listing with map */}
-      <CityListing gyms={gyms} cityName={cityName} initialCategory={initialCategory} />
+      <CityListing gyms={gyms} cityName={cityName} initialCategory={initialCategory} userLat={userLat} userLng={userLng} />
     </div>
   );
 }

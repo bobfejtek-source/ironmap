@@ -12,6 +12,14 @@ interface Props {
   topCities: { city: string; count: number }[];
   total: number;
   allCities: { city: string; count: number }[];
+  cityCenters: { city: string; lat: number; lng: number }[];
+}
+
+function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const R = 6371, r = (x: number) => x * Math.PI / 180;
+  const dl = r(lat2 - lat1), dn = r(lng2 - lng1);
+  const a = Math.sin(dl / 2) ** 2 + Math.cos(r(lat1)) * Math.cos(r(lat2)) * Math.sin(dn / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
 
@@ -67,7 +75,7 @@ type IntentModal = 'entry' | 'compare' | 'trainer' | null;
 const FORMSPREE = 'https://formspree.io/f/xgopqqvz';
 const TRAINER_GOALS = ['Silový trénink', 'Hubnutí', 'Kondice', 'Rehabilitace', 'Výživa a strava', 'Jiné'];
 
-export default function HomeClient({ topCities, total, allCities }: Props) {
+export default function HomeClient({ topCities, total, allCities, cityCenters }: Props) {
   const { t } = useT();
   const { openAddGym } = useModal();
   const router = useRouter();
@@ -165,7 +173,21 @@ export default function HomeClient({ topCities, total, allCities }: Props) {
       return;
     }
     navigator.geolocation.getCurrentPosition(
-      () => { router.push('/posilovny'); },
+      (pos) => {
+        const { latitude: lat, longitude: lng } = pos.coords;
+        // Find nearest city by haversine distance
+        let nearest = cityCenters[0];
+        let minDist = Infinity;
+        for (const c of cityCenters) {
+          const d = haversineKm(lat, lng, c.lat, c.lng);
+          if (d < minDist) { minDist = d; nearest = c; }
+        }
+        if (!nearest) { router.push('/posilovny'); return; }
+        const slug = nearest.city
+          .toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        router.push(`/posilovny/${slug}?lat=${lat.toFixed(5)}&lng=${lng.toFixed(5)}`);
+      },
       () => { setGeoError(t.geo.permissionDenied); }
     );
   };

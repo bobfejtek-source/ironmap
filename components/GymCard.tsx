@@ -22,9 +22,10 @@ const CATEGORY_KEY: Record<string, string> = {
 interface Props {
   gym: Gym;
   hideCity?: boolean;
+  distanceKm?: number;
 }
 
-export default function GymCard({ gym, hideCity = false }: Props) {
+export default function GymCard({ gym, hideCity = false, distanceKm }: Props) {
   const { t } = useT();
   const category = gym.category ?? 'Posilovna';
   const key = CATEGORY_KEY[category];
@@ -65,20 +66,35 @@ export default function GymCard({ gym, hideCity = false }: Props) {
         gap: '0.75rem',
       }}
     >
-      {/* Row 1: Category tag + Rating */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{
-          fontSize: '0.6rem',
-          letterSpacing: '0.12em',
-          textTransform: 'uppercase',
-          border: '1px solid var(--border)',
-          padding: '0.15rem 0.5rem',
-          color: 'var(--lime)',
-          fontFamily: 'var(--font-display)',
-          fontWeight: 700,
-        }}>
-          {categoryLabel}
-        </span>
+      {/* Row 1: Category tag + Distance + Rating */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', minWidth: 0 }}>
+          <span style={{
+            fontSize: '0.6rem',
+            letterSpacing: '0.12em',
+            textTransform: 'uppercase',
+            border: '1px solid var(--border)',
+            padding: '0.15rem 0.5rem',
+            color: 'var(--lime)',
+            fontFamily: 'var(--font-display)',
+            fontWeight: 700,
+            flexShrink: 0,
+          }}>
+            {categoryLabel}
+          </span>
+          {distanceKm != null && (
+            <span style={{
+              fontSize: '0.6rem',
+              letterSpacing: '0.1em',
+              fontFamily: 'var(--font-display)',
+              fontWeight: 700,
+              color: 'var(--muted)',
+              flexShrink: 0,
+            }}>
+              {distanceKm < 1 ? `${Math.round(distanceKm * 1000)} m` : `${distanceKm.toFixed(1)} km`}
+            </span>
+          )}
+        </div>
 
         {gym.rating != null ? (
           <div style={{

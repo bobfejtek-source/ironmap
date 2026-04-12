@@ -37,6 +37,17 @@ const nextConfig = {
     ],
   },
 
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'ironmap.cz' }],
+        destination: 'https://www.ironmap.cz/:path*',
+        permanent: true,
+      },
+    ];
+  },
+
   async headers() {
     return [
       {

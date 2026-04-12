@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { getAllGyms, getCities } from '@/lib/db';
 import { cityUrl, gymDetailUrl } from '@/lib/utils';
+import { CATEGORIES } from '@/lib/categories';
 
 const BASE = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://www.ironmap.cz';
 
@@ -48,5 +49,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [...staticRoutes, ...cityRoutes, ...gymRoutes];
+  const categoryRoutes: MetadataRoute.Sitemap = CATEGORIES.map(({ slug }) => ({
+    url: `${BASE}/kategorie/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly',
+    priority: 0.8,
+  }));
+
+  return [...staticRoutes, ...categoryRoutes, ...cityRoutes, ...gymRoutes];
 }

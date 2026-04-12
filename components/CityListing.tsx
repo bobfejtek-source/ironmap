@@ -52,9 +52,18 @@ interface Props {
   gyms: Gym[];
   cityName: string;
   initialCategory?: string;
+  userLat?: number;
+  userLng?: number;
 }
 
-export default function CityListing({ gyms, cityName, initialCategory }: Props) {
+function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const R = 6371, r = (x: number) => x * Math.PI / 180;
+  const dl = r(lat2 - lat1), dn = r(lng2 - lng1);
+  const a = Math.sin(dl / 2) ** 2 + Math.cos(r(lat1)) * Math.cos(r(lat2)) * Math.sin(dn / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+export default function CityListing({ gyms, cityName, initialCategory, userLat, userLng }: Props) {
   const { t } = useT();
   const router = useRouter();
   const pathname = usePathname();
@@ -83,8 +92,10 @@ export default function CityListing({ gyms, cityName, initialCategory }: Props) 
     'Bazén': t.categories.pool,
   };
 
+  const geoActive = userLat != null && userLng != null;
+
   const filtered = useMemo(() => {
-    return gyms.filter(g => {
+    let result = gyms.filter(g => {
       if (category !== 'Vše' && (g.category ?? 'Posilovna') !== category) return false;
       if (openNow) {
         const open = isOpenNow(g.opening_hours);
@@ -92,7 +103,16 @@ export default function CityListing({ gyms, cityName, initialCategory }: Props) 
       }
       return true;
     });
-  }, [gyms, category, openNow]);
+
+    if (geoActive) {
+      result = result.slice().sort((a, b) => {
+        const distA = (() => { try { const c = JSON.parse(a.coordinates!); return haversineKm(userLat!, userLng!, c.lat, c.lng); } catch { return Infinity; } })();
+        const distB = (() => { try { const c = JSON.parse(b.coordinates!); return haversineKm(userLat!, userLng!, c.lat, c.lng); } catch { return Infinity; } })();
+        return distA - distB;
+      });
+    }
+    return result;
+  }, [gyms, category, openNow, geoActive, userLat, userLng]);
 
   const pins: MapPin[] = useMemo(() =>
     filtered
@@ -247,18 +267,23 @@ export default function CityListing({ gyms, cityName, initialCategory }: Props) 
               {t.listing.noResults}
             </div>
           ) : (
-            filtered.map(gym => (
-              <div
-                key={gym.id}
-                id={`gym-card-${gym.id}`}
-                style={{
-                  outline: activeId === String(gym.id) ? '1px solid var(--lime)' : 'none',
-                  transition: 'outline 0.2s',
-                }}
-              >
-                <GymCard gym={gym} hideCity />
-              </div>
-            ))
+            filtered.map(gym => {
+              const distanceKm = geoActive && gym.coordinates
+                ? (() => { try { const c = JSON.parse(gym.coordinates!); return haversineKm(userLat!, userLng!, c.lat, c.lng); } catch { return undefined; } })()
+                : undefined;
+              return (
+                <div
+                  key={gym.id}
+                  id={`gym-card-${gym.id}`}
+                  style={{
+                    outline: activeId === String(gym.id) ? '1px solid var(--lime)' : 'none',
+                    transition: 'outline 0.2s',
+                  }}
+                >
+                  <GymCard gym={gym} hideCity distanceKm={distanceKm} />
+                </div>
+              );
+            })
           )}
         </div>
       </div>

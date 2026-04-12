@@ -102,6 +102,22 @@ export async function getGymsBySlugs(slugs: string[]): Promise<Gym[]> {
   return rows as Gym[];
 }
 
+export async function getCityCenters(): Promise<{ city: string; lat: number; lng: number }[]> {
+  if (!HAS_DB) return [];
+  const rows = await sql`
+    SELECT
+      city,
+      AVG((coordinates::json->>'lat')::float) AS lat,
+      AVG((coordinates::json->>'lng')::float) AS lng
+    FROM gyms
+    WHERE staging = FALSE AND coordinates IS NOT NULL
+    GROUP BY city
+    HAVING COUNT(*) >= 2
+    ORDER BY COUNT(*) DESC
+  `;
+  return rows as { city: string; lat: number; lng: number }[];
+}
+
 export async function getGymsByCategory(category: string): Promise<Gym[]> {
   if (!HAS_DB) return [];
   const rows = await sql`
