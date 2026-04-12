@@ -128,11 +128,10 @@ export default function ProMajiteleClient({ gymCount }: Props) {
 
       {/* ── 1. HERO ─────────────────────────────────────────────────── */}
       <section style={{
-        minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
-        padding: '8rem 2rem 6rem',
+        padding: '5rem 2rem 4rem',
         maxWidth: 900,
         margin: '0 auto',
       }}>
@@ -278,7 +277,7 @@ export default function ProMajiteleClient({ gymCount }: Props) {
           lineHeight: 1.8,
           color: 'var(--muted)',
         }}>
-          Každý měsíc tisíce lidí ve vašem městě googl hledá posilovnu. Část z nich najde konkurenci. Část vás nenajde vůbec.{' '}
+          Každý měsíc tisíce lidí ve vašem městě hledá posilovnu. Část z nich najde konkurenci. Část vás nenajde vůbec.{' '}
           <span style={{ color: 'var(--text)', fontWeight: 400 }}>
             IRONMAP to mění — jsme tam kde lidé hledají, v momentě rozhodnutí.
           </span>
@@ -378,7 +377,7 @@ export default function ProMajiteleClient({ gymCount }: Props) {
             </div>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
               {[
-                'Prioritní pozice — buďte vidět jako první',
+                'Prioritní pozice — buďte vidět mezi prvními',
                 'Vlastní fotogalerie',
                 'Statistiky prohlédnutí',
                 'Ověřený badge — zákazníci vám věří více',
@@ -454,67 +453,69 @@ export default function ProMajiteleClient({ gymCount }: Props) {
         </div>
       </section>
 
-      {/* ── 5. GYM OF THE WEEK ───────────────────────────────────────── */}
+      {/* ── 5. COMING SOON BANNER ────────────────────────────────────── */}
       <section style={{
-        background: 'var(--off-black)',
         borderTop: '1px solid var(--border)',
         borderBottom: '1px solid var(--border)',
-        padding: '7rem 2rem',
+        padding: '4rem 2rem',
+        background: 'var(--black)',
       }}>
-        <div style={{ maxWidth: 760, margin: '0 auto' }}>
-          <div style={{
-            fontFamily: 'var(--font-display)',
-            fontWeight: 700,
-            fontSize: '0.68rem',
-            letterSpacing: '0.22em',
-            textTransform: 'uppercase',
-            color: 'var(--lime)',
-            marginBottom: '1.5rem',
-          }}>
-            Prémiová expozice
-          </div>
-          <h2 style={{
-            fontFamily: 'var(--font-display)',
-            fontWeight: 900,
-            fontSize: 'clamp(1.6rem, 4vw, 3rem)',
-            textTransform: 'uppercase',
-            letterSpacing: '-0.01em',
-            lineHeight: 1,
-            marginBottom: '2rem',
-            color: 'var(--text)',
-          }}>
-            Gym týdne —{' '}
-            <span style={{ color: 'var(--lime)' }}>buďte na titulní stránce</span>
-          </h2>
-          <p style={{
-            fontFamily: 'var(--font-barlow)',
-            fontWeight: 300,
-            fontSize: '1.1rem',
-            lineHeight: 1.8,
-            color: 'var(--muted)',
-            marginBottom: '2.5rem',
-            maxWidth: 560,
-          }}>
-            Homepage banner + dedikovaný článek + sdílení na sociálních sítích. Jednorázová investice, trvalý efekt.
-          </p>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', flexWrap: 'wrap' }}>
+        <div style={{ maxWidth: 760, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '2rem' }}>
+          <div>
             <div style={{
               fontFamily: 'var(--font-display)',
-              fontWeight: 900,
-              fontSize: '2rem',
-              color: 'var(--lime)',
-              letterSpacing: '0.02em',
+              fontWeight: 700,
+              fontSize: '0.65rem',
+              letterSpacing: '0.22em',
+              textTransform: 'uppercase',
+              color: 'var(--border-mid)',
+              marginBottom: '0.75rem',
             }}>
-              4 999 Kč jednorázově
+              Brzy
             </div>
-            <a
-              href="#kontakt"
-              className="iron-btn iron-btn-primary"
-              style={{ fontSize: '0.85rem', padding: '0.7rem 1.75rem', textDecoration: 'none' }}
-            >
-              Mám zájem
-            </a>
+            <h3 style={{
+              fontFamily: 'var(--font-display)',
+              fontWeight: 900,
+              fontSize: 'clamp(1rem, 2.5vw, 1.5rem)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.04em',
+              color: 'var(--muted)',
+              marginBottom: '0.75rem',
+            }}>
+              Reklamní bannery — brzy
+            </h3>
+            <p style={{
+              fontFamily: 'var(--font-barlow)',
+              fontWeight: 300,
+              fontSize: '0.95rem',
+              lineHeight: 1.7,
+              color: 'var(--border-mid)',
+              maxWidth: 480,
+              margin: 0,
+            }}>
+              Připravujeme prémiové reklamní pozice pro vaše fitko. Homepage banner, kategorie stránky, výsledky vyhledávání. Máte zájem? Napište nám.
+            </p>
           </div>
+          <a
+            href="#kontakt"
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontWeight: 700,
+              fontSize: '0.72rem',
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase',
+              color: 'var(--muted)',
+              border: '1px solid var(--border)',
+              padding: '0.6rem 1.25rem',
+              textDecoration: 'none',
+              flexShrink: 0,
+              transition: 'color 0.2s, border-color 0.2s',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.color = 'var(--text)'; e.currentTarget.style.borderColor = 'var(--muted)'; }}
+            onMouseLeave={e => { e.currentTarget.style.color = 'var(--muted)'; e.currentTarget.style.borderColor = 'var(--border)'; }}
+          >
+            Mám zájem →
+          </a>
         </div>
       </section>
 
