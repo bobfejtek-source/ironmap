@@ -410,7 +410,23 @@ export default function ProMajiteleClient({ gymCount }: Props) {
             flexDirection: 'column',
             gap: '1.25rem',
             background: 'var(--off-black)',
+            position: 'relative',
           }}>
+            <div style={{
+              position: 'absolute',
+              top: '-1px', left: '50%', transform: 'translateX(-50%)',
+              background: '#b8860b',
+              color: '#fff',
+              fontFamily: 'var(--font-display)',
+              fontWeight: 900,
+              fontSize: '0.6rem',
+              letterSpacing: '0.2em',
+              textTransform: 'uppercase',
+              padding: '0.25rem 0.75rem',
+              whiteSpace: 'nowrap',
+            }}>
+              Největší hodnota
+            </div>
             <div>
               <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '0.75rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '0.75rem' }}>Elite</div>
               <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '2.5rem', letterSpacing: '0.02em', color: 'var(--text)', lineHeight: 1 }}>1 290 Kč<span style={{ fontSize: '1rem', color: 'var(--muted)', fontWeight: 700 }}>/měs</span></div>
