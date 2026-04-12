@@ -148,8 +148,8 @@ const EXCLUDE_NAME_KEYWORDS = [
   'házení sekery', 'házení sekerou', 'axe throw',
   'psí ', ' psí',  // dog training halls
   'koňsk', 'equin', 'jezdecký', 'jezdeck',  // equestrian
-  // Stadiums / arenas (large spectator venues)
-  'stadion', 'stadión', 'aréna', 'arena',
+  // Stadiums (large spectator venues — but NOT "Arena Gym" type names)
+  'stadion', 'stadión',
   // Entertainment / trampoline parks
   'laser game', 'lasergame', 'escape room', 'úniková',
   'trampolín', 'trampoline', 'jump family', 'jump arena', 'jump park',
