@@ -45,11 +45,11 @@ export default function GymCard({ gym, hideCity = false, distanceKm }: Props) {
   // Price display
   const hasPrice = gym.price_verified && (gym.daily_price || gym.monthly_price);
   const priceLabel = gym.price_verified && gym.daily_price && gym.monthly_price
-    ? `Vstup od ${gym.daily_price} Kč | Členství od ${gym.monthly_price} Kč`
+    ? `${t.gymCard.dropInFrom} ${gym.daily_price} ${t.gymCard.currency} | ${t.gymCard.membershipFrom} ${gym.monthly_price} ${t.gymCard.currency}`
     : gym.price_verified && gym.daily_price
-    ? `Vstup od ${gym.daily_price} Kč`
+    ? `${t.gymCard.dropInFrom} ${gym.daily_price} ${t.gymCard.currency}`
     : gym.price_verified && gym.monthly_price
-    ? `Členství od ${gym.monthly_price} Kč`
+    ? `${t.gymCard.membershipFrom} ${gym.monthly_price} ${t.gymCard.currency}`
     : null;
 
   return (
@@ -189,13 +189,13 @@ export default function GymCard({ gym, hideCity = false, distanceKm }: Props) {
                 letterSpacing: '0.06em',
                 textTransform: 'uppercase',
               }}>
-                {status.open ? 'Otevřeno' : 'Zavřeno'}
+                {status.open ? t.gymCard.open : t.gymCard.closed}
               </span>
               <span style={{ color: 'var(--border-mid)', fontSize: '0.72rem' }}>·</span>
               <span style={{ fontSize: '0.78rem', color: 'var(--muted)', fontWeight: 300 }}>
                 {status.open
-                  ? `do ${status.closesAt}`
-                  : status.opensAt ? `otevírá ${status.opensAt}` : todayFmt}
+                  ? `${t.gymCard.until} ${status.closesAt}`
+                  : status.opensAt ? `${t.gymCard.opens} ${status.opensAt}` : todayFmt}
               </span>
             </>
           ) : (
@@ -243,7 +243,7 @@ export default function GymCard({ gym, hideCity = false, distanceKm }: Props) {
           fontWeight: 700,
           marginLeft: hideCity ? 'auto' : undefined,
         }}>
-          {priceLabel ?? 'Detail →'}
+          {priceLabel ?? t.gymCard.detail}
         </span>
       </div>
     </Link>

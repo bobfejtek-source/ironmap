@@ -43,7 +43,7 @@ export default function IronFooter() {
         {[
           { label: t.footer.gyms, href: '/posilovny' },
           { label: t.footer.about, href: '/o-projektu' },
-          { label: 'Pro majitele', href: '/pro-majitele' },
+          { label: t.footer.forOwners, href: '/pro-majitele' },
           { label: t.footer.contact, href: '/kontakt' },
           { label: t.footer.privacy, href: '/ochrana-soukromi' },
         ].map(({ label, href }) => (

@@ -141,6 +141,7 @@
   "footer": {
     "gyms": "Gyms",
     "about": "About",
+    "forOwners": "For gym owners",
     "contact": "Contact",
     "privacy": "Privacy",
     "tagline": "The largest gym directory in the Czech Republic."
@@ -252,5 +253,124 @@
     "emailLabel": "Email",
     "addGymBtn": "Add a gym",
     "feedbackBtn": "Feedback"
+  },
+  "gymCard": {
+    "open": "Open",
+    "closed": "Closed",
+    "until": "until",
+    "opens": "opens",
+    "detail": "View →",
+    "dropInFrom": "Drop-in from",
+    "membershipFrom": "Membership from",
+    "dropInAndMembership": "Drop-in from {dropIn} CZK | Membership from {monthly} CZK",
+    "currency": "CZK"
+  },
+  "nearby": {
+    "breadcrumb": "Near you",
+    "title": "Gyms near you",
+    "radius": "Radius:",
+    "noGymsTitle": "No gyms within {radius} km",
+    "noGymsSub": "Try a larger radius or view the nearest city.",
+    "viewCity": "View gyms in {city} →",
+    "sorted": "gyms — sorted by distance",
+    "noCategory": "No results for this category.",
+    "showMap": "Show map",
+    "hideMap": "Hide map",
+    "loadingMap": "Loading map…"
+  },
+  "forOwners": {
+    "tag": "For gym owners",
+    "heroLine1": "Your customers",
+    "heroLine2": "are searching.",
+    "heroLineAccent": "Will they find you?",
+    "heroSub": "Over 450,000 active fitness members in the Czech Republic. The fitness market grows 12% a year. Be where they search.",
+    "heroCta": "Add your gym →",
+    "heroCta2": "View pricing",
+    "statsGymLabel": "fitness centres in the directory",
+    "statsCitiesLabel": "cities covered",
+    "statsGrowthLabel": "annual fitness market growth in CZ",
+    "statsMembersLabel": "active members in CZ",
+    "statsMembershipLabel": "average monthly membership in CZ",
+    "problemTitle1": "Your gym is great.",
+    "problemTitleAccent": "But does enough people know about it?",
+    "problemBody": "Every month thousands of people in your city search for a gym. Some find your competition. Some never find you.",
+    "problemBodyAccent": "IRONMAP changes that — we're where people look, at the moment of decision.",
+    "pricingTag": "Pricing",
+    "pricingTitle": "Choose your plan",
+    "freeName": "Free",
+    "freePrice": "Free",
+    "freeFeatures": ["Basic profile with address", "Map listing", "Opening hours"],
+    "freeCta": "Add your gym free",
+    "proName": "Pro",
+    "proBadge": "Most popular",
+    "proPrice": "499 CZK",
+    "proPer": "/mo",
+    "proFeatures": [
+      "Priority position in your category — be the first yoga studio, first CrossFit box, first gym in your city",
+      "Custom photo gallery",
+      "Profile view statistics",
+      "Verified badge — customers trust you more",
+      "Direct link to your website"
+    ],
+    "proCta": "Start free 14 days",
+    "proNote": "499 CZK/month = less than a third of the average membership fee. One new customer a month = zero net cost.",
+    "eliteName": "Elite",
+    "eliteBadge": "Best value",
+    "elitePrice": "1,290 CZK",
+    "elitePer": "/mo",
+    "eliteFeatures": [
+      "Everything in Pro",
+      "TOP position above all others — maximum visibility",
+      "Gym of the Month: homepage banner + feature article + social media",
+      "0% commission on sold entries",
+      "Dedicated account manager",
+      "Monthly visitor report"
+    ],
+    "eliteCta": "Contact us",
+    "placeholderBadge": "Coming soon",
+    "placeholders": [
+      {
+        "title": "Category Spotlight — coming soon",
+        "body": "Premium placement on your category page. Be the first thing customers see when searching for yoga, CrossFit or a gym in their city.",
+        "price": "from 299 CZK/month"
+      },
+      {
+        "title": "Homepage Rotation — coming soon",
+        "body": "Weekly rotation of your gym on the IRONMAP homepage. Thousands of visitors, maximum visibility.",
+        "price": "from 999 CZK/month"
+      },
+      {
+        "title": "City Spotlight — coming soon",
+        "body": "Top position on your city page. Customers searching for a gym in Prague, Brno or Ostrava will see you first.",
+        "price": "from 499 CZK/month"
+      }
+    ],
+    "comingSoonTag": "Coming soon",
+    "comingSoonTitle": "Display ads — coming soon",
+    "comingSoonBody": "We're building premium ad placements for your gym. Homepage banner, category pages, search results. Interested? Get in touch.",
+    "comingSoonCta": "I'm interested →",
+    "whyTag": "Why IRONMAP",
+    "whyTitle": "The numbers speak for themselves",
+    "why": [
+      { "title": "CUSTOMERS AT THE MOMENT OF DECISION", "body": "We reach people who are actively searching for a gym — not random scrollers." },
+      { "title": "UP TO 10% OF MEMBERS WANT TO PAY ONLINE", "body": "Online booking is on its way. Your gym will be ready first." },
+      { "title": "KNOW WHAT WORKS", "body": "Profile views, clicks, conversions. Data that used to be reserved for large chains." },
+      { "title": "WE GROW TOGETHER", "body": "The Czech fitness market grows 12% annually. We're here to grow with you." }
+    ],
+    "contactTag": "Contact",
+    "contactTitle": "Let's work together",
+    "contactSub": "Fill in the form and we'll get back to you within 24 hours.",
+    "fieldGymName": "Gym name",
+    "fieldCity": "City",
+    "fieldName": "Name",
+    "fieldEmail": "Email",
+    "fieldPhone": "Phone",
+    "interestLabel": "Interested in",
+    "interests": ["Free listing", "Pro", "Elite", "Gym of the Week", "I'd like to talk"],
+    "submit": "Send →",
+    "submitting": "Sending…",
+    "formSuccess": "Thanks! We'll get back to you within 24 hours.",
+    "footerTitle": "Your gym deserves to be on top.",
+    "footerCta": "Add your gym free →"
   }
 }

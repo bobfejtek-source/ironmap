@@ -9,17 +9,24 @@ import { useT } from '@/lib/i18n';
 import { cityUrl } from '@/lib/utils';
 import type { MapPin } from './MapView';
 
-const MapView = dynamic(() => import('./MapView'), {
-  ssr: false,
-  loading: () => (
+function MapLoader() {
+  const { t } = useT();
+  return (
     <div style={{
       width: '100%', height: '100%', background: '#111',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       color: 'var(--muted)', fontSize: '0.75rem', letterSpacing: '0.15em',
       textTransform: 'uppercase', fontFamily: 'var(--font-display)', fontWeight: 700,
     }}>
-      Načítání mapy…
+      {t.nearby.loadingMap}
     </div>
+  );
+}
+
+const MapView = dynamic(() => import('./MapView'), {
+  ssr: false,
+  loading: () => (
+    <MapLoader />
   ),
 });
 
@@ -113,7 +120,7 @@ export default function NearbyListing({ gyms, userLat, userLng }: Props) {
   };
 
   const noResults = nearbyWithDist.length === 0;
-  const countLabel = `${noResults ? '0' : filtered.length} gymů · ${radius} km`;
+  const countLabel = `${noResults ? '0' : filtered.length} ${t.listing.found} · ${radius} km`;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -140,13 +147,13 @@ export default function NearbyListing({ gyms, userLat, userLng }: Props) {
           fontSize: '0.65rem', letterSpacing: '0.12em', textTransform: 'uppercase',
           color: 'var(--muted)', fontFamily: 'var(--font-display)', fontWeight: 700,
           textDecoration: 'none', flexShrink: 0,
-        }}>Posilovny</Link>
+        }}>{t.cityPage.breadcrumb}</Link>
         <span style={{ color: 'var(--border-mid)', fontSize: '0.65rem', flexShrink: 0 }}>—</span>
         <span style={{
           fontSize: '0.65rem', letterSpacing: '0.12em', textTransform: 'uppercase',
           color: 'var(--text)', fontFamily: 'var(--font-display)', fontWeight: 700,
           overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-        }}>Poblíž vás</span>
+        }}>{t.nearby.breadcrumb}</span>
         <span style={{
           marginLeft: 'auto', flexShrink: 0,
           fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase',
@@ -178,9 +185,9 @@ export default function NearbyListing({ gyms, userLat, userLng }: Props) {
         }}>
           <Link href="/" style={{ color: 'var(--muted)' }}>IRON</Link>
           <span style={{ color: 'var(--border-mid)' }}>—</span>
-          <Link href="/posilovny" style={{ color: 'var(--muted)' }}>Posilovny</Link>
+          <Link href="/posilovny" style={{ color: 'var(--muted)' }}>{t.cityPage.breadcrumb}</Link>
           <span style={{ color: 'var(--border-mid)' }}>—</span>
-          <span style={{ color: 'var(--text)' }}>Poblíž vás</span>
+          <span style={{ color: 'var(--text)' }}>{t.nearby.breadcrumb}</span>
         </nav>
 
         <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', paddingBottom: '1.25rem', flexWrap: 'wrap', gap: '1rem' }}>
@@ -192,7 +199,8 @@ export default function NearbyListing({ gyms, userLat, userLng }: Props) {
             letterSpacing: '-0.01em',
             lineHeight: 0.9,
           }}>
-            Posilovny <span style={{ color: 'var(--lime)' }}>poblíž vás</span>
+            {t.nearby.title.split(' ').slice(0, -2).join(' ')}{' '}
+            <span style={{ color: 'var(--lime)' }}>{t.nearby.title.split(' ').slice(-2).join(' ')}</span>
           </h1>
           <div style={{
             fontSize: '0.72rem',
@@ -203,7 +211,7 @@ export default function NearbyListing({ gyms, userLat, userLng }: Props) {
             fontWeight: 700,
             textAlign: 'right',
           }}>
-            {noResults ? 'žádné' : filtered.length} gymů do {radius} km
+            {noResults ? '0' : filtered.length} {t.listing.found} do {radius} km
           </div>
         </div>
       </div>
@@ -225,7 +233,7 @@ export default function NearbyListing({ gyms, userLat, userLng }: Props) {
           color: 'var(--muted)', fontFamily: 'var(--font-display)', fontWeight: 700,
           flexShrink: 0, marginRight: '0.25rem',
         }}>
-          Okruh:
+          {t.nearby.radius}
         </span>
         {RADIUS_OPTIONS.map(r => (
           <button
@@ -283,10 +291,10 @@ export default function NearbyListing({ gyms, userLat, userLng }: Props) {
             letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--muted)',
             marginBottom: '1.5rem',
           }}>
-            Žádné gymy do {radius} km
+            {t.nearby.noGymsTitle.replace('{radius}', String(radius))}
           </div>
           <p style={{ color: 'var(--muted)', fontSize: '0.9rem', fontWeight: 300, marginBottom: '2rem' }}>
-            Zkuste zvětšit okruh nebo se podívejte na nejbližší město.
+            {t.nearby.noGymsSub}
           </p>
           {nearestCity && (
             <Link
@@ -298,7 +306,7 @@ export default function NearbyListing({ gyms, userLat, userLng }: Props) {
                 padding: '0.6rem 1.2rem', textDecoration: 'none', transition: 'opacity 0.15s',
               }}
             >
-              Zobrazit gymy v {nearestCity} →
+              {t.nearby.viewCity.replace('{city}', nearestCity ?? '')}
             </Link>
           )}
         </div>
@@ -311,7 +319,7 @@ export default function NearbyListing({ gyms, userLat, userLng }: Props) {
             style={{ display: 'none' }}
           >
             <span style={{ fontSize: '0.8rem', lineHeight: 1 }}>{mapOpen ? '↑' : '↓'}</span>
-            {mapOpen ? 'Skrýt mapu' : 'Zobrazit mapu'}
+            {mapOpen ? t.nearby.hideMap : t.nearby.showMap}
           </button>
 
           {/* Map + List */}
@@ -351,12 +359,12 @@ export default function NearbyListing({ gyms, userLat, userLng }: Props) {
                 color: 'var(--muted)', fontFamily: 'var(--font-display)', fontWeight: 700,
                 paddingBottom: '0.75rem', borderBottom: '1px solid var(--border)',
               }}>
-                {filtered.length} gymů — seřazeno podle vzdálenosti
+                {filtered.length} {t.nearby.sorted}
               </div>
 
               {filtered.length === 0 ? (
                 <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--muted)', fontSize: '0.85rem', fontWeight: 300 }}>
-                  Žádné výsledky pro tuto kategorii.
+                  {t.nearby.noCategory}
                 </div>
               ) : (
                 filtered.map(({ gym, dist }) => (

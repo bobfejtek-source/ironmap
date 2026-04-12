@@ -141,6 +141,7 @@
   "footer": {
     "gyms": "Posilovny",
     "about": "O projektu",
+    "forOwners": "Pro majitele",
     "contact": "Kontakt",
     "privacy": "Ochrana soukromí",
     "tagline": "Největší adresář posiloven v ČR."
@@ -252,5 +253,124 @@
     "emailLabel": "Email",
     "addGymBtn": "Přidat gym",
     "feedbackBtn": "Zpětná vazba"
+  },
+  "gymCard": {
+    "open": "Otevřeno",
+    "closed": "Zavřeno",
+    "until": "do",
+    "opens": "otevírá",
+    "detail": "Detail →",
+    "dropInFrom": "Vstup od",
+    "membershipFrom": "Členství od",
+    "dropInAndMembership": "Vstup od {dropIn} Kč | Členství od {monthly} Kč",
+    "currency": "Kč"
+  },
+  "nearby": {
+    "breadcrumb": "Poblíž vás",
+    "title": "Posilovny poblíž vás",
+    "radius": "Okruh:",
+    "noGymsTitle": "Žádné gymy do {radius} km",
+    "noGymsSub": "Zkuste zvětšit okruh nebo se podívejte na nejbližší město.",
+    "viewCity": "Zobrazit gymy v {city} →",
+    "sorted": "gymů — seřazeno podle vzdálenosti",
+    "noCategory": "Žádné výsledky pro tuto kategorii.",
+    "showMap": "Zobrazit mapu",
+    "hideMap": "Skrýt mapu",
+    "loadingMap": "Načítání mapy…"
+  },
+  "forOwners": {
+    "tag": "Pro majitele gymů",
+    "heroLine1": "Vaši zákazníci",
+    "heroLine2": "vás hledají.",
+    "heroLineAccent": "Najdou vás?",
+    "heroSub": "Přes 450 000 aktivních sportovců v ČR. Fitness trh roste 12% ročně. Buďte tam kde hledají.",
+    "heroCta": "Přidat gym →",
+    "heroCta2": "Zobrazit ceník",
+    "statsGymLabel": "fitness center v databázi",
+    "statsCitiesLabel": "měst pokryto",
+    "statsGrowthLabel": "roční růst fitness trhu v ČR",
+    "statsMembersLabel": "aktivních členů v ČR",
+    "statsMembershipLabel": "průměrné měsíční členství v ČR",
+    "problemTitle1": "Váš gym je skvělý.",
+    "problemTitleAccent": "Ale ví o něm dost lidí?",
+    "problemBody": "Každý měsíc tisíce lidí ve vašem městě hledá posilovnu. Část z nich najde konkurenci. Část vás nenajde vůbec.",
+    "problemBodyAccent": "IRONMAP to mění — jsme tam kde lidé hledají, v momentě rozhodnutí.",
+    "pricingTag": "Ceník",
+    "pricingTitle": "Vyberte svůj plán",
+    "freeName": "Free",
+    "freePrice": "Zdarma",
+    "freeFeatures": ["Základní profil s adresou", "Zobrazení na mapě", "Otevírací doba"],
+    "freeCta": "Přidat gym zdarma",
+    "proName": "Pro",
+    "proBadge": "Nejpopulárnější",
+    "proPrice": "499 Kč",
+    "proPer": "/měs",
+    "proFeatures": [
+      "Prioritní pozice ve vaší kategorii — buďte první jóga studio, první CrossFit box, první posilovna ve vašem městě",
+      "Vlastní fotogalerie",
+      "Statistiky prohlédnutí",
+      "Ověřený badge — zákazníci vám věří více",
+      "Přímý odkaz na váš web"
+    ],
+    "proCta": "Začít zdarma 14 dní",
+    "proNote": "499 Kč/měsíc = méně než třetina průměrného měsíčního členství. Jeden nový zákazník měsíčně = nulové náklady.",
+    "eliteName": "Elite",
+    "eliteBadge": "Největší hodnota",
+    "elitePrice": "1\u00a0290 Kč",
+    "elitePer": "/měs",
+    "eliteFeatures": [
+      "Vše z Pro",
+      "TOP pozice nad všemi — absolutní viditelnost",
+      "Gym of the Month: homepage banner + článek + sociální sítě",
+      "0% provize z prodaných vstupů",
+      "Dedikovaný account manager",
+      "Měsíční report návštěvnosti"
+    ],
+    "eliteCta": "Kontaktovat nás",
+    "placeholderBadge": "Připravujeme",
+    "placeholders": [
+      {
+        "title": "Kategorie Spotlight — brzy",
+        "body": "Prémiová pozice na stránce vaší kategorie. Buďte první co zákazník vidí když hledá jógu, CrossFit nebo posilovnu ve svém městě.",
+        "price": "od 299 Kč/měsíc"
+      },
+      {
+        "title": "Homepage Rotace — brzy",
+        "body": "Týdenní rotace vašeho gymu na hlavní stránce IRONMAP. Tisíce návštěvníků, maximální viditelnost.",
+        "price": "od 999 Kč/měsíc"
+      },
+      {
+        "title": "City Spotlight — brzy",
+        "body": "První pozice na stránce vašeho města. Zákazníci hledající posilovnu v Praze, Brně nebo Ostravě uvidí vás jako první.",
+        "price": "od 499 Kč/měsíc"
+      }
+    ],
+    "comingSoonTag": "Brzy",
+    "comingSoonTitle": "Reklamní bannery — brzy",
+    "comingSoonBody": "Připravujeme prémiové reklamní pozice pro vaše fitko. Homepage banner, kategorie stránky, výsledky vyhledávání. Máte zájem? Napište nám.",
+    "comingSoonCta": "Mám zájem →",
+    "whyTag": "Proč IRONMAP",
+    "whyTitle": "Čísla jsou jasná",
+    "why": [
+      { "title": "ZÁKAZNÍCI V MOMENTĚ ROZHODNUTÍ", "body": "Oslovujeme lidi kteří aktivně hledají posilovnu — ne náhodné scrollery." },
+      { "title": "AŽ 10% ZÁKAZNÍKŮ CHCE PLATIT ONLINE", "body": "Připravujeme online booking. Vaše fitko bude připraveno jako první." },
+      { "title": "VÍTE CO FUNGUJE", "body": "Statistiky prohlédnutí, kliknutí, konverzí. Data která dříve měly jen velké řetězce." },
+      { "title": "ROSTEME SPOLU", "body": "Fitness trh v ČR roste 12% ročně. Jsme tu abychom rostli s vámi." }
+    ],
+    "contactTag": "Kontakt",
+    "contactTitle": "Začněme spolupráci",
+    "contactSub": "Vyplňte formulář a ozveme se do 24 hodin.",
+    "fieldGymName": "Název gymu",
+    "fieldCity": "Město",
+    "fieldName": "Jméno",
+    "fieldEmail": "Email",
+    "fieldPhone": "Telefon",
+    "interestLabel": "Zájem o",
+    "interests": ["Free listing", "Pro", "Elite", "Gym of the Week", "Chci se poradit"],
+    "submit": "Odeslat →",
+    "submitting": "Odesílám…",
+    "formSuccess": "Díky! Ozveme se do 24 hodin.",
+    "footerTitle": "Váš gym si zaslouží být nahoře.",
+    "footerCta": "Přidat gym zdarma →"
   }
 }
