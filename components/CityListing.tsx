@@ -69,6 +69,7 @@ export default function CityListing({ gyms, cityName, initialCategory, userLat, 
   const pathname = usePathname();
   const [category, setCategory] = useState(initialCategory ?? 'Vše');
   const [openNow, setOpenNow] = useState(false);
+  const [mapOpen, setMapOpen] = useState(false);
 
   function selectCategory(cat: string) {
     setCategory(cat);
@@ -137,18 +138,19 @@ export default function CityListing({ gyms, cityName, initialCategory, userLat, 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
 
-      {/* Filters bar */}
+      {/* Filters bar — single scrollable row, label hidden on mobile */}
       <div style={{
         borderBottom: '1px solid var(--border)',
         background: 'var(--off-black)',
-        padding: '0.75rem 2rem',
+        padding: '0.75rem 1rem',
         display: 'flex',
         alignItems: 'center',
         gap: '0.5rem',
         overflowX: 'auto',
         flexShrink: 0,
+        flexWrap: 'nowrap',
       }}>
-        <span style={{
+        <span className="city-filter-label" style={{
           fontSize: '0.65rem',
           letterSpacing: '0.18em',
           textTransform: 'uppercase',
@@ -166,6 +168,7 @@ export default function CityListing({ gyms, cityName, initialCategory, userLat, 
             key={cat}
             className={`chip${category === cat ? ' active' : ''}`}
             onClick={() => selectCategory(cat)}
+            style={{ flexShrink: 0 }}
           >
             {categoryLabels[cat] ?? cat}
           </button>
@@ -176,6 +179,7 @@ export default function CityListing({ gyms, cityName, initialCategory, userLat, 
         <button
           className={`chip${openNow ? ' active' : ''}`}
           onClick={() => setOpenNow(v => !v)}
+          style={{ flexShrink: 0 }}
         >
           {t.listing.filters.openNow}
         </button>
@@ -205,6 +209,16 @@ export default function CityListing({ gyms, cityName, initialCategory, userLat, 
         )}
       </div>
 
+      {/* Mobile map toggle — hidden on desktop */}
+      <button
+        className="mobile-map-toggle"
+        onClick={() => setMapOpen(v => !v)}
+        style={{ display: 'none' }}
+      >
+        <span style={{ fontSize: '0.8rem', lineHeight: 1 }}>{mapOpen ? '↑' : '↓'}</span>
+        {mapOpen ? 'Skrýt mapu' : 'Zobrazit mapu'}
+      </button>
+
       {/* Map + List */}
       <div style={{
         display: 'grid',
@@ -213,7 +227,7 @@ export default function CityListing({ gyms, cityName, initialCategory, userLat, 
         minHeight: 0,
         overflow: 'hidden',
       }}
-        className="city-listing-grid"
+        className={`city-listing-grid${mapOpen ? ' map-open' : ''}`}
       >
         {/* Map */}
         <div style={{
@@ -288,20 +302,47 @@ export default function CityListing({ gyms, cityName, initialCategory, userLat, 
         </div>
       </div>
 
-      {/* Mobile: stack map on top */}
       <style>{`
         @media (max-width: 900px) {
-          .city-listing-grid {
-            grid-template-columns: 1fr !important;
+          .city-filter-label { display: none !important; }
+
+          .mobile-map-toggle {
+            display: flex !important;
+            width: 100%;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            padding: 0.6rem 1rem;
+            background: var(--off-black);
+            border: none;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--muted);
+            flex-shrink: 0;
+            transition: color 0.15s;
           }
+          .mobile-map-toggle:hover { color: var(--text); }
+
+          .city-listing-grid { grid-template-columns: 1fr !important; overflow: visible !important; }
           .city-listing-grid > div:first-child {
             position: relative !important;
             top: 0 !important;
-            height: 280px !important;
+            height: 220px !important;
+            border-right: none !important;
+            border-bottom: 1px solid var(--border);
+            display: none !important;
+          }
+          .city-listing-grid.map-open > div:first-child {
+            display: block !important;
           }
           .city-listing-grid > div:last-child {
             height: auto !important;
-            max-height: 60vh;
+            overflow-y: visible !important;
           }
         }
       `}</style>

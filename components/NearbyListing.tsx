@@ -54,6 +54,7 @@ export default function NearbyListing({ gyms, userLat, userLng }: Props) {
   const [radius, setRadius] = useState<Radius>(20);
   const [category, setCategory] = useState('Vše');
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [mapOpen, setMapOpen] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
 
   const categoryLabels: Record<string, string> = {
@@ -68,7 +69,6 @@ export default function NearbyListing({ gyms, userLat, userLng }: Props) {
     'Bazén': t.categories.pool,
   };
 
-  // Gyms within radius, sorted by distance
   const nearbyWithDist = useMemo(() => {
     return gyms
       .map(g => ({ gym: g, dist: gymDistance(g, userLat, userLng) }))
@@ -81,7 +81,6 @@ export default function NearbyListing({ gyms, userLat, userLng }: Props) {
     return nearbyWithDist.filter(({ gym: g }) => (g.category ?? 'Posilovna') === category);
   }, [nearbyWithDist, category]);
 
-  // Nearest city for fallback link
   const nearestCity = useMemo(() => {
     const cities = new Map<string, number>();
     for (const g of gyms) {
@@ -114,12 +113,52 @@ export default function NearbyListing({ gyms, userLat, userLng }: Props) {
   };
 
   const noResults = nearbyWithDist.length === 0;
+  const countLabel = `${noResults ? '0' : filtered.length} gymů · ${radius} km`;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
 
-      {/* Header */}
-      <div style={{
+      {/* Mobile compact header — single line, hidden on desktop */}
+      <div className="nearby-mobile-header" style={{
+        display: 'none',
+        alignItems: 'center',
+        padding: '0 1rem',
+        height: 52,
+        borderBottom: '1px solid var(--border)',
+        background: 'var(--off-black)',
+        gap: '0.5rem',
+        flexShrink: 0,
+        overflow: 'hidden',
+      }}>
+        <Link href="/" style={{
+          fontSize: '0.65rem', letterSpacing: '0.12em', textTransform: 'uppercase',
+          color: 'var(--muted)', fontFamily: 'var(--font-display)', fontWeight: 700,
+          textDecoration: 'none', flexShrink: 0,
+        }}>IRON</Link>
+        <span style={{ color: 'var(--border-mid)', fontSize: '0.65rem', flexShrink: 0 }}>—</span>
+        <Link href="/posilovny" style={{
+          fontSize: '0.65rem', letterSpacing: '0.12em', textTransform: 'uppercase',
+          color: 'var(--muted)', fontFamily: 'var(--font-display)', fontWeight: 700,
+          textDecoration: 'none', flexShrink: 0,
+        }}>Posilovny</Link>
+        <span style={{ color: 'var(--border-mid)', fontSize: '0.65rem', flexShrink: 0 }}>—</span>
+        <span style={{
+          fontSize: '0.65rem', letterSpacing: '0.12em', textTransform: 'uppercase',
+          color: 'var(--text)', fontFamily: 'var(--font-display)', fontWeight: 700,
+          overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+        }}>Poblíž vás</span>
+        <span style={{
+          marginLeft: 'auto', flexShrink: 0,
+          fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase',
+          color: 'var(--muted)', fontFamily: 'var(--font-display)', fontWeight: 700,
+          whiteSpace: 'nowrap',
+        }}>
+          {countLabel}
+        </span>
+      </div>
+
+      {/* Desktop header — hidden on mobile */}
+      <div className="nearby-desktop-header" style={{
         padding: '2rem 2rem 0',
         borderBottom: '1px solid var(--border)',
         background: 'var(--off-black)',
@@ -169,21 +208,19 @@ export default function NearbyListing({ gyms, userLat, userLng }: Props) {
         </div>
       </div>
 
-      {/* Filter bar */}
+      {/* Filter bar — single scrollable row on mobile, labels hidden */}
       <div style={{
         borderBottom: '1px solid var(--border)',
         background: 'var(--off-black)',
-        padding: '0.75rem 2rem',
+        padding: '0.75rem 1rem',
         display: 'flex',
         alignItems: 'center',
         gap: '0.5rem',
         overflowX: 'auto',
         flexShrink: 0,
-        flexWrap: 'wrap',
-        rowGap: '0.5rem',
+        flexWrap: 'nowrap',
       }}>
-        {/* Radius chips */}
-        <span style={{
+        <span className="nearby-filter-label" style={{
           fontSize: '0.65rem', letterSpacing: '0.18em', textTransform: 'uppercase',
           color: 'var(--muted)', fontFamily: 'var(--font-display)', fontWeight: 700,
           flexShrink: 0, marginRight: '0.25rem',
@@ -195,6 +232,7 @@ export default function NearbyListing({ gyms, userLat, userLng }: Props) {
             key={r}
             className={`chip${radius === r ? ' active' : ''}`}
             onClick={() => setRadius(r)}
+            style={{ flexShrink: 0 }}
           >
             {r} km
           </button>
@@ -202,8 +240,7 @@ export default function NearbyListing({ gyms, userLat, userLng }: Props) {
 
         <div style={{ width: '1px', height: 20, background: 'var(--border)', flexShrink: 0, margin: '0 0.25rem' }} />
 
-        {/* Category chips */}
-        <span style={{
+        <span className="nearby-filter-label" style={{
           fontSize: '0.65rem', letterSpacing: '0.18em', textTransform: 'uppercase',
           color: 'var(--muted)', fontFamily: 'var(--font-display)', fontWeight: 700,
           flexShrink: 0, marginRight: '0.25rem',
@@ -215,6 +252,7 @@ export default function NearbyListing({ gyms, userLat, userLng }: Props) {
             key={cat}
             className={`chip${category === cat ? ' active' : ''}`}
             onClick={() => setCategory(cat)}
+            style={{ flexShrink: 0 }}
           >
             {categoryLabels[cat] ?? cat}
           </button>
@@ -265,73 +303,125 @@ export default function NearbyListing({ gyms, userLat, userLng }: Props) {
           )}
         </div>
       ) : (
-        /* Map + List */
-        <div
-          style={{ display: 'grid', gridTemplateColumns: '44% 1fr', flex: 1, minHeight: 0, overflow: 'hidden' }}
-          className="city-listing-grid"
-        >
-          {/* Map */}
-          <div style={{
-            position: 'sticky', top: 64,
-            height: 'calc(100vh - 64px - 52px - 48px)',
-            borderRight: '1px solid var(--border)',
-          }}>
-            <MapView
-              pins={pins}
-              center={[userLat, userLng]}
-              zoom={radius <= 5 ? 13 : radius <= 10 ? 12 : radius <= 20 ? 11 : 10}
-              onPinClick={handlePinClick}
-              height="100%"
-            />
-          </div>
-
-          {/* Gym list */}
-          <div
-            ref={listRef}
-            style={{
-              overflowY: 'auto',
-              height: 'calc(100vh - 64px - 52px - 48px)',
-              padding: '1.5rem',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '0.75rem',
-            }}
+        <>
+          {/* Mobile map toggle button — hidden on desktop */}
+          <button
+            className="mobile-map-toggle"
+            onClick={() => setMapOpen(v => !v)}
+            style={{ display: 'none' }}
           >
+            <span style={{ fontSize: '0.8rem', lineHeight: 1 }}>{mapOpen ? '↑' : '↓'}</span>
+            {mapOpen ? 'Skrýt mapu' : 'Zobrazit mapu'}
+          </button>
+
+          {/* Map + List */}
+          <div
+            style={{ display: 'grid', gridTemplateColumns: '44% 1fr', flex: 1, minHeight: 0, overflow: 'hidden' }}
+            className={`city-listing-grid${mapOpen ? ' map-open' : ''}`}
+          >
+            {/* Map */}
             <div style={{
-              fontSize: '0.72rem', letterSpacing: '0.15em', textTransform: 'uppercase',
-              color: 'var(--muted)', fontFamily: 'var(--font-display)', fontWeight: 700,
-              paddingBottom: '0.75rem', borderBottom: '1px solid var(--border)',
+              position: 'sticky', top: 64,
+              height: 'calc(100vh - 64px - 52px - 48px)',
+              borderRight: '1px solid var(--border)',
             }}>
-              {filtered.length} gymů — seřazeno podle vzdálenosti
+              <MapView
+                pins={pins}
+                center={[userLat, userLng]}
+                zoom={radius <= 5 ? 13 : radius <= 10 ? 12 : radius <= 20 ? 11 : 10}
+                onPinClick={handlePinClick}
+                height="100%"
+              />
             </div>
 
-            {filtered.length === 0 ? (
-              <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--muted)', fontSize: '0.85rem', fontWeight: 300 }}>
-                Žádné výsledky pro tuto kategorii.
+            {/* Gym list */}
+            <div
+              ref={listRef}
+              style={{
+                overflowY: 'auto',
+                height: 'calc(100vh - 64px - 52px - 48px)',
+                padding: '1.5rem',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.75rem',
+              }}
+            >
+              <div style={{
+                fontSize: '0.72rem', letterSpacing: '0.15em', textTransform: 'uppercase',
+                color: 'var(--muted)', fontFamily: 'var(--font-display)', fontWeight: 700,
+                paddingBottom: '0.75rem', borderBottom: '1px solid var(--border)',
+              }}>
+                {filtered.length} gymů — seřazeno podle vzdálenosti
               </div>
-            ) : (
-              filtered.map(({ gym, dist }) => (
-                <div
-                  key={gym.id}
-                  id={`nearby-card-${gym.id}`}
-                  style={{
-                    outline: activeId === String(gym.id) ? '1px solid var(--lime)' : 'none',
-                    transition: 'outline 0.2s',
-                  }}
-                >
-                  <GymCard gym={gym} distanceKm={dist} />
+
+              {filtered.length === 0 ? (
+                <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--muted)', fontSize: '0.85rem', fontWeight: 300 }}>
+                  Žádné výsledky pro tuto kategorii.
                 </div>
-              ))
-            )}
+              ) : (
+                filtered.map(({ gym, dist }) => (
+                  <div
+                    key={gym.id}
+                    id={`nearby-card-${gym.id}`}
+                    style={{
+                      outline: activeId === String(gym.id) ? '1px solid var(--lime)' : 'none',
+                      transition: 'outline 0.2s',
+                    }}
+                  >
+                    <GymCard gym={gym} distanceKm={dist} />
+                  </div>
+                ))
+              )}
+            </div>
           </div>
-        </div>
+        </>
       )}
 
       <style>{`
         @media (max-width: 900px) {
-          .city-listing-grid { grid-template-columns: 1fr !important; }
-          .city-listing-grid > div:first-child { position: relative !important; top: 0 !important; height: 260px !important; }
-          .city-listing-grid > div:last-child { height: auto !important; max-height: 60vh; }
+          .nearby-mobile-header { display: flex !important; }
+          .nearby-desktop-header { display: none !important; }
+          .nearby-filter-label { display: none !important; }
+
+          .mobile-map-toggle {
+            display: flex !important;
+            width: 100%;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            padding: 0.6rem 1rem;
+            background: var(--off-black);
+            border: none;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--muted);
+            flex-shrink: 0;
+            transition: color 0.15s;
+          }
+          .mobile-map-toggle:hover { color: var(--text); }
+
+          .city-listing-grid { grid-template-columns: 1fr !important; overflow: visible !important; }
+          .city-listing-grid > div:first-child {
+            position: relative !important;
+            top: 0 !important;
+            height: 220px !important;
+            border-right: none !important;
+            border-bottom: 1px solid var(--border);
+            display: none !important;
+          }
+          .city-listing-grid.map-open > div:first-child {
+            display: block !important;
+          }
+          .city-listing-grid > div:last-child {
+            height: auto !important;
+            max-height: none !important;
+            overflow-y: visible !important;
+          }
         }
       `}</style>
     </div>
