@@ -40,6 +40,21 @@ export default function IronNav() {
 
       {/* Links */}
       <nav style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <Link href="/pro-majitele" className="iron-nav-hide-mobile" style={{
+          fontSize: '0.72rem',
+          letterSpacing: '0.18em',
+          textTransform: 'uppercase',
+          color: 'var(--muted)',
+          transition: 'color 0.2s',
+          fontFamily: 'var(--font-display)',
+          fontWeight: 700,
+        }}
+        onMouseEnter={e => (e.currentTarget.style.color = 'var(--text)')}
+        onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted)')}
+        >
+          Pro majitele
+        </Link>
+
         <Link href="/posilovny" className="iron-nav-hide-mobile" style={{
           fontSize: '0.72rem',
           letterSpacing: '0.18em',

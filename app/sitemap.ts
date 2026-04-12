@@ -33,6 +33,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'yearly',
       priority: 0.4,
     },
+    {
+      url: `${BASE}/pro-majitele`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
   ];
 
   const cityRoutes: MetadataRoute.Sitemap = cities.map(({ city }) => ({
