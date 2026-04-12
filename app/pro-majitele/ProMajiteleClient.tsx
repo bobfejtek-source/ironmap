@@ -315,7 +315,7 @@ export default function ProMajiteleClient({ gymCount }: Props) {
           Vyberte svůj plán
         </h2>
 
-        <div className="pm-pricing-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', alignItems: 'start' }}>
+        <div className="pm-pricing-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', alignItems: 'stretch' }}>
 
           {/* FREE */}
           <div style={{
@@ -330,7 +330,7 @@ export default function ProMajiteleClient({ gymCount }: Props) {
               <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '0.75rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '0.75rem' }}>Free</div>
               <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '2.5rem', letterSpacing: '0.02em', color: 'var(--text)', lineHeight: 1 }}>Zdarma</div>
             </div>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.6rem', flex: 1 }}>
               {['Základní profil s adresou', 'Zobrazení na mapě', 'Otevírací doba'].map(f => (
                 <li key={f} style={{ fontFamily: 'var(--font-barlow)', fontSize: '0.95rem', color: 'var(--muted)', fontWeight: 300, display: 'flex', gap: '0.6rem', alignItems: 'flex-start' }}>
                   <span style={{ color: 'var(--lime)', flexShrink: 0 }}>✓</span> {f}
@@ -377,7 +377,7 @@ export default function ProMajiteleClient({ gymCount }: Props) {
               <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '0.75rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--lime)', marginBottom: '0.75rem' }}>Pro</div>
               <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '2.5rem', letterSpacing: '0.02em', color: 'var(--text)', lineHeight: 1 }}>499 Kč<span style={{ fontSize: '1rem', color: 'var(--muted)', fontWeight: 700 }}>/měs</span></div>
             </div>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.6rem', flex: 1 }}>
               {[
                 'Prioritní pozice ve vaší kategorii — buďte první jóga studio, první CrossFit box, první posilovna ve vašem městě',
                 'Vlastní fotogalerie',
@@ -415,7 +415,7 @@ export default function ProMajiteleClient({ gymCount }: Props) {
               <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '0.75rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '0.75rem' }}>Elite</div>
               <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '2.5rem', letterSpacing: '0.02em', color: 'var(--text)', lineHeight: 1 }}>1 290 Kč<span style={{ fontSize: '1rem', color: 'var(--muted)', fontWeight: 700 }}>/měs</span></div>
             </div>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.6rem', flex: 1 }}>
               {[
                 'Vše z Pro',
                 'TOP pozice nad všemi — absolutní viditelnost',
