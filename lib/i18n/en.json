@@ -240,11 +240,21 @@
     "p7": "Deciding to go to the gym for the first time in your life is one of the hardest decisions. And that day I said to myself: this can't be this hard.",
     "p8": "All I wanted was one thing. To buy a drop-in pass from my phone. To know they'd let me in. To arrive prepared. No cash, no red face, no walk of shame back to the car.",
     "pullQuote": "IRONMAP was born from that walk-away moment.",
+    "p9middle": "Find a gym. Check when they're open, what entry costs, whether they take cards. Pick a trainer in advance. Pay for entry from your phone. Compare reviews, atmosphere, equipment. Arrive prepared. No surprises. No red face.",
     "statsGyms": "gyms",
     "statsCities": "cities",
-    "p9": "Today we have 780 gyms in 190 cities. We add more every week. One day we want to be the place where you find every sport in the Czech Republic — from lifting to yoga to climbing walls. And where you can buy your entry before you start the car.",
+    "p9": "Today we have over {gymCount} gyms and fitness centres in more than {cityCount} cities across the Czech Republic. We add more every week. One day we want to be the place where you find every sport in the Czech Republic — from lifting to yoga to climbing walls. And where you can buy your entry before you start the car.",
     "p10": "So that first step doesn't hurt. For anyone.",
-    "founder": "Founder"
+    "founder": "Bohdan",
+    "founderRole": "Founder"
+  },
+  "kategorie": {
+    "breadcrumb": "Gyms",
+    "sortedBy": "Sorted by rating",
+    "place1": "location",
+    "placeFew": "locations",
+    "placeMany": "locations",
+    "inCities": "in {count} cities"
   },
   "contact": {
     "tag": "Contact",

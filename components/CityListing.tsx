@@ -216,7 +216,7 @@ export default function CityListing({ gyms, cityName, initialCategory, userLat, 
         style={{ display: 'none' }}
       >
         <span style={{ fontSize: '0.8rem', lineHeight: 1 }}>{mapOpen ? '↑' : '↓'}</span>
-        {mapOpen ? 'Skrýt mapu' : 'Zobrazit mapu'}
+        {mapOpen ? t.nearby.hideMap : t.nearby.showMap}
       </button>
 
       {/* Map + List */}

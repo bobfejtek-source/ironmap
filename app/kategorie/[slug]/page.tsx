@@ -5,6 +5,7 @@ import { getGymsByCategory, getCities } from '@/lib/db';
 import { CATEGORIES, categoryBySlug } from '@/lib/categories';
 import { cityUrl } from '@/lib/utils';
 import GymCard from '@/components/GymCard';
+import CategoryHeader, { CategorySortLabel } from './CategoryHeader';
 
 export const revalidate = 3600;
 
@@ -53,48 +54,12 @@ export default async function CategoryPage({ params }: Props) {
         borderBottom: '1px solid var(--border)',
         background: 'var(--off-black)',
       }}>
-        <nav style={{
-          marginBottom: '1.25rem',
-          fontSize: '0.72rem',
-          letterSpacing: '0.12em',
-          textTransform: 'uppercase',
-          color: 'var(--muted)',
-          fontFamily: 'var(--font-display)',
-          fontWeight: 700,
-          display: 'flex',
-          gap: '0.75rem',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-        }}>
-          <Link href="/" style={{ color: 'var(--muted)' }}>IRON</Link>
-          <span style={{ color: 'var(--border-mid)' }}>—</span>
-          <Link href="/posilovny" style={{ color: 'var(--muted)' }}>Posilovny</Link>
-          <span style={{ color: 'var(--border-mid)' }}>—</span>
-          <span style={{ color: 'var(--text)' }}>{cat.labelCs}</span>
-        </nav>
-
-        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', paddingBottom: '1.25rem', flexWrap: 'wrap', gap: '1rem' }}>
-          <h1 style={{
-            fontFamily: 'var(--font-display)',
-            fontWeight: 900,
-            fontSize: 'clamp(2rem, 5vw, 3.5rem)',
-            textTransform: 'uppercase',
-            letterSpacing: '-0.01em',
-            lineHeight: 0.9,
-          }}>
-            <span style={{ color: 'var(--lime)' }}>{cat.labelCs}</span>
-          </h1>
-          <div style={{
-            fontSize: '0.72rem',
-            letterSpacing: '0.12em',
-            textTransform: 'uppercase',
-            color: 'var(--muted)',
-            fontFamily: 'var(--font-display)',
-            fontWeight: 700,
-          }}>
-            {gyms.length} {gyms.length === 1 ? 'místo' : gyms.length < 5 ? 'místa' : 'míst'} v {citiesWithCat.length} městech
-          </div>
-        </div>
+        <CategoryHeader
+          labelCs={cat.labelCs}
+          labelEn={cat.labelEn}
+          gymCount={gyms.length}
+          cityCount={citiesWithCat.length}
+        />
 
         {/* City sub-navigation */}
         <div style={{
@@ -128,19 +93,7 @@ export default async function CategoryPage({ params }: Props) {
 
       {/* Gym list */}
       <div style={{ padding: '1.5rem 2rem', maxWidth: 900 }}>
-        <div style={{
-          fontSize: '0.72rem',
-          letterSpacing: '0.15em',
-          textTransform: 'uppercase',
-          color: 'var(--muted)',
-          fontFamily: 'var(--font-display)',
-          fontWeight: 700,
-          paddingBottom: '1rem',
-          borderBottom: '1px solid var(--border)',
-          marginBottom: '1rem',
-        }}>
-          Seřazeno podle hodnocení
-        </div>
+        <CategorySortLabel />
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           {gyms.map(gym => (

@@ -1,22 +1,22 @@
 'use client';
 
+import { useT } from '@/lib/i18n';
+
 interface Props {
   gymCountStr: string;
   cityCountStr: string;
 }
 
-const PARAGRAPHS = [
-  'Bydlím v malém městě. Sotva deset tisíc lidí, jedno náměstí, pár hospod a tři fitka.',
-  'Dlouho jsem chtěl začít cvičit.',
-  'Ne proto že bych musel. Ale protože jsem věděl co mi to přinese. Lepší spánek. Více energie. Méně stresu. Jasnější hlava. Silnější tělo. Tohle všechno jsem chtěl a přesto jsem to odkládal měsíce.',
-  'Proč? Ne kvůli lenosti. Kvůli maličkostem které se hromadily.',
-  'Kde vůbec začít? Každé fitko jiný web, jiné ceny, jiné informace nebo žádné. Jedno číslo které nikdo nebral. Otevírací doba která platila nebo neplatila. A pak přišel den kdy jsem se odhodlal a přijel, zaplatit hotově, protože karty nebrali. Nikde to nepsali.',
-  'Kolem mě chodili chlapi co tam cvičí deset let, znají se, smějí se. A já stál u dveří v tričku z H&M, bez tušení jak to tu funguje. Ptal jsem se na základní věci a cítil jsem se jako vetřelec. Všichni si tykají, já vykám, všichni vědí kde co je, já ne.',
-  'Odešel jsem s červenými ušima. Týden jsem to odkládal. Pak jsem zkusil jiné fitko a zapomněl hotovost. Otočil jsem se ve dveřích, zajel na bankomat na druhý konec vesnice a když jsem se vrátil, bylo zavřeno.',
-  'Začít cvičit je pro spoustu lidí jedno z nejtěžších rozhodnutí. A všechny tyhle maličkosti, nejasné info, hotovost, cizí prostředí, to rozhodnutí zbytečně komplikují.',
-];
-
 export default function OProjektuClient({ gymCountStr, cityCountStr }: Props) {
+  const { t } = useT();
+  const ab = t.about;
+
+  const paragraphs = [ab.p1, ab.p2, ab.p3, ab.p4, ab.p5, ab.p6, ab.p7, ab.p8];
+
+  const p9 = ab.p9
+    .replace('{gymCount}', gymCountStr)
+    .replace('{cityCount}', cityCountStr);
+
   return (
     <div style={{
       maxWidth: '680px',
@@ -33,7 +33,7 @@ export default function OProjektuClient({ gymCountStr, cityCountStr }: Props) {
         color: 'var(--lime)',
         marginBottom: '2.5rem',
       }}>
-        Česká republika / fitness directory
+        {ab.tag}
       </div>
 
       {/* Headline */}
@@ -47,7 +47,9 @@ export default function OProjektuClient({ gymCountStr, cityCountStr }: Props) {
         marginBottom: '3.5rem',
         color: 'var(--text)',
       }}>
-        Proč<br />IRONMAP?
+        {ab.headline.split('\n').map((line, i) => (
+          <span key={i}>{line}{i < ab.headline.split('\n').length - 1 && <br />}</span>
+        ))}
       </h1>
 
       {/* Prose */}
@@ -61,7 +63,7 @@ export default function OProjektuClient({ gymCountStr, cityCountStr }: Props) {
         flexDirection: 'column',
         gap: '1.6rem',
       }}>
-        {PARAGRAPHS.map((text, i) => (
+        {paragraphs.map((text, i) => (
           <p key={i}>{text}</p>
         ))}
 
@@ -78,12 +80,10 @@ export default function OProjektuClient({ gymCountStr, cityCountStr }: Props) {
           lineHeight: 1.2,
           color: 'var(--text)',
         }}>
-          IRONMAP vznikl proto, aby ty maličkosti zmizely.
+          {ab.pullQuote}
         </div>
 
-        <p>
-          Najdi fitko. Zjisti kdy mají otevřeno, kolik stojí vstup, jestli berou kartu. Vyber si předem trenéra. Zaplať vstup klidně z mobilu. Srovnej recenze, prostředí, vybavení. Přijď připravený. Bez překvapení. Bez červených uší.
-        </p>
+        <p>{ab.p9middle}</p>
 
         {/* Stats */}
         <div style={{
@@ -95,8 +95,8 @@ export default function OProjektuClient({ gymCountStr, cityCountStr }: Props) {
           flexWrap: 'wrap',
         }}>
           {[
-            { num: gymCountStr, label: 'posiloven' },
-            { num: cityCountStr, label: 'měst' },
+            { num: gymCountStr, label: ab.statsGyms },
+            { num: cityCountStr, label: ab.statsCities },
           ].map(({ num, label }) => (
             <div key={label}>
               <div style={{
@@ -120,11 +120,9 @@ export default function OProjektuClient({ gymCountStr, cityCountStr }: Props) {
           ))}
         </div>
 
-        <p>
-          Dnes máme přes {gymCountStr} posiloven a fitness center ve více než {cityCountStr} městech po celé České republice. Přidáváme každý týden. A jednoho dne chceme být místem kde v ČR najdeš úplně každý sport, od posilovny přes jógu až po lezeckou stěnu.
-        </p>
+        <p>{p9}</p>
 
-        <p>Aby ten první krok nezabolel. Pro nikoho.</p>
+        <p>{ab.p10}</p>
 
         {/* Signature */}
         <div style={{
@@ -140,7 +138,7 @@ export default function OProjektuClient({ gymCountStr, cityCountStr }: Props) {
             textTransform: 'uppercase',
             color: 'var(--text)',
           }}>
-            Bohdan
+            {ab.founder}
           </div>
           <div style={{
             fontFamily: 'var(--font-display)',
@@ -151,7 +149,7 @@ export default function OProjektuClient({ gymCountStr, cityCountStr }: Props) {
             color: 'var(--muted)',
             marginTop: '0.25rem',
           }}>
-            Zakladatel
+            {ab.founderRole}
           </div>
         </div>
       </div>
