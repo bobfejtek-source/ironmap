@@ -14,10 +14,6 @@ interface Props {
   allCities: { city: string; count: number }[];
 }
 
-const CATEGORY_NAMES = [
-  'Posilovna', 'CrossFit', 'Jóga', 'Pilates',
-  'Outdoor', 'Bojové sporty', 'Spinning', 'Bazén',
-];
 
 function CatIcon({ category }: { category: string }) {
   const p = {

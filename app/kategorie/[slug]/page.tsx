@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getGymsByCategory, getCities } from '@/lib/db';
 import { CATEGORIES, categoryBySlug } from '@/lib/categories';
-import { cityToSlug, cityUrl } from '@/lib/utils';
+import { cityUrl } from '@/lib/utils';
 import GymCard from '@/components/GymCard';
 
 export const revalidate = 3600;
