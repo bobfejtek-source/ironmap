@@ -116,6 +116,24 @@ const EXCLUDE_NAME_KEYWORDS = [
   // Food & drink
   'restaur', 'kavárna', 'bar ', ' bar', 'pub ', ' pub', 'bistro', 'pizz', 'bufet',
   'bowling',
+  // Shooting ranges (English + Czech already covered)
+  'shooting range',
+  // Cycling / wheeled sports
+  'pumptrack', 'bmx ', ' bmx', 'cyklo',
+  // Table tennis / ping pong
+  'stolní tenis', 'ping pong', 'table tennis',
+  // Canoe / water sports (supplement existing kanoistik)
+  'kanoe', 'kajak', 'veslař',
+  // Cultural / community centers
+  'kulturní dům', 'kulturní centrum', 'dům kultury',
+  // Dance studios (distinct from fitness)
+  'centrum tance', 'taneční studio', 'taneční škola',
+  // RC / model clubs
+  'rc modell', 'model car', 'modell car',
+  // Dog runs
+  'výběh pro psy', 'psí výběh',
+  // Beach / sand courts (not a gym)
+  'beach bar', 'plážový bar',
   // Outdoor / non-gym sport
   'hřiště',        // football/playground fields (Czech)
   'football field', 'soccer field', 'fotbalové',  // English + Czech
@@ -137,8 +155,23 @@ const EXCLUDE_NAME_KEYWORDS = [
   'trampolín', 'trampoline', 'jump family', 'jump arena', 'jump park',
   // Football / sports clubs (not gyms)
   ' fk ', 'fk ', ' fk,',  // fotbalový klub
-  'fotbalový klub', 'футбольный',
-  'tennis club', 'tenisový klub', 'squash club',
+  'fotbalový klub',
+  // Tennis-specific venues (not mixed fitness venues)
+  'tenisov',              // tenisový/tenisová/tenisové kurt(y)/hala/areál
+  'tenisový kurt', 'tenisové kurty', ' kurty',
+  'tenis areál', 'areal tenis', 'tenis a beach', 'tenis beach',
+  'tennis club', 'tennis court', 'tennis center',
+  'ttc ',                 // table tennis club
+  'table tennis', 'stolni tenis', 'ping pong',
+  'herna stolni',
+  // Archery
+  'archery', 'lukostřelb', 'lukostřelec', 'lukostřelb',
+  // Kite / wind sports
+  'kiting', 'kite surf', 'kite spot', 'kiteboard',
+  // Festivals / events
+  'festival', ' fest ',
+  // Community halls / pubs (not gyms)
+  'baráčnická', 'rychta', 'kulturní dům', 'dům kultury',
 ];
 
 // Place types from Places API that indicate a non-gym business
@@ -192,7 +225,7 @@ function computeConfidence(place) {
 
 // ── Normalization helpers ─────────────────────────────────────────────────────
 
-const LEGAL_SUFFIXES = /\b(s\.?\s*r\.?\s*o\.?|a\.?\s*s\.?|z\.?\s*s\.?|spol|ltd|gmbh|inc|fitness\s+club)\b/gi;
+const LEGAL_SUFFIXES = /\b(s\.?\s*r\.?\s*o\.?|a\.?\s*s\.?|z\.?\s*s\.?|spol|ltd|gmbh|inc)\b/gi;
 
 function normalizeName(s) {
   return String(s)
@@ -220,8 +253,13 @@ function levenshtein(a, b) {
 
 function nameSimilarity(a, b) {
   const na = normalizeName(a), nb = normalizeName(b);
+  if (!na || !nb) return 0; // empty after normalization → no match
   if (na === nb) return 1;
-  if (na.includes(nb) || nb.includes(na)) return 0.85;
+  // includes shortcut: only when the shorter string is meaningful (≥ 9 chars)
+  // prevents "fitness" (7) matching "world fitness club Praha"
+  const shorter = na.length <= nb.length ? na : nb;
+  const longer  = na.length <= nb.length ? nb : na;
+  if (shorter.length >= 9 && longer.includes(shorter)) return 0.85;
   const dist = levenshtein(na, nb);
   return 1 - dist / Math.max(na.length, nb.length, 1);
 }
@@ -449,16 +487,23 @@ function isDuplicate(place, existingGyms, targetCity) {
 
 // ── Exclusion filter ──────────────────────────────────────────────────────────
 
+function stripDiacritics(s) {
+  return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
 function isExcluded(place) {
-  const name  = (place.displayName?.text ?? '').toLowerCase();
-  const types = place.types ?? [];
+  // Normalize name for keyword matching: lowercase + strip diacritics
+  // so "stolní tenis" keyword catches "Stolni Tenis" and vice versa
+  const rawName  = (place.displayName?.text ?? '').toLowerCase();
+  const name     = stripDiacritics(rawName);
+  const types    = place.types ?? [];
 
   // Type-based exclusions (fast path)
   const badType = types.find(t => EXCLUDE_PLACE_TYPES.has(t));
   if (badType) return `place type: ${badType}`;
 
-  // Name-based exclusions
-  const badKw = EXCLUDE_NAME_KEYWORDS.find(kw => name.includes(kw));
+  // Name-based exclusions (keywords also stripped of diacritics for matching)
+  const badKw = EXCLUDE_NAME_KEYWORDS.find(kw => name.includes(stripDiacritics(kw)));
   if (badKw) return `name contains "${badKw}"`;
 
   // sports_complex / recreation_center / health are broad types.
@@ -466,8 +511,24 @@ function isExcluded(place) {
   const primaryTypes = types.filter(t => SPORTS_COMPLEX_ONLY_TYPES.has(t));
   const hasStrongType = types.some(t => t === 'gym' || t === 'fitness_center' || t === 'yoga_studio');
   if (primaryTypes.length > 0 && !hasStrongType) {
-    const hasGymSignal = GYM_NAME_SIGNALS.some(s => name.includes(s));
+    const hasGymSignal = GYM_NAME_SIGNALS.some(s => name.includes(stripDiacritics(s)));
     if (!hasGymSignal) return `sports_complex type without gym name signal`;
+  }
+
+  // "Tenis X" prefix guard: names starting with "Tenis" are tennis clubs
+  // unless they also have a gym signal (e.g., "Tenis & Fitness Centrum")
+  if (/^tenis\s+/i.test(rawName)) {
+    const hasGymSignal = GYM_NAME_SIGNALS.some(s => name.includes(stripDiacritics(s)));
+    if (!hasGymSignal) return `tenis prefix without gym signal`;
+  }
+
+  // Sports-club prefix guard: SK/TJ/HC/FC prefixes are Czech sports clubs
+  // (football, ice hockey, athletics). Google sometimes mis-tags them as 'gym'.
+  // Only accept them if the name contains a recognisable gym/fitness signal.
+  const CLUB_PREFIX = /^(sk|hc|fc|ac|mk|orel)\s+/i;
+  if (CLUB_PREFIX.test(rawName)) {
+    const hasGymSignal = GYM_NAME_SIGNALS.some(s => name.includes(stripDiacritics(s)));
+    if (!hasGymSignal) return `sports club prefix (${rawName.split(' ')[0].toUpperCase()}) without gym signal`;
   }
 
   return null;
