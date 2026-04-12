@@ -28,20 +28,24 @@ export type Gym = {
   monthly_price: number | null;
   price_verified: boolean | null;
   raw_price_text: string | null;
+  discovery_source: string | null;
+  discovery_batch: string | null;
+  confidence: number | null;
+  staging: boolean;
 };
 
 // ─── Queries ──────────────────────────────────────────────────────────────────
 
 export async function getAllGyms(): Promise<Gym[]> {
   if (!HAS_DB) return [];
-  const rows = await sql`SELECT * FROM gyms WHERE name != 'Unnamed Gym' ORDER BY name`;
+  const rows = await sql`SELECT * FROM gyms WHERE name != 'Unnamed Gym' AND staging = FALSE ORDER BY name`;
   return rows as Gym[];
 }
 
 export async function getGymsByCity(city: string): Promise<Gym[]> {
   if (!HAS_DB) return [];
   const rows = await sql`
-    SELECT * FROM gyms WHERE city = ${city} AND name != 'Unnamed Gym' ORDER BY name
+    SELECT * FROM gyms WHERE city = ${city} AND name != 'Unnamed Gym' AND staging = FALSE ORDER BY name
   `;
   return rows as Gym[];
 }
@@ -77,7 +81,7 @@ export async function getTopCities(limit = 12): Promise<{ city: string; count: n
 
 export async function getTotalCount(): Promise<number> {
   if (!HAS_DB) return 0;
-  const rows = await sql`SELECT COUNT(*)::int AS n FROM gyms WHERE name != 'Unnamed Gym'`;
+  const rows = await sql`SELECT COUNT(*)::int AS n FROM gyms WHERE name != 'Unnamed Gym' AND staging = FALSE`;
   return (rows[0] as { n: number }).n;
 }
 
@@ -85,7 +89,7 @@ export async function getSimilarGyms(city: string, excludeSlug: string, limit = 
   if (!HAS_DB) return [];
   const rows = await sql`
     SELECT * FROM gyms
-    WHERE city = ${city} AND slug != ${excludeSlug} AND name != 'Unnamed Gym'
+    WHERE city = ${city} AND slug != ${excludeSlug} AND name != 'Unnamed Gym' AND staging = FALSE
     ORDER BY CASE WHEN rating IS NOT NULL THEN 0 ELSE 1 END, rating DESC
     LIMIT ${limit}
   `;
