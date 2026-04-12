@@ -51,7 +51,7 @@ export default function ProMajiteleClient({ gymCount }: Props) {
   // ── Animated counters ──────────────────────────────────────────────
   const statsRef = useRef<HTMLDivElement>(null);
   const [animating, setAnimating] = useState(false);
-  const [counts, setCounts] = useState({ gym: 0, cities: 0, pct: 0, members: 0 });
+  const [counts, setCounts] = useState({ gym: 0, cities: 0, pct: 0, members: 0, membership: 0 });
 
   useEffect(() => {
     const el = statsRef.current;
@@ -72,10 +72,11 @@ export default function ProMajiteleClient({ gymCount }: Props) {
       const t = Math.min((now - start) / duration, 1);
       const e = easeOutQuart(t);
       setCounts({
-        gym:     Math.floor(e * gymCount),
-        cities:  Math.floor(e * 190),
-        pct:     Math.floor(e * 12),
-        members: Math.floor(e * 450),
+        gym:        Math.floor(e * gymCount),
+        cities:     Math.floor(e * 190),
+        pct:        Math.floor(e * 12),
+        members:    Math.floor(e * 450),
+        membership: Math.floor(e * 1500),
       });
       if (t < 1) requestAnimationFrame(tick);
     };
@@ -212,7 +213,7 @@ export default function ProMajiteleClient({ gymCount }: Props) {
           borderBottom: '1px solid var(--border)',
           background: 'var(--off-black)',
           display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
+          gridTemplateColumns: 'repeat(5, 1fr)',
           padding: '0',
         }}
         className="pm-stats-grid"
@@ -222,10 +223,11 @@ export default function ProMajiteleClient({ gymCount }: Props) {
           { value: `${counts.cities}+`,              label: 'měst pokryto' },
           { value: `${counts.pct}%`,                 label: 'roční růst fitness trhu v ČR' },
           { value: `${counts.members}\u00a0000+`,    label: 'aktivních členů v ČR' },
+          { value: `${counts.membership.toLocaleString('cs-CZ')}\u00a0Kč`, label: 'průměrné měsíční členství v ČR' },
         ].map(({ value, label }, i) => (
           <div key={i} style={{
-            padding: '2.5rem 2rem',
-            borderRight: i < 3 ? '1px solid var(--border)' : 'none',
+            padding: '2.5rem 1.5rem',
+            borderRight: i < 4 ? '1px solid var(--border)' : 'none',
             textAlign: 'center',
           }}
             className="pm-stat-cell"
@@ -377,7 +379,7 @@ export default function ProMajiteleClient({ gymCount }: Props) {
             </div>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
               {[
-                'Prioritní pozice — buďte vidět mezi prvními',
+                'Prioritní pozice ve vaší kategorii — buďte první jóga studio, první CrossFit box, první posilovna ve vašem městě',
                 'Vlastní fotogalerie',
                 'Statistiky prohlédnutí',
                 'Ověřený badge — zákazníci vám věří více',
@@ -396,7 +398,7 @@ export default function ProMajiteleClient({ gymCount }: Props) {
               Začít zdarma 14 dní
             </a>
             <div style={{ fontFamily: 'var(--font-barlow)', fontWeight: 300, fontSize: '0.8rem', color: 'var(--muted)', lineHeight: 1.5, borderTop: '1px solid var(--border)', paddingTop: '1rem' }}>
-              499 Kč/měsíc = cena jednoho vstupu. Jeden nový zákazník měsíčně = nulové náklady.
+              499 Kč/měsíc = méně než třetina průměrného měsíčního členství. Jeden nový zákazník měsíčně = nulové náklady.
             </div>
           </div>
 
@@ -452,6 +454,92 @@ export default function ProMajiteleClient({ gymCount }: Props) {
           </div>
         </div>
       </section>
+
+      {/* ── 4b. PLACEHOLDER AD PRODUCTS ─────────────────────────────── */}
+      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 2rem 4rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        {[
+          {
+            title: 'Kategorie Spotlight — brzy',
+            body: 'Prémiová pozice na stránce vaší kategorie. Buďte první co zákazník vidí když hledá jógu, CrossFit nebo posilovnu ve svém městě.',
+            price: 'od 299 Kč/měsíc',
+          },
+          {
+            title: 'Homepage Rotace — brzy',
+            body: 'Týdenní rotace vašeho gymu na hlavní stránce IRONMAP. Tisíce návštěvníků, maximální viditelnost.',
+            price: 'od 999 Kč/měsíc',
+          },
+          {
+            title: 'City Spotlight — brzy',
+            body: 'První pozice na stránce vašeho města. Zákazníci hledající posilovnu v Praze, Brně nebo Ostravě uvidí vás jako první.',
+            price: 'od 499 Kč/měsíc',
+          },
+        ].map(({ title, body, price }) => (
+          <div key={title} style={{
+            position: 'relative',
+            border: '1px dashed var(--border)',
+            padding: '1.75rem 2rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '2rem',
+            flexWrap: 'wrap',
+            background: 'var(--off-black)',
+          }}>
+            {/* Badge */}
+            <div style={{
+              position: 'absolute',
+              top: '1rem',
+              right: '1rem',
+              fontFamily: 'var(--font-display)',
+              fontWeight: 700,
+              fontSize: '0.55rem',
+              letterSpacing: '0.2em',
+              textTransform: 'uppercase',
+              color: 'var(--border-mid)',
+              border: '1px dashed var(--border)',
+              padding: '0.2rem 0.5rem',
+            }}>
+              Připravujeme
+            </div>
+
+            <div style={{ flex: 1, minWidth: 0, paddingRight: '5rem' }}>
+              <div style={{
+                fontFamily: 'var(--font-display)',
+                fontWeight: 900,
+                fontSize: '0.78rem',
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                color: 'var(--muted)',
+                marginBottom: '0.5rem',
+              }}>
+                {title}
+              </div>
+              <p style={{
+                fontFamily: 'var(--font-barlow)',
+                fontWeight: 300,
+                fontSize: '0.9rem',
+                lineHeight: 1.6,
+                color: 'var(--border-mid)',
+                margin: 0,
+              }}>
+                {body}
+              </p>
+            </div>
+
+            <div style={{
+              fontFamily: 'var(--font-display)',
+              fontWeight: 700,
+              fontSize: '0.85rem',
+              letterSpacing: '0.08em',
+              color: 'var(--border-mid)',
+              flexShrink: 0,
+              whiteSpace: 'nowrap',
+            }}>
+              {price}
+            </div>
+          </div>
+        ))}
+      </div>
 
       {/* ── 5. COMING SOON BANNER ────────────────────────────────────── */}
       <section style={{
@@ -740,11 +828,14 @@ export default function ProMajiteleClient({ gymCount }: Props) {
         @media (max-width: 860px) {
           .pm-pricing-grid { grid-template-columns: 1fr !important; }
           .pm-why-grid { grid-template-columns: 1fr !important; }
-          .pm-stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+          .pm-stats-grid { grid-template-columns: repeat(3, 1fr) !important; }
           .pm-stat-cell { border-right: none !important; border-bottom: 1px solid var(--border); }
           .pm-form-row { grid-template-columns: 1fr !important; }
         }
-        @media (max-width: 480px) {
+        @media (max-width: 600px) {
+          .pm-stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+        @media (max-width: 380px) {
           .pm-stats-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
