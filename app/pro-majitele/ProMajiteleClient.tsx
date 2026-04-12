@@ -110,7 +110,7 @@ export default function ProMajiteleClient({ gymCount }: Props) {
         flexDirection: 'column',
         justifyContent: 'center',
         padding: '5rem 2rem 4rem',
-        maxWidth: 900,
+        maxWidth: 760,
         margin: '0 auto',
       }}>
         <div style={{
