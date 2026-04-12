@@ -8,12 +8,12 @@ const CSP = [
   "font-src 'self' https://fonts.gstatic.com",
   // Google profile pictures + map tiles (Leaflet: OSM primary, CartoDB fallback)
   "img-src 'self' data: blob: https://lh3.googleusercontent.com https://*.googleusercontent.com https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com",
-  // API calls: weather + Neon DB edge
-  "connect-src 'self' https://api.open-meteo.com",
+  // API calls: Formspree forms (client-side fetch), weather API is server-side only
+  "connect-src 'self' https://formspree.io",
   "frame-ancestors 'none'",
   "object-src 'none'",
   "base-uri 'self'",
-  "form-action 'self'",
+  "form-action 'none'",
 ].join('; ');
 
 const securityHeaders = [
