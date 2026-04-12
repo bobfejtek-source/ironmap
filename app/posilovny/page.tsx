@@ -4,6 +4,8 @@ import GymCard from '@/components/GymCard';
 import { getAllGyms, getCities } from '@/lib/db';
 import { cityUrl } from '@/lib/utils';
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: 'Všechny posilovny v České republice',
   description:

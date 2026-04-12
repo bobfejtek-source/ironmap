@@ -5,6 +5,7 @@ import { cityToSlug, gymDetailUrl, formatRating } from '@/lib/utils';
 import GymDetailClient from '@/components/GymDetailClient';
 
 export const dynamicParams = true;
+export const revalidate = 3600;
 
 type Props = { params: { city: string; slug: string } };
 

@@ -6,6 +6,7 @@ import { cityToSlug } from '@/lib/utils';
 import CityListing from '@/components/CityListing';
 
 export const dynamicParams = true;
+export const revalidate = 3600;
 
 type Props = { params: { city: string } };
 

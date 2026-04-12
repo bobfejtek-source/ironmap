@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { getTopCities, getTotalCount, getCities } from '@/lib/db';
 import HomeClient from '@/components/HomeClient';
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: 'IRON — Najdi svou posilovnu v České republice',
   description:
