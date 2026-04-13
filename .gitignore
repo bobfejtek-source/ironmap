@@ -39,3 +39,5 @@ next-env.d.ts
 /data/gymie.db
 /data/gymie.db-shm
 /data/gymie.db-wal
+scripts/enrich-google-places-progress.json
+scripts/multisport_facilities.json
