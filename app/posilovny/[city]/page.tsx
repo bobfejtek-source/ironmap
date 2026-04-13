@@ -10,7 +10,7 @@ export const revalidate = 3600;
 
 import { CATEGORIES } from '@/lib/categories';
 
-type Props = { params: { city: string }; searchParams: { kategorie?: string; lat?: string; lng?: string } };
+type Props = { params: Promise<{ city: string }>; searchParams: Promise<{ kategorie?: string; lat?: string; lng?: string }> };
 
 export async function generateStaticParams() {
   const cities = await getCities();
@@ -18,30 +18,32 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const cityName = await resolveCityName(params.city);
+  const { city } = await params;
+  const cityName = await resolveCityName(city);
   if (!cityName) return {};
   const gyms = await getGymsByCity(cityName);
   return {
     title: `Posilovny ${cityName} — ${gyms.length} fitness center`,
     description: `Najděte nejlepší posilovnu v ${cityName}. ${gyms.length} fitness center s hodnoceními, otevírací dobou a kontakty.`,
-    alternates: { canonical: `/posilovny/${params.city}` },
+    alternates: { canonical: `/posilovny/${city}` },
   };
 }
 
 export default async function CityGymsPage({ params, searchParams }: Props) {
-  const cityName = await resolveCityName(params.city);
+  const { city } = await params;
+  const cityName = await resolveCityName(city);
   if (!cityName) notFound();
 
   const gyms = await getGymsByCity(cityName);
   if (gyms.length === 0) notFound();
 
   // Resolve initialCategory from ?kategorie= param (must be a known DB value)
-  const katParam = searchParams.kategorie;
+  const { kategorie: katParam, lat: latStr, lng: lngStr } = await searchParams;
   const initialCategory = CATEGORIES.find(c => c.db === katParam)?.db ?? undefined;
 
   // Geolocation coords from ?lat=&lng= — passed through from homepage redirect
-  const userLat = searchParams.lat ? parseFloat(searchParams.lat) : undefined;
-  const userLng = searchParams.lng ? parseFloat(searchParams.lng) : undefined;
+  const userLat = latStr ? parseFloat(latStr) : undefined;
+  const userLng = lngStr ? parseFloat(lngStr) : undefined;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>

@@ -26,9 +26,7 @@ const securityHeaders = [
 ];
 
 const nextConfig = {
-  experimental: {
-    serverComponentsExternalPackages: ['@neondatabase/serverless'],
-  },
+  serverExternalPackages: ['@neondatabase/serverless'],
 
   images: {
     remotePatterns: [

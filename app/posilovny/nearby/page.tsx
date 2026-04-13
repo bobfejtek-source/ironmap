@@ -9,11 +9,12 @@ export const metadata: Metadata = {
   robots: { index: false }, // personal location page — don't index
 };
 
-type Props = { searchParams: { lat?: string; lng?: string } };
+type Props = { searchParams: Promise<{ lat?: string; lng?: string }> };
 
 export default async function NearbyPage({ searchParams }: Props) {
-  const lat = parseFloat(searchParams.lat ?? '');
-  const lng = parseFloat(searchParams.lng ?? '');
+  const { lat: latStr, lng: lngStr } = await searchParams;
+  const lat = parseFloat(latStr ?? '');
+  const lng = parseFloat(lngStr ?? '');
 
   if (isNaN(lat) || isNaN(lng) || lat < 48 || lat > 52 || lng < 12 || lng > 19) {
     redirect('/');

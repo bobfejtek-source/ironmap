@@ -7,7 +7,7 @@ import GymDetailClient from '@/components/GymDetailClient';
 export const dynamicParams = true;
 export const revalidate = 3600;
 
-type Props = { params: { city: string; slug: string } };
+type Props = { params: Promise<{ city: string; slug: string }> };
 
 export async function generateStaticParams() {
   const gyms = await getAllGyms();
@@ -18,7 +18,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const gym = await getGymBySlug(params.slug);
+  const { slug } = await params;
+  const gym = await getGymBySlug(slug);
   if (!gym) return {};
 
   const title = `${gym.name} — posilovna ${gym.city}`;
@@ -35,8 +36,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function GymDetailPage({ params }: Props) {
-  const gym = await getGymBySlug(params.slug);
-  if (!gym || cityToSlug(gym.city) !== params.city) notFound();
+  const { city, slug } = await params;
+  const gym = await getGymBySlug(slug);
+  if (!gym || cityToSlug(gym.city) !== city) notFound();
 
   const similar = await getSimilarGyms(gym.city, gym.slug, 4);
 

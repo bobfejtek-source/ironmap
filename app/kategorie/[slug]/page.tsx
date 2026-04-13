@@ -9,25 +9,27 @@ import CategoryHeader, { CategorySortLabel } from './CategoryHeader';
 
 export const revalidate = 3600;
 
-type Props = { params: { slug: string } };
+type Props = { params: Promise<{ slug: string }> };
 
 export function generateStaticParams() {
   return CATEGORIES.map(c => ({ slug: c.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const cat = categoryBySlug(params.slug);
+  const { slug } = await params;
+  const cat = categoryBySlug(slug);
   if (!cat) return {};
   const gyms = await getGymsByCategory(cat.db);
   return {
     title: `${cat.labelCs} v České republice — ${gyms.length} studií`,
     description: `Najděte nejlepší ${cat.labelCs.toLowerCase()} v České republice. ${gyms.length} míst s hodnoceními a kontakty.`,
-    alternates: { canonical: `/kategorie/${params.slug}` },
+    alternates: { canonical: `/kategorie/${slug}` },
   };
 }
 
 export default async function CategoryPage({ params }: Props) {
-  const cat = categoryBySlug(params.slug);
+  const { slug } = await params;
+  const cat = categoryBySlug(slug);
   if (!cat) notFound();
 
   const [gyms, allCities] = await Promise.all([
