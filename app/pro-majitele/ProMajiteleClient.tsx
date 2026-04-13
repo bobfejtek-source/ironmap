@@ -424,7 +424,7 @@ export default function ProMajiteleClient({ gymCount }: Props) {
                   proPrice="2 549 Kč" elitePrice="2 249 Kč"
                   features={[
                     'Pozice #1 ve vašem městě ve vaší kategorii',
-                    'Gold badge na profilu',
+                    'Gold badge na profilu po dobu kampaně',
                   ]}
                 />
                 <SlotCard
