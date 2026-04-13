@@ -10,6 +10,7 @@ import { useT } from '@/lib/i18n';
 import { trackEvent } from '@/lib/gtag';
 import GymCard from './GymCard';
 import CheckinButton from './CheckinButton';
+import GymPhotoGallery from './GymPhotoGallery';
 
 function MapLoader() {
   const { t } = useT();
@@ -197,6 +198,9 @@ export default function GymDetailClient({ gym, similarGyms }: Props) {
           </p>
         )}
       </div>
+
+      {/* Photo gallery */}
+      {gym.photos && <GymPhotoGallery photos={gym.photos} gymName={gym.name} />}
 
       {/* Amenities */}
       {(() => {
