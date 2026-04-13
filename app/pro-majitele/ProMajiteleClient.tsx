@@ -1,49 +1,140 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useModal } from '@/components/ModalContext';
-import { useT } from '@/lib/i18n';
 
-interface Props {
-  gymCount: number;
-}
-
-function formatGymCount(n: number): string {
-  if (n >= 1000) return `${Math.floor(n / 1000)}\u00a0${String(n % 1000).padStart(3, '0')}`;
-  return String(n);
-}
+interface Props { gymCount: number; }
 
 function easeOutQuart(t: number): number {
   return 1 - Math.pow(1 - t, 4);
 }
 
-type CheckKey = 'free' | 'pro' | 'elite' | 'gymWeek' | 'poradit';
-const CHECK_KEYS: CheckKey[] = ['free', 'pro', 'elite', 'gymWeek', 'poradit'];
+// ── Inline SVG icons - no external assets ──────────────────────────────────
+const IconTarget = () => (
+  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+    <rect x="1" y="1" width="26" height="26" stroke="var(--lime)" strokeWidth="2"/>
+    <rect x="9" y="9" width="10" height="10" fill="var(--lime)"/>
+  </svg>
+);
+const IconBars = () => (
+  <svg width="26" height="24" viewBox="0 0 26 24" fill="none" aria-hidden="true">
+    <rect x="0"  y="10" width="6" height="14" fill="var(--lime)"/>
+    <rect x="10" y="4"  width="6" height="20" fill="var(--lime)"/>
+    <rect x="20" y="0"  width="6" height="24" fill="var(--lime)"/>
+  </svg>
+);
+const IconDiamond = () => (
+  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+    <rect x="8" y="8" width="12" height="12" stroke="var(--lime)" strokeWidth="2" transform="rotate(45 14 14)"/>
+    <rect x="11" y="11" width="6" height="6" fill="var(--lime)" transform="rotate(45 14 14)"/>
+  </svg>
+);
+const IconArrow = () => (
+  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+    <polyline points="4,22 14,6 24,22" stroke="var(--lime)" strokeWidth="2.5" strokeLinejoin="miter" fill="none"/>
+    <rect x="11" y="14" width="6" height="14" fill="var(--lime)"/>
+  </svg>
+);
 
+// ── Reusable feature list item ─────────────────────────────────────────────
+function FeatItem({ children }: { children: React.ReactNode }) {
+  return (
+    <li style={{
+      display: 'flex', gap: '0.6rem', alignItems: 'flex-start',
+      fontFamily: 'var(--font-body)', fontSize: '0.93rem',
+      color: 'var(--muted)', fontWeight: 300, lineHeight: 1.5,
+    }}>
+      <span style={{ color: 'var(--lime)', flexShrink: 0, marginTop: '0.05em', fontWeight: 700 }}>+</span>
+      {children}
+    </li>
+  );
+}
+
+// ── Metal slot card ────────────────────────────────────────────────────────
+interface SlotCardProps {
+  tier: 'gold' | 'silver' | 'bronze';
+  name: string;
+  price: string;
+  proPrice: string;
+  elitePrice: string;
+  features: string[];
+  last?: boolean;
+}
+function SlotCard({ tier, name, price, proPrice, elitePrice, features, last }: SlotCardProps) {
+  const colors = {
+    gold:   { text: '#FFD700', glow: 'rgba(255,215,0,0.12)',  border: 'rgba(255,215,0,0.4)',  medal: '#FFD700', mGlow: 'rgba(255,215,0,0.7)'  },
+    silver: { text: '#C8C8C8', glow: 'rgba(192,192,192,0.09)',border: 'rgba(192,192,192,0.35)',medal: '#C0C0C0', mGlow: 'rgba(192,192,192,0.6)' },
+    bronze: { text: '#D4894A', glow: 'rgba(205,127,50,0.09)', border: 'rgba(205,127,50,0.35)',medal: '#CD7F32', mGlow: 'rgba(205,127,50,0.6)'  },
+  }[tier];
+  return (
+    <div
+      className={`pm-slot-card pm-slot-card-${tier}${last ? ' pm-slot-last' : ''}`}
+      style={{ ['--slot-border' as string]: colors.border, ['--slot-glow' as string]: colors.glow }}
+    >
+      <div className="pm-slot-top">
+        <div
+          className="pm-slot-medal"
+          aria-hidden="true"
+          style={{ background: colors.medal, boxShadow: `0 0 10px ${colors.mGlow}` }}
+        />
+        <div style={{ flex: 1 }}>
+          <div className="pm-slot-name" style={{ color: colors.text }}>{name}</div>
+          <div className="pm-slot-price">{price}</div>
+          <div className="pm-slot-discounts">
+            <span>Pro: {proPrice}</span>
+            <span style={{ color: colors.text }}>Elite: {elitePrice}</span>
+          </div>
+        </div>
+      </div>
+      <ul className="pm-slot-features">
+        {features.map(f => <FeatItem key={f}>{f}</FeatItem>)}
+      </ul>
+    </div>
+  );
+}
+
+// ── Main component ─────────────────────────────────────────────────────────
 export default function ProMajiteleClient({ gymCount }: Props) {
-  const { openAddGym } = useModal();
-  const { t } = useT();
-  const fo = t.forOwners;
 
-  // ── Animated counters ──────────────────────────────────────────────
+  // Count-up
   const statsRef = useRef<HTMLDivElement>(null);
-  const [animating, setAnimating] = useState(false);
+  const [statsActive, setStatsActive] = useState(false);
   const [counts, setCounts] = useState({ gym: 0, cities: 0, pct: 0, members: 0, membership: 0 });
 
+  // Scroll reveals
+  const pricingRef = useRef<HTMLElement>(null);
+  const slotsRef   = useRef<HTMLElement>(null);
+  const whyRef     = useRef<HTMLElement>(null);
+  const contactRef = useRef<HTMLElement>(null);
+  const [pricingVis, setPricingVis] = useState(false);
+  const [slotsVis,   setSlotsVis]   = useState(false);
+  const [whyVis,     setWhyVis]     = useState(false);
+  const [contactVis, setContactVis] = useState(false);
+
+  // Form
+  const [form, setForm] = useState({ gymName: '', name: '', email: '', phone: '', interest: '', message: '' });
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted,  setSubmitted]  = useState(false);
+
+  // Stats entry observer
   useEffect(() => {
     const el = statsRef.current;
     if (!el) return;
     const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setAnimating(true); obs.disconnect(); } },
-      { threshold: 0.3 },
+      ([e]) => { if (e.isIntersecting) { setStatsActive(true); obs.disconnect(); } },
+      { threshold: 0.25 },
     );
     obs.observe(el);
     return () => obs.disconnect();
   }, []);
 
+  // Stats animation
   useEffect(() => {
-    if (!animating) return;
-    const duration = 1600;
+    if (!statsActive) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setCounts({ gym: gymCount, cities: 190, pct: 12, members: 450, membership: 850 });
+      return;
+    }
+    const duration = 1800;
     const start = performance.now();
     const tick = (now: number) => {
       const t = Math.min((now - start) / duration, 1);
@@ -53,46 +144,51 @@ export default function ProMajiteleClient({ gymCount }: Props) {
         cities:     Math.floor(e * 190),
         pct:        Math.floor(e * 12),
         members:    Math.floor(e * 450),
-        membership: Math.floor(e * 1500),
+        membership: Math.floor(e * 850),
       });
       if (t < 1) requestAnimationFrame(tick);
     };
     requestAnimationFrame(tick);
-  }, [animating, gymCount]);
+  }, [statsActive, gymCount]);
 
-  // ── Contact form ───────────────────────────────────────────────────
-  const [form, setForm] = useState({ gymName: '', city: '', name: '', email: '', phone: '' });
-  const [interests, setInterests] = useState<Record<CheckKey, boolean>>({
-    free: false, pro: false, elite: false, gymWeek: false, poradit: false,
-  });
-  const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-
-  const handleField = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
-    setForm(f => ({ ...f, [k]: e.target.value }));
-
-  const toggleInterest = (k: CheckKey) =>
-    setInterests(prev => ({ ...prev, [k]: !prev[k] }));
+  // Scroll reveals
+  useEffect(() => {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) { setPricingVis(true); setSlotsVis(true); setWhyVis(true); setContactVis(true); return; }
+    const pairs: [React.RefObject<HTMLElement | null>, (v: boolean) => void][] = [
+      [pricingRef, setPricingVis],
+      [slotsRef,   setSlotsVis],
+      [whyRef,     setWhyVis],
+      [contactRef, setContactVis],
+    ];
+    const observers = pairs.map(([ref, setter]) => {
+      const el = ref.current;
+      if (!el) return null;
+      const obs = new IntersectionObserver(
+        ([e]) => { if (e.isIntersecting) { setter(true); obs.disconnect(); } },
+        { threshold: 0.06 },
+      );
+      obs.observe(el);
+      return obs;
+    });
+    return () => observers.forEach(o => o?.disconnect());
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    const selectedInterests = CHECK_KEYS
-      .filter(k => interests[k])
-      .map((k, i) => fo.interests[i])
-      .join(', ') || fo.interests[4];
     try {
       const res = await fetch('https://formspree.io/f/xgopqqvz', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
-          [fo.fieldGymName]: form.gymName,
-          [fo.fieldCity]: form.city,
-          [fo.fieldName]: form.name,
-          [fo.fieldEmail]: form.email,
-          [fo.fieldPhone]: form.phone,
-          [fo.interestLabel]: selectedInterests,
-          source: 'pro-majitele',
+          'Nazev gymu': form.gymName,
+          'Jmeno':      form.name,
+          'Email':      form.email,
+          'Telefon':    form.phone,
+          'Zajem o':    form.interest,
+          'Zprava':     form.message,
+          source:       'pro-majitele',
         }),
       });
       if (res.ok) setSubmitted(true);
@@ -101,544 +197,1043 @@ export default function ProMajiteleClient({ gymCount }: Props) {
     }
   };
 
+  const fmtGym = (n: number) =>
+    n >= 1000 ? `${Math.floor(n / 1000)}\u00a0${String(n % 1000).padStart(3, '0')}` : String(n);
+
   return (
     <main>
 
-      {/* ── 1. HERO ─────────────────────────────────────────────────── */}
-      <section style={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        padding: '5rem 2rem 4rem',
-        maxWidth: 760,
-        margin: '0 auto',
-      }}>
-        <div style={{
-          fontFamily: 'var(--font-display)',
-          fontWeight: 700,
-          fontSize: '0.68rem',
-          letterSpacing: '0.22em',
-          textTransform: 'uppercase',
-          color: 'var(--lime)',
-          marginBottom: '2rem',
-        }}>
-          {fo.tag}
-        </div>
-
-        <h1 style={{
-          fontFamily: 'var(--font-display)',
-          fontWeight: 900,
-          fontSize: 'clamp(2.2rem, 6vw, 5rem)',
-          textTransform: 'uppercase',
-          letterSpacing: '-0.01em',
-          lineHeight: 0.95,
-          marginBottom: '2.5rem',
-          color: 'var(--text)',
-        }}>
-          {fo.heroLine1}<br />
-          {fo.heroLine2}<br />
-          <span style={{ color: 'var(--lime)' }}>{fo.heroLineAccent}</span>
-        </h1>
-
-        <p style={{
-          fontFamily: 'var(--font-barlow)',
-          fontWeight: 300,
-          fontSize: 'clamp(1rem, 2vw, 1.25rem)',
-          color: 'var(--muted)',
-          lineHeight: 1.7,
-          maxWidth: 560,
-          marginBottom: '3rem',
-        }}>
-          {fo.heroSub}
-        </p>
-
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-          <a
-            href="#kontakt"
-            className="iron-btn iron-btn-primary"
-            style={{ fontSize: '0.85rem', padding: '0.75rem 2rem', textDecoration: 'none' }}
-          >
-            {fo.heroCta}
-          </a>
-          <a
-            href="#cenik"
-            style={{
-              fontFamily: 'var(--font-display)',
-              fontWeight: 700,
-              fontSize: '0.75rem',
-              letterSpacing: '0.12em',
-              textTransform: 'uppercase',
-              color: 'var(--muted)',
-              border: '1px solid var(--border)',
-              padding: '0.75rem 2rem',
-              textDecoration: 'none',
-              transition: 'color 0.2s, border-color 0.2s',
-            }}
-            onMouseEnter={e => { e.currentTarget.style.color = 'var(--text)'; e.currentTarget.style.borderColor = 'var(--text)'; }}
-            onMouseLeave={e => { e.currentTarget.style.color = 'var(--muted)'; e.currentTarget.style.borderColor = 'var(--border)'; }}
-          >
-            {fo.heroCta2}
-          </a>
+      {/* ════════════════════════════════════════════════════════════ */}
+      {/* 1. HERO                                                      */}
+      {/* ════════════════════════════════════════════════════════════ */}
+      <section className="pm-hero" aria-label="Hlavni sekce">
+        <div className="pm-hero-grid" aria-hidden="true" />
+        <div className="pm-hero-inner">
+          <p className="iron-label pm-anim-1">Pro majitele</p>
+          <h1 className="pm-hero-h1 pm-anim-2">
+            Vasi zakaznici<br />
+            vas hledaji.
+          </h1>
+          <p className="pm-hero-lime pm-anim-3">Najdou vas?</p>
+          <p className="pm-hero-body pm-anim-4">
+            Pres 450&nbsp;000 aktivnich sportovcu v&nbsp;CR. Fitness trh roste 12&nbsp;% rocne.<br className="pm-br-desktop" />
+            Budte tam kde hledaji.
+          </p>
+          <div className="pm-hero-ctas pm-anim-5">
+            <a href="/pridat-gym" className="iron-btn iron-btn-primary pm-pulse">
+              Pridat gym zdarma
+            </a>
+            <a href="#cenik" className="iron-btn iron-btn-ghost">
+              Zobrazit cenik
+            </a>
+          </div>
         </div>
       </section>
 
-      {/* ── 2. STATS BAR ─────────────────────────────────────────────── */}
-      <div
-        ref={statsRef}
-        style={{
-          borderTop: '1px solid var(--border)',
-          borderBottom: '1px solid var(--border)',
-          background: 'var(--off-black)',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(5, 1fr)',
-        }}
-        className="pm-stats-grid"
-      >
+      {/* ════════════════════════════════════════════════════════════ */}
+      {/* 2. STATS BAR                                                 */}
+      {/* ════════════════════════════════════════════════════════════ */}
+      <div ref={statsRef} className="pm-stats" role="region" aria-label="Statistiky trhu">
         {[
-          { value: `${formatGymCount(counts.gym)}+`, label: fo.statsGymLabel },
-          { value: `${counts.cities}+`,              label: fo.statsCitiesLabel },
-          { value: `${counts.pct}%`,                 label: fo.statsGrowthLabel },
-          { value: `${counts.members}\u00a0000+`,    label: fo.statsMembersLabel },
-          { value: `${counts.membership.toLocaleString('cs-CZ')}\u00a0Kč`, label: fo.statsMembershipLabel },
-        ].map(({ value, label }, i) => (
-          <div key={i} style={{
-            padding: '2.5rem 1.5rem',
-            borderRight: i < 4 ? '1px solid var(--border)' : 'none',
-            textAlign: 'center',
-          }}
-            className="pm-stat-cell"
-          >
-            <div style={{
-              fontFamily: 'var(--font-display)',
-              fontWeight: 900,
-              fontSize: 'clamp(1.8rem, 3.5vw, 3rem)',
-              letterSpacing: '0.02em',
-              color: 'var(--lime)',
-              lineHeight: 1,
-              marginBottom: '0.5rem',
-            }}>{value}</div>
-            <div style={{
-              fontFamily: 'var(--font-display)',
-              fontWeight: 700,
-              fontSize: '0.65rem',
-              letterSpacing: '0.15em',
-              textTransform: 'uppercase',
-              color: 'var(--muted)',
-            }}>{label}</div>
+          { val: `${fmtGym(counts.gym)}+`,             lbl: 'posiloven v\u00a0CR'             },
+          { val: `${counts.cities}+`,                   lbl: 'mest pokryto'                    },
+          { val: `${counts.pct}\u00a0%`,                lbl: 'rocni rust fitness trhu'          },
+          { val: `${counts.members}\u00a0000+`,         lbl: 'aktivnich clenu'                 },
+          { val: `${counts.membership}\u00a0Kc`,        lbl: 'prumerne mesicni clenstvi'       },
+        ].map(({ val, lbl }, i) => (
+          <div key={i} className="pm-stat-cell">
+            <div className="pm-stat-val">{val}</div>
+            <div className="pm-stat-lbl">{lbl}</div>
           </div>
         ))}
       </div>
 
-      {/* ── 3. PROBLEM ───────────────────────────────────────────────── */}
-      <section style={{
-        padding: '7rem 2rem',
-        maxWidth: 760,
-        margin: '0 auto',
-      }}>
-        <h2 style={{
-          fontFamily: 'var(--font-display)',
-          fontWeight: 900,
-          fontSize: 'clamp(1.6rem, 4vw, 3rem)',
-          textTransform: 'uppercase',
-          letterSpacing: '-0.01em',
-          lineHeight: 1,
-          marginBottom: '2.5rem',
-          color: 'var(--text)',
-        }}>
-          {fo.problemTitle1}<br />
-          <span style={{ color: 'var(--lime)' }}>{fo.problemTitleAccent}</span>
-        </h2>
-        <p style={{
-          fontFamily: 'var(--font-barlow)',
-          fontWeight: 300,
-          fontSize: '1.15rem',
-          lineHeight: 1.8,
-          color: 'var(--muted)',
-        }}>
-          {fo.problemBody}{' '}
-          <span style={{ color: 'var(--text)', fontWeight: 400 }}>{fo.problemBodyAccent}</span>
-        </p>
-      </section>
+      {/* ════════════════════════════════════════════════════════════ */}
+      {/* 3. PRICING                                                   */}
+      {/* ════════════════════════════════════════════════════════════ */}
+      <section
+        id="cenik"
+        ref={pricingRef}
+        className={`pm-section pm-reveal${pricingVis ? ' is-visible' : ''}`}
+        aria-label="Cenik"
+      >
+        <div className="pm-inner pm-wide">
+          <p className="iron-label">Cenik</p>
+          <h2 className="pm-h2" style={{ marginTop: '1.5rem' }}>Vyberte svuj zaklad</h2>
+          <p className="pm-sub" style={{ marginTop: '1rem' }}>
+            Profil, viditelnost, data. Plafte jednou mesicne, cancellujte kdykoliv.
+          </p>
 
-      {/* ── 4. PRICING ───────────────────────────────────────────────── */}
-      <section id="cenik" style={{
-        padding: '0 2rem 7rem',
-        maxWidth: 1100,
-        margin: '0 auto',
-      }}>
-        <div style={{
-          fontFamily: 'var(--font-display)',
-          fontWeight: 700,
-          fontSize: '0.68rem',
-          letterSpacing: '0.22em',
-          textTransform: 'uppercase',
-          color: 'var(--lime)',
-          marginBottom: '1.5rem',
-        }}>
-          {fo.pricingTag}
-        </div>
-        <h2 style={{
-          fontFamily: 'var(--font-display)',
-          fontWeight: 900,
-          fontSize: 'clamp(1.6rem, 3.5vw, 2.5rem)',
-          textTransform: 'uppercase',
-          letterSpacing: '-0.01em',
-          marginBottom: '3rem',
-          color: 'var(--text)',
-        }}>
-          {fo.pricingTitle}
-        </h2>
+          <div className="pm-plans">
 
-        <div className="pm-pricing-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', alignItems: 'stretch' }}>
+            {/* FREE */}
+            <article className="pm-plan" aria-label="Free plan">
+              <header className="pm-plan-head">
+                <div className="pm-plan-tier">Free</div>
+                <div className="pm-price-row">
+                  <span className="pm-price">0&nbsp;Kc</span>
+                  <span className="pm-per">/mes</span>
+                </div>
+              </header>
+              <ul className="pm-feat-list">
+                {['Zakladni profil s adresou','Zobrazeni na mape','Oteviraci doba','Kontaktni udaje']
+                  .map(f => <FeatItem key={f}>{f}</FeatItem>)}
+              </ul>
+              <a href="/pridat-gym" className="pm-plan-btn pm-plan-btn-outline">
+                Pridat gym zdarma
+              </a>
+            </article>
 
-          {/* FREE */}
-          <div style={{
-            border: '1px solid var(--border)',
-            padding: '2rem',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '1.25rem',
-            background: 'var(--off-black)',
-          }}>
-            <div>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '0.75rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '0.75rem' }}>{fo.freeName}</div>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '2.5rem', letterSpacing: '0.02em', color: 'var(--text)', lineHeight: 1 }}>{fo.freePrice}</div>
-            </div>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.6rem', flex: 1 }}>
-              {fo.freeFeatures.map(f => (
-                <li key={f} style={{ fontFamily: 'var(--font-barlow)', fontSize: '0.95rem', color: 'var(--muted)', fontWeight: 300, display: 'flex', gap: '0.6rem', alignItems: 'flex-start' }}>
-                  <span style={{ color: 'var(--lime)', flexShrink: 0 }}>✓</span> {f}
-                </li>
-              ))}
-            </ul>
-            <button
-              onClick={openAddGym}
-              style={{ marginTop: 'auto', fontSize: '0.8rem', padding: '0.65rem 1.25rem', border: '1px solid var(--border)', background: 'none', color: 'var(--text)', fontFamily: 'var(--font-display)', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', cursor: 'pointer', transition: 'border-color 0.2s, color 0.2s' }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--lime)'; e.currentTarget.style.color = 'var(--lime)'; }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text)'; }}
-            >
-              {fo.freeCta}
-            </button>
+            {/* PRO - featured */}
+            <article className="pm-plan pm-plan-pro" aria-label="Pro plan">
+              <div className="pm-plan-badge pm-badge-lime">Nejpopularnejsi</div>
+              <header className="pm-plan-head">
+                <div className="pm-plan-tier" style={{ color: 'var(--lime)' }}>Pro</div>
+                <span className="pm-pilot-tag">Pilot cena</span>
+                <div className="pm-price-row" style={{ marginTop: '0.5rem' }}>
+                  <span className="pm-price-old">599&nbsp;Kc</span>
+                  <span className="pm-price">499&nbsp;Kc</span>
+                  <span className="pm-per">/mes</span>
+                </div>
+                <div className="pm-from">od</div>
+              </header>
+              <ul className="pm-feat-list">
+                {[
+                  'Vse z Free',
+                  'Prioritni pozice v kategorii vaseho mesta',
+                  'Vlastni fotogalerie',
+                  'Statistiky zobrazeni profilu',
+                  'Overeny badge - zakaznici veri vice',
+                  'Primy odkaz na web',
+                  '15\u00a0% sleva na reklamni sloty',
+                ].map(f => <FeatItem key={f}>{f}</FeatItem>)}
+              </ul>
+              <a href="#kontakt" className="pm-plan-btn pm-plan-btn-primary pm-pulse">
+                Zacit 14 dni zdarma
+              </a>
+            </article>
+
+            {/* ELITE */}
+            <article className="pm-plan pm-plan-elite" aria-label="Elite plan">
+              <div className="pm-plan-badge pm-badge-gold">Nejvyssi hodnota</div>
+              <header className="pm-plan-head">
+                <div className="pm-plan-tier" style={{ color: '#D4944A' }}>Elite</div>
+                <span className="pm-pilot-tag" style={{ borderColor: '#D4944A', color: '#D4944A' }}>Pilot cena</span>
+                <div className="pm-price-row" style={{ marginTop: '0.5rem' }}>
+                  <span className="pm-price-old">1&nbsp;590&nbsp;Kc</span>
+                  <span className="pm-price">1&nbsp;290&nbsp;Kc</span>
+                  <span className="pm-per">/mes</span>
+                </div>
+                <div className="pm-from">od</div>
+              </header>
+              <ul className="pm-feat-list">
+                {[
+                  'Vse z Pro',
+                  'Pokrocile statistiky a konverze',
+                  'Featured badge - maximalni duveryhodnost',
+                  '25\u00a0% sleva na reklamni sloty',
+                  '3 dny Gold Mesto slot zdarma / mesic (hodnota 1\u00a0499\u00a0Kc)',
+                  'Dedicovany account manager',
+                  'Mesicni report navstevnosti',
+                ].map(f => <FeatItem key={f}>{f}</FeatItem>)}
+              </ul>
+              <a href="#kontakt" className="pm-plan-btn pm-plan-btn-gold">
+                Kontaktovat nas
+              </a>
+            </article>
+
           </div>
 
-          {/* PRO */}
-          <div style={{
-            border: '1px solid var(--lime)',
-            padding: '2rem',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '1.25rem',
-            background: 'var(--off-black)',
-            position: 'relative',
-          }}>
-            <div style={{
-              position: 'absolute',
-              top: '-1px', left: '50%', transform: 'translateX(-50%)',
-              background: 'var(--lime)',
-              color: '#000',
-              fontFamily: 'var(--font-display)',
-              fontWeight: 900,
-              fontSize: '0.6rem',
-              letterSpacing: '0.2em',
-              textTransform: 'uppercase',
-              padding: '0.25rem 0.75rem',
-              whiteSpace: 'nowrap',
-            }}>
-              {fo.proBadge}
-            </div>
-            <div>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '0.75rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--lime)', marginBottom: '0.75rem' }}>{fo.proName}</div>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '2.5rem', letterSpacing: '0.02em', color: 'var(--text)', lineHeight: 1 }}>{fo.proPrice}<span style={{ fontSize: '1rem', color: 'var(--muted)', fontWeight: 700 }}>{fo.proPer}</span></div>
-            </div>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.6rem', flex: 1 }}>
-              {fo.proFeatures.map(f => (
-                <li key={f} style={{ fontFamily: 'var(--font-barlow)', fontSize: '0.95rem', color: 'var(--muted)', fontWeight: 300, display: 'flex', gap: '0.6rem', alignItems: 'flex-start' }}>
-                  <span style={{ color: 'var(--lime)', flexShrink: 0 }}>✓</span> {f}
-                </li>
-              ))}
-            </ul>
-            <a
-              href="#kontakt"
-              className="iron-btn iron-btn-primary"
-              style={{ marginTop: 'auto', fontSize: '0.8rem', padding: '0.65rem 1.25rem', textDecoration: 'none', textAlign: 'center' }}
-            >
-              {fo.proCta}
-            </a>
-            <div style={{ fontFamily: 'var(--font-barlow)', fontWeight: 300, fontSize: '0.8rem', color: 'var(--muted)', lineHeight: 1.5, borderTop: '1px solid var(--border)', paddingTop: '1rem' }}>
-              {fo.proNote}
-            </div>
-          </div>
-
-          {/* ELITE */}
-          <div style={{
-            border: '1px solid var(--border)',
-            padding: '2rem',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '1.25rem',
-            background: 'var(--off-black)',
-            position: 'relative',
-          }}>
-            <div style={{
-              position: 'absolute',
-              top: '-1px', left: '50%', transform: 'translateX(-50%)',
-              background: '#b8860b',
-              color: '#fff',
-              fontFamily: 'var(--font-display)',
-              fontWeight: 900,
-              fontSize: '0.6rem',
-              letterSpacing: '0.2em',
-              textTransform: 'uppercase',
-              padding: '0.25rem 0.75rem',
-              whiteSpace: 'nowrap',
-            }}>
-              {fo.eliteBadge}
-            </div>
-            <div>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '0.75rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '0.75rem' }}>{fo.eliteName}</div>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '2.5rem', letterSpacing: '0.02em', color: 'var(--text)', lineHeight: 1 }}>{fo.elitePrice}<span style={{ fontSize: '1rem', color: 'var(--muted)', fontWeight: 700 }}>{fo.elitePer}</span></div>
-            </div>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.6rem', flex: 1 }}>
-              {fo.eliteFeatures.map(f => (
-                <li key={f} style={{ fontFamily: 'var(--font-barlow)', fontSize: '0.95rem', color: 'var(--muted)', fontWeight: 300, display: 'flex', gap: '0.6rem', alignItems: 'flex-start' }}>
-                  <span style={{ color: 'var(--lime)', flexShrink: 0 }}>✓</span> {f}
-                </li>
-              ))}
-            </ul>
-            <a
-              href="#kontakt"
-              style={{
-                marginTop: 'auto',
-                fontFamily: 'var(--font-display)',
-                fontWeight: 700,
-                fontSize: '0.8rem',
-                letterSpacing: '0.1em',
-                textTransform: 'uppercase',
-                color: 'var(--text)',
-                border: '1px solid var(--border)',
-                padding: '0.65rem 1.25rem',
-                textDecoration: 'none',
-                textAlign: 'center',
-                transition: 'border-color 0.2s, color 0.2s',
-                display: 'block',
-              }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--lime)'; e.currentTarget.style.color = 'var(--lime)'; }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text)'; }}
-            >
-              {fo.eliteCta}
-            </a>
-          </div>
+          <p className="pm-plans-note">
+            Reklamni sloty jsou dostupne pro vsechny plany.
+            Pro a Elite ziskavaji automatickou slevu 15&nbsp;% resp. 25&nbsp;%.
+          </p>
         </div>
       </section>
 
-      {/* ── 4b. PLACEHOLDER AD PRODUCTS ─────────────────────────────── */}
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 2rem 4rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        {fo.placeholders.map(({ title, body, price }) => (
-          <div key={title} style={{
-            position: 'relative',
-            border: '1px dashed var(--border)',
-            padding: '1.75rem 2rem',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '2rem',
-            flexWrap: 'wrap',
-            background: 'var(--off-black)',
-          }}>
-            <div style={{
-              position: 'absolute',
-              top: '1rem',
-              right: '1rem',
-              fontFamily: 'var(--font-display)',
-              fontWeight: 700,
-              fontSize: '0.55rem',
-              letterSpacing: '0.2em',
-              textTransform: 'uppercase',
-              color: 'var(--border-mid)',
-              border: '1px dashed var(--border)',
-              padding: '0.2rem 0.5rem',
-            }}>
-              {fo.placeholderBadge}
-            </div>
-            <div style={{ flex: 1, minWidth: 0, paddingRight: '5rem' }}>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '0.78rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '0.5rem' }}>
-                {title}
-              </div>
-              <p style={{ fontFamily: 'var(--font-barlow)', fontWeight: 300, fontSize: '0.9rem', lineHeight: 1.6, color: 'var(--border-mid)', margin: 0 }}>
-                {body}
-              </p>
-            </div>
-            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.85rem', letterSpacing: '0.08em', color: 'var(--border-mid)', flexShrink: 0, whiteSpace: 'nowrap' }}>
-              {price}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* ── 5. COMING SOON BANNER ────────────────────────────────────── */}
-      <section style={{
-        borderTop: '1px solid var(--border)',
-        borderBottom: '1px solid var(--border)',
-        padding: '4rem 2rem',
-        background: 'var(--black)',
-      }}>
-        <div style={{ maxWidth: 760, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '2rem' }}>
-          <div>
-            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.65rem', letterSpacing: '0.22em', textTransform: 'uppercase', color: 'var(--border-mid)', marginBottom: '0.75rem' }}>
-              {fo.comingSoonTag}
-            </div>
-            <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 'clamp(1rem, 2.5vw, 1.5rem)', textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--muted)', marginBottom: '0.75rem' }}>
-              {fo.comingSoonTitle}
-            </h3>
-            <p style={{ fontFamily: 'var(--font-barlow)', fontWeight: 300, fontSize: '0.95rem', lineHeight: 1.7, color: 'var(--border-mid)', maxWidth: 480, margin: 0 }}>
-              {fo.comingSoonBody}
-            </p>
-          </div>
-          <a
-            href="#kontakt"
-            style={{
-              fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.72rem', letterSpacing: '0.12em', textTransform: 'uppercase',
-              color: 'var(--muted)', border: '1px solid var(--border)', padding: '0.6rem 1.25rem', textDecoration: 'none',
-              flexShrink: 0, transition: 'color 0.2s, border-color 0.2s',
-            }}
-            onMouseEnter={e => { e.currentTarget.style.color = 'var(--text)'; e.currentTarget.style.borderColor = 'var(--muted)'; }}
-            onMouseLeave={e => { e.currentTarget.style.color = 'var(--muted)'; e.currentTarget.style.borderColor = 'var(--border)'; }}
-          >
-            {fo.comingSoonCta}
-          </a>
-        </div>
-      </section>
-
-      {/* ── 6. WHY IRONMAP ───────────────────────────────────────────── */}
-      <section style={{ padding: '7rem 2rem', maxWidth: 1100, margin: '0 auto' }}>
-        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.68rem', letterSpacing: '0.22em', textTransform: 'uppercase', color: 'var(--lime)', marginBottom: '1.5rem' }}>
-          {fo.whyTag}
-        </div>
-        <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 'clamp(1.6rem, 3.5vw, 2.5rem)', textTransform: 'uppercase', letterSpacing: '-0.01em', marginBottom: '3rem', color: 'var(--text)' }}>
-          {fo.whyTitle}
-        </h2>
-        <div className="pm-why-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1px', background: 'var(--border)' }}>
-          {fo.why.map(({ title, body }) => (
-            <div key={title} style={{ background: 'var(--off-black)', padding: '2.5rem' }}>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '0.8rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--lime)', marginBottom: '1rem' }}>
-                {title}
-              </div>
-              <p style={{ fontFamily: 'var(--font-barlow)', fontWeight: 300, fontSize: '1rem', lineHeight: 1.7, color: 'var(--muted)', margin: 0 }}>
-                {body}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── 7. CONTACT FORM ──────────────────────────────────────────── */}
-      <section id="kontakt" style={{ background: 'var(--off-black)', borderTop: '1px solid var(--border)', padding: '7rem 2rem' }}>
-        <div style={{ maxWidth: 640, margin: '0 auto' }}>
-          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.68rem', letterSpacing: '0.22em', textTransform: 'uppercase', color: 'var(--lime)', marginBottom: '1.5rem' }}>
-            {fo.contactTag}
-          </div>
-          <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 'clamp(1.6rem, 4vw, 3rem)', textTransform: 'uppercase', letterSpacing: '-0.01em', lineHeight: 1, marginBottom: '0.75rem', color: 'var(--text)' }}>
-            {fo.contactTitle}
+      {/* ════════════════════════════════════════════════════════════ */}
+      {/* 4. REKLAMNI SLOTY                                            */}
+      {/* ════════════════════════════════════════════════════════════ */}
+      <section
+        ref={slotsRef}
+        className={`pm-section pm-section-alt pm-reveal${slotsVis ? ' is-visible' : ''}`}
+        aria-label="Reklamni sloty"
+      >
+        <div className="pm-inner pm-wide">
+          <h2 className="pm-display-xl">
+            Budte<br />
+            <span style={{ color: 'var(--lime)' }}>prvni.</span>
           </h2>
-          <p style={{ fontFamily: 'var(--font-barlow)', fontWeight: 300, fontSize: '1rem', color: 'var(--muted)', marginBottom: '3rem' }}>
-            {fo.contactSub}
+          <p className="pm-accent-sub">Pouze 3 dostupne pozice na kategorii. Kdo drive prijde.</p>
+          <p className="pm-sub" style={{ marginBottom: '4rem', maxWidth: 640 }}>
+            Exkluzivni zlate, stribrne a bronzove pozice ve vyhledavani - narodni nebo mestske.
+            Jednou obsazeno, konkurence ceka.
+          </p>
+
+          <div className="pm-slots-cols">
+
+            {/* NATIONAL */}
+            <div>
+              <div className="pm-col-hdr">
+                <span className="iron-label">Narodni sloty</span>
+                <span className="pm-duration">7 dni</span>
+              </div>
+              <p className="pm-col-desc">Top 3 v cele CR - viditelnost napric vsemi mestama</p>
+              <div className="pm-slots-stack">
+                <SlotCard
+                  tier="gold" name="Gold - Narodni" price="7\u00a0999\u00a0Kc"
+                  proPrice="6\u00a0799\u00a0Kc" elitePrice="5\u00a0999\u00a0Kc"
+                  features={[
+                    'Pozice #1 ve vyhledavani vasi kategorie v cele CR',
+                    'Gold badge na profilu po dobu kampane',
+                    'Zmineni v mesicnim newsletteru Iron',
+                  ]}
+                />
+                <SlotCard
+                  tier="silver" name="Silver - Narodni" price="5\u00a0999\u00a0Kc"
+                  proPrice="5\u00a0099\u00a0Kc" elitePrice="4\u00a0499\u00a0Kc"
+                  features={[
+                    'Pozice #2 ve vyhledavani vasi kategorie v cele CR',
+                    'Silver badge na profilu po dobu kampane',
+                  ]}
+                />
+                <SlotCard
+                  tier="bronze" name="Bronze - Narodni" price="4\u00a0999\u00a0Kc"
+                  proPrice="4\u00a0249\u00a0Kc" elitePrice="3\u00a0749\u00a0Kc"
+                  features={[
+                    'Pozice #3 ve vyhledavani vasi kategorie v cele CR',
+                    'Bronze badge na profilu po dobu kampane',
+                  ]}
+                  last
+                />
+              </div>
+            </div>
+
+            {/* CITY */}
+            <div>
+              <div className="pm-col-hdr">
+                <span className="iron-label">Mestske sloty</span>
+                <span className="pm-duration">7 dni</span>
+              </div>
+              <p className="pm-col-desc">Top 3 ve vasem meste - dominance lokalnich vysledku</p>
+              <div className="pm-slots-stack">
+                <SlotCard
+                  tier="gold" name="Gold Mesto" price="2\u00a0999\u00a0Kc"
+                  proPrice="2\u00a0549\u00a0Kc" elitePrice="2\u00a0249\u00a0Kc"
+                  features={[
+                    'Pozice #1 ve vasem meste ve vasi kategorii',
+                    'Gold badge na profilu',
+                  ]}
+                />
+                <SlotCard
+                  tier="silver" name="Silver Mesto" price="1\u00a0999\u00a0Kc"
+                  proPrice="1\u00a0699\u00a0Kc" elitePrice="1\u00a0499\u00a0Kc"
+                  features={['Pozice #2 ve vasem meste ve vasi kategorii']}
+                />
+                <SlotCard
+                  tier="bronze" name="Bronze Mesto" price="1\u00a0499\u00a0Kc"
+                  proPrice="1\u00a0274\u00a0Kc" elitePrice="1\u00a0124\u00a0Kc"
+                  features={['Pozice #3 ve vasem meste ve vasi kategorii']}
+                  last
+                />
+              </div>
+            </div>
+
+          </div>
+
+          <p className="pm-slots-note">
+            Ceny jsou uvedeny bez DPH. Sloty jsou exkluzivni - po obsazeni neni mozne zakoupit
+            stejnou pozici do uplynutí kampane.
+          </p>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════════ */}
+      {/* 5. PROC IRONMAP                                              */}
+      {/* ════════════════════════════════════════════════════════════ */}
+      <section
+        ref={whyRef}
+        className={`pm-section pm-reveal${whyVis ? ' is-visible' : ''}`}
+        aria-label="Proc IRONMAP"
+      >
+        <div className="pm-inner pm-wide">
+          <p className="iron-label">Cisla jsou jasna</p>
+          <h2 className="pm-h2" style={{ marginTop: '1.5rem', marginBottom: '3rem' }}>Proc ironmap</h2>
+          <div className="pm-why-grid">
+            {[
+              {
+                Icon: IconTarget,
+                title: 'Zakaznici v momentu rozhodnuti',
+                body:  'Oslovujeme lidi kteri aktivne hledaji posilovnu, ne nahodne scrollery.',
+              },
+              {
+                Icon: IconBars,
+                title: 'Az 10\u00a0% zakazniku chce platit online',
+                body:  'Pripravujeme online booking. Vase fitko bude pripraveno jako prvni.',
+              },
+              {
+                Icon: IconDiamond,
+                title: 'Vite co funguje',
+                body:  'Statistiky prohlédnuti, kliknuti, konverzi. Data ktera drive mely jen velke retezce.',
+              },
+              {
+                Icon: IconArrow,
+                title: 'Rosteme spolu',
+                body:  'Fitness trh v\u00a0CR roste 12\u00a0% rocne. Jsme tu abychom rostli s\u00a0vami.',
+              },
+            ].map(({ Icon, title, body }) => (
+              <div key={title} className="pm-why-card">
+                <div className="pm-why-icon"><Icon /></div>
+                <h3 className="pm-why-title">{title}</h3>
+                <p className="pm-why-body">{body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════════ */}
+      {/* 6. CONTACT                                                   */}
+      {/* ════════════════════════════════════════════════════════════ */}
+      <section
+        id="kontakt"
+        ref={contactRef}
+        className={`pm-section pm-section-alt pm-reveal${contactVis ? ' is-visible' : ''}`}
+        aria-label="Kontaktni formular"
+      >
+        <div className="pm-inner pm-narrow">
+          <p className="iron-label">Spoluplace</p>
+          <h2 className="pm-h2" style={{ marginTop: '1.5rem' }}>Zacneme spolupraci</h2>
+          <p className="pm-sub" style={{ marginTop: '1rem', marginBottom: '3rem' }}>
+            Vyplnte formular a ozveme se do 24 hodin.
           </p>
 
           {submitted ? (
-            <div style={{ padding: '3rem', border: '1px solid var(--lime)', textAlign: 'center', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--lime)' }}>
-              {fo.formSuccess}
+            <div className="pm-success" role="alert">
+              <div className="pm-success-icon" aria-hidden="true" />
+              <div className="pm-success-title">Zprava odeslana</div>
+              <p className="pm-success-body">Ozveme se do 24 hodin.</p>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div className="pm-form-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                <input required placeholder={fo.fieldGymName} value={form.gymName} onChange={handleField('gymName')} className="pm-input" />
-                <input required placeholder={fo.fieldCity} value={form.city} onChange={handleField('city')} className="pm-input" />
-              </div>
-              <div className="pm-form-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                <input required placeholder={fo.fieldName} value={form.name} onChange={handleField('name')} className="pm-input" />
-                <input required type="email" placeholder={fo.fieldEmail} value={form.email} onChange={handleField('email')} className="pm-input" />
-              </div>
-              <input placeholder={fo.fieldPhone} value={form.phone} onChange={handleField('phone')} className="pm-input" />
+            <form onSubmit={handleSubmit} noValidate style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
 
-              <div style={{ paddingTop: '0.5rem' }}>
-                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.65rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '0.75rem' }}>
-                  {fo.interestLabel}
+              <div className="pm-form-2">
+                <div className="pm-field">
+                  <label htmlFor="pm-gymName" className="pm-label">Nazev gymu</label>
+                  <input
+                    id="pm-gymName" required type="text"
+                    className="pm-input" placeholder="Napr. Fitness Center Praha"
+                    value={form.gymName}
+                    onChange={e => setForm(f => ({ ...f, gymName: e.target.value }))}
+                    aria-required="true"
+                  />
                 </div>
-                <div className="pm-checkboxes" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                  {CHECK_KEYS.map((key, i) => (
-                    <button
-                      key={key}
-                      type="button"
-                      className={`chip${interests[key] ? ' active' : ''}`}
-                      onClick={() => toggleInterest(key)}
-                    >
-                      {fo.interests[i]}
-                    </button>
-                  ))}
+                <div className="pm-field">
+                  <label htmlFor="pm-name" className="pm-label">Jmeno</label>
+                  <input
+                    id="pm-name" required type="text"
+                    className="pm-input" placeholder="Vase jmeno"
+                    value={form.name}
+                    onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                    aria-required="true"
+                  />
                 </div>
+              </div>
+
+              <div className="pm-form-2">
+                <div className="pm-field">
+                  <label htmlFor="pm-email" className="pm-label">Email</label>
+                  <input
+                    id="pm-email" required type="email"
+                    className="pm-input" placeholder="vas@email.cz"
+                    value={form.email}
+                    onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
+                    aria-required="true"
+                  />
+                </div>
+                <div className="pm-field">
+                  <label htmlFor="pm-phone" className="pm-label">
+                    Telefon <span className="pm-optional">(nepovinne)</span>
+                  </label>
+                  <input
+                    id="pm-phone" type="tel"
+                    className="pm-input" placeholder="+420 ..."
+                    value={form.phone}
+                    onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
+                  />
+                </div>
+              </div>
+
+              <div className="pm-field">
+                <label htmlFor="pm-interest" className="pm-label">Zajem o</label>
+                <div className="pm-select-wrap">
+                  <select
+                    id="pm-interest" required
+                    className="pm-select"
+                    value={form.interest}
+                    onChange={e => setForm(f => ({ ...f, interest: e.target.value }))}
+                    aria-required="true"
+                  >
+                    <option value="" disabled>Vyberte moznost</option>
+                    <option value="Free listing">Free listing</option>
+                    <option value="Pro">Pro</option>
+                    <option value="Elite">Elite</option>
+                    <option value="Gold narodni">Gold narodni</option>
+                    <option value="Silver narodni">Silver narodni</option>
+                    <option value="Bronze narodni">Bronze narodni</option>
+                    <option value="Gold mesto">Gold mesto</option>
+                    <option value="Silver mesto">Silver mesto</option>
+                    <option value="Bronze mesto">Bronze mesto</option>
+                    <option value="Chci se poradit">Chci se poradit</option>
+                  </select>
+                  <span className="pm-select-arr" aria-hidden="true" />
+                </div>
+              </div>
+
+              <div className="pm-field">
+                <label htmlFor="pm-message" className="pm-label">
+                  Zprava <span className="pm-optional">(nepovinne)</span>
+                </label>
+                <textarea
+                  id="pm-message"
+                  className="pm-input pm-textarea"
+                  placeholder="Napiste nam cokoliv..."
+                  rows={4}
+                  value={form.message}
+                  onChange={e => setForm(f => ({ ...f, message: e.target.value }))}
+                />
               </div>
 
               <button
                 type="submit"
                 disabled={submitting}
-                className="iron-btn iron-btn-primary"
-                style={{ marginTop: '0.5rem', fontSize: '0.85rem', padding: '0.8rem 2rem', opacity: submitting ? 0.6 : 1 }}
+                className="pm-submit pm-pulse"
+                aria-label="Odeslat formular"
               >
-                {submitting ? fo.submitting : fo.submit}
+                {submitting ? 'Odesilam...' : 'Odeslat'}
               </button>
+
             </form>
           )}
         </div>
       </section>
 
-      {/* ── 8. FOOTER CTA ────────────────────────────────────────────── */}
-      <div style={{ background: 'var(--lime)', padding: '5rem 2rem', textAlign: 'center' }}>
-        <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 'clamp(1.8rem, 5vw, 3.5rem)', textTransform: 'uppercase', letterSpacing: '-0.01em', lineHeight: 1, color: '#000', marginBottom: '2.5rem' }}>
-          {fo.footerTitle}
-        </h2>
-        <button
-          onClick={openAddGym}
-          style={{
-            fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '0.9rem', letterSpacing: '0.1em', textTransform: 'uppercase',
-            color: '#000', background: 'transparent', border: '2px solid #000', padding: '0.8rem 2.5rem', cursor: 'pointer', transition: 'background 0.2s, color 0.2s',
-          }}
-          onMouseEnter={e => { e.currentTarget.style.background = '#000'; e.currentTarget.style.color = 'var(--lime)'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#000'; }}
-        >
-          {fo.footerCta}
-        </button>
-      </div>
-
+      {/* ════════════════════════════════════════════════════════════ */}
+      {/* STYLES                                                       */}
+      {/* ════════════════════════════════════════════════════════════ */}
       <style>{`
+
+        /* ── Hero ───────────────────────────────────────────────── */
+        .pm-hero {
+          position: relative;
+          min-height: calc(100vh - 64px);
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          overflow: hidden;
+          background: var(--black);
+        }
+        .pm-hero-grid {
+          position: absolute;
+          inset: 0;
+          background-image:
+            linear-gradient(rgba(200,255,0,0.035) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(200,255,0,0.035) 1px, transparent 1px);
+          background-size: 80px 80px;
+          pointer-events: none;
+        }
+        .pm-hero-inner {
+          position: relative;
+          z-index: 1;
+          max-width: 1200px;
+          width: 100%;
+          margin: 0 auto;
+          padding: 8rem 3rem 6rem;
+        }
+        .pm-hero-h1 {
+          font-family: var(--font-display);
+          font-weight: 900;
+          font-size: clamp(3.2rem, 10vw, 9rem);
+          text-transform: uppercase;
+          letter-spacing: -0.025em;
+          line-height: 0.88;
+          color: var(--text);
+          margin: 1.5rem 0 0;
+        }
+        .pm-hero-lime {
+          font-family: var(--font-display);
+          font-weight: 900;
+          font-size: clamp(3.2rem, 10vw, 9rem);
+          text-transform: uppercase;
+          letter-spacing: -0.025em;
+          line-height: 0.88;
+          color: var(--lime);
+          margin: 0 0 2.5rem;
+        }
+        .pm-hero-body {
+          font-family: var(--font-body);
+          font-weight: 300;
+          font-size: clamp(0.95rem, 2vw, 1.15rem);
+          color: var(--muted);
+          line-height: 1.75;
+          max-width: 500px;
+          margin: 0 0 3rem;
+        }
+        .pm-hero-ctas {
+          display: flex;
+          gap: 1rem;
+          flex-wrap: wrap;
+          align-items: center;
+        }
+        .pm-br-desktop { display: block; }
+
+        /* Load animations */
+        .pm-anim-1,.pm-anim-2,.pm-anim-3,.pm-anim-4,.pm-anim-5 {
+          animation: pmFadeUp 0.7s ease both;
+        }
+        .pm-anim-1 { animation-delay: 0.05s; }
+        .pm-anim-2 { animation-delay: 0.18s; }
+        .pm-anim-3 { animation-delay: 0.32s; }
+        .pm-anim-4 { animation-delay: 0.44s; }
+        .pm-anim-5 { animation-delay: 0.58s; }
+        @keyframes pmFadeUp {
+          from { opacity: 0; transform: translateY(30px); }
+          to   { opacity: 1; transform: none; }
+        }
+
+        /* Neon pulse */
+        .pm-pulse {
+          animation: pmNeon 3s ease-in-out infinite;
+        }
+        @keyframes pmNeon {
+          0%,100% { box-shadow: 0 0 6px rgba(200,255,0,0.35), 0 0 18px rgba(200,255,0,0.12); }
+          50%      { box-shadow: 0 0 14px rgba(200,255,0,0.65), 0 0 40px rgba(200,255,0,0.25); }
+        }
+
+        /* ── Stats bar ─────────────────────────────────────────── */
+        .pm-stats {
+          display: grid;
+          grid-template-columns: repeat(5, 1fr);
+          background: var(--border);
+          gap: 1px;
+          border-top: 1px solid var(--border);
+          border-bottom: 1px solid var(--border);
+        }
+        .pm-stat-cell {
+          background: var(--off-black);
+          padding: 2.5rem 1.5rem;
+          text-align: center;
+        }
+        .pm-stat-val {
+          font-family: var(--font-display);
+          font-weight: 900;
+          font-size: clamp(1.7rem, 3.5vw, 2.9rem);
+          color: var(--lime);
+          line-height: 1;
+          letter-spacing: 0.02em;
+          margin-bottom: 0.5rem;
+        }
+        .pm-stat-lbl {
+          font-family: var(--font-display);
+          font-weight: 700;
+          font-size: 0.62rem;
+          letter-spacing: 0.16em;
+          text-transform: uppercase;
+          color: var(--muted);
+        }
+
+        /* ── Section shell ─────────────────────────────────────── */
+        .pm-section {
+          padding: 8rem 3rem;
+          background: var(--black);
+          border-top: 1px solid var(--border);
+        }
+        .pm-section-alt { background: var(--off-black); }
+        .pm-inner { margin: 0 auto; width: 100%; }
+        .pm-wide   { max-width: 1200px; }
+        .pm-narrow { max-width: 680px; }
+
+        .pm-h2 {
+          font-family: var(--font-display);
+          font-weight: 900;
+          font-size: clamp(2.2rem, 5.5vw, 5rem);
+          text-transform: uppercase;
+          letter-spacing: -0.02em;
+          line-height: 0.88;
+          color: var(--text);
+        }
+        .pm-sub {
+          font-family: var(--font-body);
+          font-weight: 300;
+          font-size: 1.05rem;
+          color: var(--muted);
+          line-height: 1.7;
+          max-width: 540px;
+        }
+        .pm-accent-sub {
+          font-family: var(--font-display);
+          font-weight: 700;
+          font-size: clamp(1rem, 2.5vw, 1.55rem);
+          color: var(--lime);
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
+          margin: 0.75rem 0 1.5rem;
+        }
+
+        /* Scroll reveal */
+        .pm-reveal {
+          opacity: 0;
+          transform: translateY(40px);
+          transition: opacity 0.75s ease, transform 0.75s ease;
+        }
+        .pm-reveal.is-visible {
+          opacity: 1;
+          transform: none;
+        }
+
+        /* ── Pricing ────────────────────────────────────────────── */
+        .pm-plans {
+          display: grid;
+          grid-template-columns: 1fr 1.07fr 1fr;
+          margin-top: 3.5rem;
+          background: var(--border);
+          gap: 1px;
+          border: 1px solid var(--border);
+        }
+        .pm-plan {
+          background: var(--off-black);
+          padding: 2.5rem 2rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0;
+          position: relative;
+          transition: transform 0.2s ease;
+        }
+        .pm-plan:hover { transform: translateY(-5px); }
+        .pm-plan-pro {
+          background: #0d0d0d;
+          outline: 2px solid var(--lime);
+          outline-offset: -1px;
+          box-shadow: 0 0 50px rgba(200,255,0,0.07), inset 0 0 50px rgba(200,255,0,0.015);
+          z-index: 1;
+        }
+        .pm-plan-badge {
+          position: absolute;
+          top: 0;
+          right: 1.75rem;
+          font-family: var(--font-display);
+          font-weight: 900;
+          font-size: 0.56rem;
+          letter-spacing: 0.22em;
+          text-transform: uppercase;
+          padding: 0.28rem 0.7rem;
+          white-space: nowrap;
+        }
+        .pm-badge-lime { background: var(--lime); color: #000; }
+        .pm-badge-gold { background: #b8860b; color: #fff; }
+        .pm-plan-head { margin-bottom: 1.5rem; padding-top: 0.5rem; }
+        .pm-plan-tier {
+          font-family: var(--font-display);
+          font-weight: 900;
+          font-size: 0.75rem;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          color: var(--muted);
+          margin-bottom: 0.75rem;
+        }
+        .pm-pilot-tag {
+          display: inline-block;
+          font-family: var(--font-display);
+          font-weight: 700;
+          font-size: 0.53rem;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          color: var(--lime);
+          border: 1px solid var(--lime);
+          padding: 0.15rem 0.5rem;
+        }
+        .pm-price-row {
+          display: flex;
+          align-items: baseline;
+          gap: 0.4rem;
+          flex-wrap: wrap;
+        }
+        .pm-price-old {
+          font-family: var(--font-display);
+          font-weight: 700;
+          font-size: 1.1rem;
+          color: var(--muted);
+          text-decoration: line-through;
+          opacity: 0.55;
+        }
+        .pm-price {
+          font-family: var(--font-display);
+          font-weight: 900;
+          font-size: clamp(1.9rem, 3.5vw, 2.8rem);
+          letter-spacing: 0.02em;
+          color: var(--text);
+          line-height: 1;
+        }
+        .pm-per {
+          font-family: var(--font-display);
+          font-weight: 700;
+          font-size: 0.95rem;
+          color: var(--muted);
+        }
+        .pm-from {
+          font-family: var(--font-display);
+          font-weight: 700;
+          font-size: 0.6rem;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          color: var(--muted);
+          margin-top: 0.3rem;
+        }
+        .pm-feat-list {
+          list-style: none;
+          padding: 0;
+          margin: 0 0 1.5rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.65rem;
+          flex: 1;
+        }
+        .pm-plan-btn {
+          display: block;
+          text-align: center;
+          font-family: var(--font-display);
+          font-weight: 900;
+          font-size: 0.76rem;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          padding: 0.85rem 1.5rem;
+          text-decoration: none;
+          transition: all 0.15s;
+          margin-top: auto;
+        }
+        .pm-plan-btn-primary {
+          background: var(--lime);
+          color: #000;
+          border: none;
+        }
+        .pm-plan-btn-primary:hover { background: #d8ff20; transform: translateY(-2px); }
+        .pm-plan-btn-outline {
+          border: 1px solid var(--border);
+          color: var(--text);
+          background: transparent;
+        }
+        .pm-plan-btn-outline:hover { border-color: var(--lime); color: var(--lime); }
+        .pm-plan-btn-gold {
+          border: 1px solid #b8860b;
+          color: #D4944A;
+          background: transparent;
+        }
+        .pm-plan-btn-gold:hover { background: #b8860b; color: #000; }
+        .pm-plans-note {
+          font-family: var(--font-body);
+          font-weight: 300;
+          font-size: 0.82rem;
+          color: var(--muted);
+          margin-top: 2rem;
+          line-height: 1.6;
+          opacity: 0.8;
+        }
+
+        /* ── Slots ─────────────────────────────────────────────── */
+        .pm-display-xl {
+          font-family: var(--font-display);
+          font-weight: 900;
+          font-size: clamp(4rem, 13vw, 11rem);
+          text-transform: uppercase;
+          letter-spacing: -0.03em;
+          line-height: 0.85;
+          color: var(--text);
+          margin-bottom: 1rem;
+        }
+        .pm-slots-cols {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 3rem;
+        }
+        .pm-col-hdr {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 0.75rem;
+        }
+        .pm-col-desc {
+          font-family: var(--font-body);
+          font-weight: 300;
+          font-size: 0.87rem;
+          color: var(--muted);
+          margin: 0 0 1.5rem;
+          line-height: 1.5;
+        }
+        .pm-duration {
+          font-family: var(--font-display);
+          font-weight: 700;
+          font-size: 0.58rem;
+          letter-spacing: 0.15em;
+          text-transform: uppercase;
+          color: var(--muted);
+          border: 1px solid var(--border);
+          padding: 0.2rem 0.5rem;
+        }
+        .pm-slots-stack { display: flex; flex-direction: column; }
+        .pm-slot-card {
+          padding: 1.5rem;
+          border: 1px solid var(--slot-border, var(--border));
+          border-bottom: none;
+          background: var(--black);
+          transition: box-shadow 0.25s;
+          box-shadow: 0 0 20px var(--slot-glow, transparent);
+        }
+        .pm-slot-last { border-bottom: 1px solid var(--slot-border, var(--border)) !important; }
+        .pm-slot-card:hover {
+          box-shadow: 0 0 35px var(--slot-glow, transparent);
+        }
+        .pm-slot-top {
+          display: flex;
+          align-items: flex-start;
+          gap: 1rem;
+          margin-bottom: 0.9rem;
+        }
+        .pm-slot-medal {
+          width: 16px;
+          height: 16px;
+          flex-shrink: 0;
+          margin-top: 4px;
+          transform: rotate(45deg);
+        }
+        .pm-slot-name {
+          font-family: var(--font-display);
+          font-weight: 900;
+          font-size: 0.75rem;
+          letter-spacing: 0.15em;
+          text-transform: uppercase;
+          margin-bottom: 0.3rem;
+        }
+        .pm-slot-price {
+          font-family: var(--font-display);
+          font-weight: 900;
+          font-size: 1.45rem;
+          color: var(--text);
+          letter-spacing: 0.02em;
+          line-height: 1;
+          margin-bottom: 0.3rem;
+        }
+        .pm-slot-discounts {
+          display: flex;
+          gap: 1rem;
+          font-family: var(--font-display);
+          font-weight: 700;
+          font-size: 0.58rem;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          color: var(--muted);
+        }
+        .pm-slot-features {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+          display: flex;
+          flex-direction: column;
+          gap: 0.35rem;
+        }
+        .pm-slots-note {
+          font-family: var(--font-body);
+          font-weight: 300;
+          font-size: 0.8rem;
+          color: var(--muted);
+          margin-top: 2.5rem;
+          line-height: 1.6;
+          opacity: 0.65;
+        }
+
+        /* ── Why grid ──────────────────────────────────────────── */
+        .pm-why-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          background: var(--border);
+          gap: 1px;
+        }
+        .pm-why-card {
+          background: var(--off-black);
+          padding: 3rem;
+          transition: background 0.2s;
+        }
+        .pm-why-card:hover { background: #141414; }
+        .pm-why-icon { margin-bottom: 1.5rem; }
+        .pm-why-title {
+          font-family: var(--font-display);
+          font-weight: 900;
+          font-size: 0.8rem;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          color: var(--lime);
+          margin: 0 0 0.85rem;
+          line-height: 1.3;
+        }
+        .pm-why-body {
+          font-family: var(--font-body);
+          font-weight: 300;
+          font-size: 0.98rem;
+          color: var(--muted);
+          line-height: 1.7;
+          margin: 0;
+        }
+
+        /* ── Form ──────────────────────────────────────────────── */
+        .pm-form-2 {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 1rem;
+        }
+        .pm-field {
+          display: flex;
+          flex-direction: column;
+          gap: 0.4rem;
+        }
+        .pm-label {
+          font-family: var(--font-display);
+          font-weight: 700;
+          font-size: 0.62rem;
+          letter-spacing: 0.16em;
+          text-transform: uppercase;
+          color: var(--muted);
+        }
+        .pm-optional {
+          font-family: var(--font-body);
+          font-weight: 300;
+          font-size: 0.65rem;
+          letter-spacing: 0;
+          text-transform: none;
+          color: var(--border-mid);
+        }
         .pm-input {
           width: 100%;
           background: #111;
           border: 1px solid var(--border);
-          padding: 0.75rem 1rem;
           color: var(--text);
-          font-family: var(--font-barlow);
-          font-size: 0.95rem;
+          font-family: var(--font-body);
+          font-size: 0.92rem;
           font-weight: 300;
+          padding: 0.85rem 1rem;
           outline: none;
           transition: border-color 0.2s;
           box-sizing: border-box;
         }
-        .pm-input::placeholder { color: var(--muted); }
         .pm-input:focus { border-color: var(--lime); }
+        .pm-input::placeholder { color: var(--muted); }
+        .pm-textarea { resize: vertical; min-height: 110px; }
+        .pm-select-wrap { position: relative; }
+        .pm-select {
+          width: 100%;
+          background: #111;
+          border: 1px solid var(--border);
+          color: var(--text);
+          font-family: var(--font-body);
+          font-size: 0.92rem;
+          font-weight: 300;
+          padding: 0.85rem 2.5rem 0.85rem 1rem;
+          outline: none;
+          appearance: none;
+          cursor: pointer;
+          transition: border-color 0.2s;
+          box-sizing: border-box;
+        }
+        .pm-select:focus { border-color: var(--lime); }
+        .pm-select-arr {
+          position: absolute;
+          right: 0.9rem;
+          top: 50%;
+          width: 8px;
+          height: 8px;
+          border-right: 2px solid var(--muted);
+          border-bottom: 2px solid var(--muted);
+          transform: translateY(-65%) rotate(45deg);
+          pointer-events: none;
+        }
+        .pm-submit {
+          display: block;
+          width: 100%;
+          background: var(--lime);
+          color: #000;
+          font-family: var(--font-display);
+          font-weight: 900;
+          font-size: 0.9rem;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          border: none;
+          padding: 1.05rem 2rem;
+          cursor: pointer;
+          transition: background 0.15s, transform 0.15s;
+        }
+        .pm-submit:hover:not(:disabled) { background: #d8ff20; transform: translateY(-2px); }
+        .pm-submit:disabled { opacity: 0.45; cursor: not-allowed; animation: none; }
 
+        /* Success */
+        .pm-success {
+          border: 1px solid var(--lime);
+          padding: 3.5rem 2rem;
+          text-align: center;
+          background: rgba(200,255,0,0.025);
+        }
+        .pm-success-icon {
+          width: 30px;
+          height: 30px;
+          border: 2px solid var(--lime);
+          margin: 0 auto 1.5rem;
+          transform: rotate(45deg);
+          box-shadow: 0 0 20px rgba(200,255,0,0.25);
+        }
+        .pm-success-title {
+          font-family: var(--font-display);
+          font-weight: 900;
+          font-size: 1.25rem;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          color: var(--lime);
+          margin-bottom: 0.5rem;
+        }
+        .pm-success-body {
+          font-family: var(--font-body);
+          font-weight: 300;
+          font-size: 0.95rem;
+          color: var(--muted);
+          margin: 0;
+        }
+
+        /* ── Responsive ────────────────────────────────────────── */
+        @media (max-width: 1024px) {
+          .pm-slots-cols { grid-template-columns: 1fr; gap: 3.5rem; }
+        }
         @media (max-width: 860px) {
-          .pm-pricing-grid { grid-template-columns: 1fr !important; }
-          .pm-why-grid { grid-template-columns: 1fr !important; }
-          .pm-stats-grid { grid-template-columns: repeat(3, 1fr) !important; }
-          .pm-stat-cell { border-right: none !important; border-bottom: 1px solid var(--border); }
-          .pm-form-row { grid-template-columns: 1fr !important; }
+          .pm-plans { grid-template-columns: 1fr; }
+          .pm-plan-pro { outline-offset: 0; }
+          .pm-why-grid { grid-template-columns: 1fr; }
+          .pm-stats { grid-template-columns: repeat(3, 1fr); }
         }
         @media (max-width: 600px) {
-          .pm-stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+          .pm-hero-inner { padding: 5rem 1.25rem 4rem; }
+          .pm-section { padding: 5rem 1.25rem; }
+          .pm-stats { grid-template-columns: repeat(2, 1fr); }
+          .pm-form-2 { grid-template-columns: 1fr; }
+          .pm-why-card { padding: 2rem 1.5rem; }
+          .pm-br-desktop { display: none; }
         }
         @media (max-width: 380px) {
-          .pm-stats-grid { grid-template-columns: 1fr !important; }
+          .pm-stats { grid-template-columns: 1fr; }
         }
+
+        /* ── Reduced motion ────────────────────────────────────── */
+        @media (prefers-reduced-motion: reduce) {
+          .pm-anim-1,.pm-anim-2,.pm-anim-3,.pm-anim-4,.pm-anim-5 { animation: none !important; }
+          .pm-pulse { animation: none !important; }
+          .pm-reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+          .pm-plan,.pm-why-card,.pm-plan-btn,.pm-submit,.pm-slot-card { transition: none !important; }
+        }
+
       `}</style>
     </main>
   );
