@@ -182,12 +182,12 @@ export default function ProMajiteleClient({ gymCount }: Props) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
-          'Nazev gymu': form.gymName,
-          'Jmeno':      form.name,
+          'Název gymu': form.gymName,
+          'Jméno':      form.name,
           'Email':      form.email,
           'Telefon':    form.phone,
-          'Zajem o':    form.interest,
-          'Zprava':     form.message,
+          'Zájem o':    form.interest,
+          'Zpráva':     form.message,
           source:       'pro-majitele',
         }),
       });
@@ -206,25 +206,25 @@ export default function ProMajiteleClient({ gymCount }: Props) {
       {/* ════════════════════════════════════════════════════════════ */}
       {/* 1. HERO                                                      */}
       {/* ════════════════════════════════════════════════════════════ */}
-      <section className="pm-hero" aria-label="Hlavni sekce">
+      <section className="pm-hero" aria-label="Hlavní sekce">
         <div className="pm-hero-grid" aria-hidden="true" />
         <div className="pm-hero-inner">
           <p className="iron-label pm-anim-1">Pro majitele</p>
           <h1 className="pm-hero-h1 pm-anim-2">
-            Vasi zakaznici<br />
-            vas hledaji.
+            Vaši zákazníci<br />
+            vás hledají.
           </h1>
-          <p className="pm-hero-lime pm-anim-3">Najdou vas?</p>
+          <p className="pm-hero-lime pm-anim-3">Najdou vás?</p>
           <p className="pm-hero-body pm-anim-4">
-            Pres 450&nbsp;000 aktivnich sportovcu v&nbsp;CR. Fitness trh roste 12&nbsp;% rocne.<br className="pm-br-desktop" />
-            Budte tam kde hledaji.
+            Přes 450&nbsp;000 aktivních sportovců v&nbsp;ČR. Fitness trh roste 12&nbsp;% ročně.<br className="pm-br-desktop" />
+            Buďte tam kde hledají.
           </p>
           <div className="pm-hero-ctas pm-anim-5">
             <a href="/pridat-gym" className="iron-btn iron-btn-primary pm-pulse">
-              Pridat gym zdarma
+              Přidat gym zdarma
             </a>
             <a href="#cenik" className="iron-btn iron-btn-ghost">
-              Zobrazit cenik
+              Zobrazit ceník
             </a>
           </div>
         </div>
@@ -235,11 +235,11 @@ export default function ProMajiteleClient({ gymCount }: Props) {
       {/* ════════════════════════════════════════════════════════════ */}
       <div ref={statsRef} className="pm-stats" role="region" aria-label="Statistiky trhu">
         {[
-          { val: `${fmtGym(counts.gym)}+`,             lbl: 'posiloven v\u00a0CR'             },
-          { val: `${counts.cities}+`,                   lbl: 'mest pokryto'                    },
-          { val: `${counts.pct}\u00a0%`,                lbl: 'rocni rust fitness trhu'          },
-          { val: `${counts.members}\u00a0000+`,         lbl: 'aktivnich clenu'                 },
-          { val: `${counts.membership}\u00a0Kc`,        lbl: 'prumerne mesicni clenstvi'       },
+          { val: `${fmtGym(counts.gym)}+`,             lbl: 'posiloven v ČR'                  },
+          { val: `${counts.cities}+`,                   lbl: 'měst pokryto'                    },
+          { val: `${counts.pct} %`,                     lbl: 'roční růst fitness trhu'          },
+          { val: `${counts.members} 000+`,              lbl: 'aktivních členů'                 },
+          { val: `${counts.membership} Kč`,             lbl: 'průměrné měsíční členství'       },
         ].map(({ val, lbl }, i) => (
           <div key={i} className="pm-stat-cell">
             <div className="pm-stat-val">{val}</div>
@@ -255,13 +255,13 @@ export default function ProMajiteleClient({ gymCount }: Props) {
         id="cenik"
         ref={pricingRef}
         className={`pm-section pm-reveal${pricingVis ? ' is-visible' : ''}`}
-        aria-label="Cenik"
+        aria-label="Ceník"
       >
         <div className="pm-inner pm-wide">
-          <p className="iron-label">Cenik</p>
-          <h2 className="pm-h2" style={{ marginTop: '1.5rem' }}>Vyberte svuj zaklad</h2>
+          <p className="iron-label">Ceník</p>
+          <h2 className="pm-h2" style={{ marginTop: '1.5rem' }}>Vyberte svůj základ</h2>
           <p className="pm-sub" style={{ marginTop: '1rem' }}>
-            Profil, viditelnost, data. Plafte jednou mesicne, cancellujte kdykoliv.
+            Profil, viditelnost, data. Plaťte jednou měsíčně, cancellujte kdykoliv.
           </p>
 
           <div className="pm-plans">
@@ -271,82 +271,82 @@ export default function ProMajiteleClient({ gymCount }: Props) {
               <header className="pm-plan-head">
                 <div className="pm-plan-tier">Free</div>
                 <div className="pm-price-row">
-                  <span className="pm-price">0&nbsp;Kc</span>
-                  <span className="pm-per">/mes</span>
+                  <span className="pm-price">0 Kč</span>
+                  <span className="pm-per">/měs</span>
                 </div>
               </header>
               <ul className="pm-feat-list">
-                {['Zakladni profil s adresou','Zobrazeni na mape','Oteviraci doba','Kontaktni udaje']
+                {['Základní profil s adresou','Zobrazení na mapě','Otevírací doba','Kontaktní údaje']
                   .map(f => <FeatItem key={f}>{f}</FeatItem>)}
               </ul>
               <a href="/pridat-gym" className="pm-plan-btn pm-plan-btn-outline">
-                Pridat gym zdarma
+                Přidat gym zdarma
               </a>
             </article>
 
             {/* PRO - featured */}
             <article className="pm-plan pm-plan-pro" aria-label="Pro plan">
-              <div className="pm-plan-badge pm-badge-lime">Nejpopularnejsi</div>
+              <div className="pm-plan-badge pm-badge-lime">Nejpopulárnější</div>
               <header className="pm-plan-head">
                 <div className="pm-plan-tier" style={{ color: 'var(--lime)' }}>Pro</div>
                 <span className="pm-pilot-tag">Pilot cena</span>
                 <div className="pm-price-row" style={{ marginTop: '0.5rem' }}>
-                  <span className="pm-price-old">599&nbsp;Kc</span>
-                  <span className="pm-price">499&nbsp;Kc</span>
-                  <span className="pm-per">/mes</span>
+                  <span className="pm-price-old">599 Kč</span>
+                  <span className="pm-price">499 Kč</span>
+                  <span className="pm-per">/měs</span>
                 </div>
                 <div className="pm-from">od</div>
               </header>
               <ul className="pm-feat-list">
                 {[
-                  'Vse z Free',
-                  'Prioritni pozice v kategorii vaseho mesta',
-                  'Vlastni fotogalerie',
-                  'Statistiky zobrazeni profilu',
-                  'Overeny badge - zakaznici veri vice',
-                  'Primy odkaz na web',
-                  '15\u00a0% sleva na reklamni sloty',
+                  'Vše z Free',
+                  'Prioritní pozice v kategorii vašeho města',
+                  'Vlastní fotogalerie',
+                  'Statistiky zobrazení profilu',
+                  'Ověřený badge - zákazníci věří více',
+                  'Přímý odkaz na web',
+                  '15 % sleva na reklamní sloty',
                 ].map(f => <FeatItem key={f}>{f}</FeatItem>)}
               </ul>
               <a href="#kontakt" className="pm-plan-btn pm-plan-btn-primary pm-pulse">
-                Zacit 14 dni zdarma
+                Začít 14 dní zdarma
               </a>
             </article>
 
             {/* ELITE */}
             <article className="pm-plan pm-plan-elite" aria-label="Elite plan">
-              <div className="pm-plan-badge pm-badge-gold">Nejvyssi hodnota</div>
+              <div className="pm-plan-badge pm-badge-gold">Nejvyšší hodnota</div>
               <header className="pm-plan-head">
                 <div className="pm-plan-tier" style={{ color: '#D4944A' }}>Elite</div>
                 <span className="pm-pilot-tag" style={{ borderColor: '#D4944A', color: '#D4944A' }}>Pilot cena</span>
                 <div className="pm-price-row" style={{ marginTop: '0.5rem' }}>
-                  <span className="pm-price-old">1&nbsp;590&nbsp;Kc</span>
-                  <span className="pm-price">1&nbsp;290&nbsp;Kc</span>
-                  <span className="pm-per">/mes</span>
+                  <span className="pm-price-old">1 590 Kč</span>
+                  <span className="pm-price">1 290 Kč</span>
+                  <span className="pm-per">/měs</span>
                 </div>
                 <div className="pm-from">od</div>
               </header>
               <ul className="pm-feat-list">
                 {[
-                  'Vse z Pro',
-                  'Pokrocile statistiky a konverze',
-                  'Featured badge - maximalni duveryhodnost',
-                  '25\u00a0% sleva na reklamni sloty',
-                  '3 dny Gold Mesto slot zdarma / mesic (hodnota 1\u00a0499\u00a0Kc)',
-                  'Dedicovany account manager',
-                  'Mesicni report navstevnosti',
+                  'Vše z Pro',
+                  'Pokročilé statistiky a konverze',
+                  'Featured badge - maximální důvěryhodnost',
+                  '25 % sleva na reklamní sloty',
+                  '3 dny Gold Město slot zdarma / měsíc (hodnota 1 499 Kč)',
+                  'Dedikovaný account manager',
+                  'Měsíční report návštěvnosti',
                 ].map(f => <FeatItem key={f}>{f}</FeatItem>)}
               </ul>
               <a href="#kontakt" className="pm-plan-btn pm-plan-btn-gold">
-                Kontaktovat nas
+                Kontaktovat nás
               </a>
             </article>
 
           </div>
 
           <p className="pm-plans-note">
-            Reklamni sloty jsou dostupne pro vsechny plany.
-            Pro a Elite ziskavaji automatickou slevu 15&nbsp;% resp. 25&nbsp;%.
+            Reklamní sloty jsou dostupné pro všechny plány.
+            Pro a Elite získávají automatickou slevu 15 % resp. 25 %.
           </p>
         </div>
       </section>
@@ -357,17 +357,17 @@ export default function ProMajiteleClient({ gymCount }: Props) {
       <section
         ref={slotsRef}
         className={`pm-section pm-section-alt pm-reveal${slotsVis ? ' is-visible' : ''}`}
-        aria-label="Reklamni sloty"
+        aria-label="Reklamní sloty"
       >
         <div className="pm-inner pm-wide">
           <h2 className="pm-display-xl">
-            Budte<br />
-            <span style={{ color: 'var(--lime)' }}>prvni.</span>
+            Buďte<br />
+            <span style={{ color: 'var(--lime)' }}>první.</span>
           </h2>
-          <p className="pm-accent-sub">Pouze 3 dostupne pozice na kategorii. Kdo drive prijde.</p>
+          <p className="pm-accent-sub">Pouze 3 dostupné pozice na kategorii. Kdo dříve přijde.</p>
           <p className="pm-sub" style={{ marginBottom: '4rem', maxWidth: 640 }}>
-            Exkluzivni zlate, stribrne a bronzove pozice ve vyhledavani - narodni nebo mestske.
-            Jednou obsazeno, konkurence ceka.
+            Exkluzivní zlaté, stříbrné a bronzové pozice ve vyhledávání - národní nebo městské.
+            Jednou obsazeno, konkurence čeká.
           </p>
 
           <div className="pm-slots-cols">
@@ -375,34 +375,34 @@ export default function ProMajiteleClient({ gymCount }: Props) {
             {/* NATIONAL */}
             <div>
               <div className="pm-col-hdr">
-                <span className="iron-label">Narodni sloty</span>
-                <span className="pm-duration">7 dni</span>
+                <span className="iron-label">Národní sloty</span>
+                <span className="pm-duration">7 dní</span>
               </div>
-              <p className="pm-col-desc">Top 3 v cele CR - viditelnost napric vsemi mestama</p>
+              <p className="pm-col-desc">Top 3 v celé ČR - viditelnost napříč všemi městy</p>
               <div className="pm-slots-stack">
                 <SlotCard
-                  tier="gold" name="Gold - Narodni" price="7\u00a0999\u00a0Kc"
-                  proPrice="6\u00a0799\u00a0Kc" elitePrice="5\u00a0999\u00a0Kc"
+                  tier="gold" name="Gold - Národní" price="7 999 Kč"
+                  proPrice="6 799 Kč" elitePrice="5 999 Kč"
                   features={[
-                    'Pozice #1 ve vyhledavani vasi kategorie v cele CR',
-                    'Gold badge na profilu po dobu kampane',
-                    'Zmineni v mesicnim newsletteru Iron',
+                    'Pozice #1 ve vyhledávání vaší kategorie v celé ČR',
+                    'Gold badge na profilu po dobu kampaně',
+                    'Zmínění v měsíčním newsletteru Iron',
                   ]}
                 />
                 <SlotCard
-                  tier="silver" name="Silver - Narodni" price="5\u00a0999\u00a0Kc"
-                  proPrice="5\u00a0099\u00a0Kc" elitePrice="4\u00a0499\u00a0Kc"
+                  tier="silver" name="Silver - Národní" price="5 999 Kč"
+                  proPrice="5 099 Kč" elitePrice="4 499 Kč"
                   features={[
-                    'Pozice #2 ve vyhledavani vasi kategorie v cele CR',
-                    'Silver badge na profilu po dobu kampane',
+                    'Pozice #2 ve vyhledávání vaší kategorie v celé ČR',
+                    'Silver badge na profilu po dobu kampaně',
                   ]}
                 />
                 <SlotCard
-                  tier="bronze" name="Bronze - Narodni" price="4\u00a0999\u00a0Kc"
-                  proPrice="4\u00a0249\u00a0Kc" elitePrice="3\u00a0749\u00a0Kc"
+                  tier="bronze" name="Bronze - Národní" price="4 999 Kč"
+                  proPrice="4 249 Kč" elitePrice="3 749 Kč"
                   features={[
-                    'Pozice #3 ve vyhledavani vasi kategorie v cele CR',
-                    'Bronze badge na profilu po dobu kampane',
+                    'Pozice #3 ve vyhledávání vaší kategorie v celé ČR',
+                    'Bronze badge na profilu po dobu kampaně',
                   ]}
                   last
                 />
@@ -412,28 +412,28 @@ export default function ProMajiteleClient({ gymCount }: Props) {
             {/* CITY */}
             <div>
               <div className="pm-col-hdr">
-                <span className="iron-label">Mestske sloty</span>
-                <span className="pm-duration">7 dni</span>
+                <span className="iron-label">Městské sloty</span>
+                <span className="pm-duration">7 dní</span>
               </div>
-              <p className="pm-col-desc">Top 3 ve vasem meste - dominance lokalnich vysledku</p>
+              <p className="pm-col-desc">Top 3 ve vašem městě - dominance lokálních výsledků</p>
               <div className="pm-slots-stack">
                 <SlotCard
-                  tier="gold" name="Gold Mesto" price="2\u00a0999\u00a0Kc"
-                  proPrice="2\u00a0549\u00a0Kc" elitePrice="2\u00a0249\u00a0Kc"
+                  tier="gold" name="Gold Město" price="2 999 Kč"
+                  proPrice="2 549 Kč" elitePrice="2 249 Kč"
                   features={[
-                    'Pozice #1 ve vasem meste ve vasi kategorii',
+                    'Pozice #1 ve vašem městě ve vaší kategorii',
                     'Gold badge na profilu',
                   ]}
                 />
                 <SlotCard
-                  tier="silver" name="Silver Mesto" price="1\u00a0999\u00a0Kc"
-                  proPrice="1\u00a0699\u00a0Kc" elitePrice="1\u00a0499\u00a0Kc"
-                  features={['Pozice #2 ve vasem meste ve vasi kategorii']}
+                  tier="silver" name="Silver Město" price="1 999 Kč"
+                  proPrice="1 699 Kč" elitePrice="1 499 Kč"
+                  features={['Pozice #2 ve vašem městě ve vaší kategorii']}
                 />
                 <SlotCard
-                  tier="bronze" name="Bronze Mesto" price="1\u00a0499\u00a0Kc"
-                  proPrice="1\u00a0274\u00a0Kc" elitePrice="1\u00a0124\u00a0Kc"
-                  features={['Pozice #3 ve vasem meste ve vasi kategorii']}
+                  tier="bronze" name="Bronze Město" price="1 499 Kč"
+                  proPrice="1 274 Kč" elitePrice="1 124 Kč"
+                  features={['Pozice #3 ve vašem městě ve vaší kategorii']}
                   last
                 />
               </div>
@@ -442,8 +442,8 @@ export default function ProMajiteleClient({ gymCount }: Props) {
           </div>
 
           <p className="pm-slots-note">
-            Ceny jsou uvedeny bez DPH. Sloty jsou exkluzivni - po obsazeni neni mozne zakoupit
-            stejnou pozici do uplynutí kampane.
+            Ceny jsou uvedeny bez DPH. Sloty jsou exkluzivní - po obsazení není možné zakoupit
+            stejnou pozici do uplynutí kampaně.
           </p>
         </div>
       </section>
@@ -454,32 +454,32 @@ export default function ProMajiteleClient({ gymCount }: Props) {
       <section
         ref={whyRef}
         className={`pm-section pm-reveal${whyVis ? ' is-visible' : ''}`}
-        aria-label="Proc IRONMAP"
+        aria-label="Proč IRONMAP"
       >
         <div className="pm-inner pm-wide">
-          <p className="iron-label">Cisla jsou jasna</p>
-          <h2 className="pm-h2" style={{ marginTop: '1.5rem', marginBottom: '3rem' }}>Proc ironmap</h2>
+          <p className="iron-label">Čísla jsou jasná</p>
+          <h2 className="pm-h2" style={{ marginTop: '1.5rem', marginBottom: '3rem' }}>Proč ironmap</h2>
           <div className="pm-why-grid">
             {[
               {
                 Icon: IconTarget,
-                title: 'Zakaznici v momentu rozhodnuti',
-                body:  'Oslovujeme lidi kteri aktivne hledaji posilovnu, ne nahodne scrollery.',
+                title: 'Zákazníci v momentu rozhodnutí',
+                body:  'Oslovujeme lidi kteří aktivně hledají posilovnu, ne náhodné scrollery.',
               },
               {
                 Icon: IconBars,
-                title: 'Az 10\u00a0% zakazniku chce platit online',
-                body:  'Pripravujeme online booking. Vase fitko bude pripraveno jako prvni.',
+                title: 'Až 10 % zákazníků chce platit online',
+                body:  'Připravujeme online booking. Vaše fitko bude připraveno jako první.',
               },
               {
                 Icon: IconDiamond,
-                title: 'Vite co funguje',
-                body:  'Statistiky prohlédnuti, kliknuti, konverzi. Data ktera drive mely jen velke retezce.',
+                title: 'Víte co funguje',
+                body:  'Statistiky prohlédnutí, kliknutí, konverzí. Data která dříve měly jen velké řetězce.',
               },
               {
                 Icon: IconArrow,
                 title: 'Rosteme spolu',
-                body:  'Fitness trh v\u00a0CR roste 12\u00a0% rocne. Jsme tu abychom rostli s\u00a0vami.',
+                body:  'Fitness trh v ČR roste 12 % ročně. Jsme tu abychom rostli s vámi.',
               },
             ].map(({ Icon, title, body }) => (
               <div key={title} className="pm-why-card">
@@ -499,19 +499,19 @@ export default function ProMajiteleClient({ gymCount }: Props) {
         id="kontakt"
         ref={contactRef}
         className={`pm-section pm-section-alt pm-reveal${contactVis ? ' is-visible' : ''}`}
-        aria-label="Kontaktni formular"
+        aria-label="Kontaktní formulář"
       >
         <div className="pm-inner pm-narrow">
-          <p className="iron-label">Spoluplace</p>
-          <h2 className="pm-h2" style={{ marginTop: '1.5rem' }}>Zacneme spolupraci</h2>
+          <p className="iron-label">Spolupráce</p>
+          <h2 className="pm-h2" style={{ marginTop: '1.5rem' }}>Začneme spolupráci</h2>
           <p className="pm-sub" style={{ marginTop: '1rem', marginBottom: '3rem' }}>
-            Vyplnte formular a ozveme se do 24 hodin.
+            Vyplňte formulář a ozveme se do 24 hodin.
           </p>
 
           {submitted ? (
             <div className="pm-success" role="alert">
               <div className="pm-success-icon" aria-hidden="true" />
-              <div className="pm-success-title">Zprava odeslana</div>
+              <div className="pm-success-title">Zpráva odeslána</div>
               <p className="pm-success-body">Ozveme se do 24 hodin.</p>
             </div>
           ) : (
@@ -519,20 +519,20 @@ export default function ProMajiteleClient({ gymCount }: Props) {
 
               <div className="pm-form-2">
                 <div className="pm-field">
-                  <label htmlFor="pm-gymName" className="pm-label">Nazev gymu</label>
+                  <label htmlFor="pm-gymName" className="pm-label">Název gymu</label>
                   <input
                     id="pm-gymName" required type="text"
-                    className="pm-input" placeholder="Napr. Fitness Center Praha"
+                    className="pm-input" placeholder="Např. Fitness Center Praha"
                     value={form.gymName}
                     onChange={e => setForm(f => ({ ...f, gymName: e.target.value }))}
                     aria-required="true"
                   />
                 </div>
                 <div className="pm-field">
-                  <label htmlFor="pm-name" className="pm-label">Jmeno</label>
+                  <label htmlFor="pm-name" className="pm-label">Jméno</label>
                   <input
                     id="pm-name" required type="text"
-                    className="pm-input" placeholder="Vase jmeno"
+                    className="pm-input" placeholder="Vaše jméno"
                     value={form.name}
                     onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                     aria-required="true"
@@ -553,7 +553,7 @@ export default function ProMajiteleClient({ gymCount }: Props) {
                 </div>
                 <div className="pm-field">
                   <label htmlFor="pm-phone" className="pm-label">
-                    Telefon <span className="pm-optional">(nepovinne)</span>
+                    Telefon <span className="pm-optional">(nepovinné)</span>
                   </label>
                   <input
                     id="pm-phone" type="tel"
@@ -565,7 +565,7 @@ export default function ProMajiteleClient({ gymCount }: Props) {
               </div>
 
               <div className="pm-field">
-                <label htmlFor="pm-interest" className="pm-label">Zajem o</label>
+                <label htmlFor="pm-interest" className="pm-label">Zájem o</label>
                 <div className="pm-select-wrap">
                   <select
                     id="pm-interest" required
@@ -574,16 +574,16 @@ export default function ProMajiteleClient({ gymCount }: Props) {
                     onChange={e => setForm(f => ({ ...f, interest: e.target.value }))}
                     aria-required="true"
                   >
-                    <option value="" disabled>Vyberte moznost</option>
+                    <option value="" disabled>Vyberte možnost</option>
                     <option value="Free listing">Free listing</option>
                     <option value="Pro">Pro</option>
                     <option value="Elite">Elite</option>
-                    <option value="Gold narodni">Gold narodni</option>
-                    <option value="Silver narodni">Silver narodni</option>
-                    <option value="Bronze narodni">Bronze narodni</option>
-                    <option value="Gold mesto">Gold mesto</option>
-                    <option value="Silver mesto">Silver mesto</option>
-                    <option value="Bronze mesto">Bronze mesto</option>
+                    <option value="Gold národní">Gold národní</option>
+                    <option value="Silver národní">Silver národní</option>
+                    <option value="Bronze národní">Bronze národní</option>
+                    <option value="Gold město">Gold město</option>
+                    <option value="Silver město">Silver město</option>
+                    <option value="Bronze město">Bronze město</option>
                     <option value="Chci se poradit">Chci se poradit</option>
                   </select>
                   <span className="pm-select-arr" aria-hidden="true" />
@@ -592,12 +592,12 @@ export default function ProMajiteleClient({ gymCount }: Props) {
 
               <div className="pm-field">
                 <label htmlFor="pm-message" className="pm-label">
-                  Zprava <span className="pm-optional">(nepovinne)</span>
+                  Zpráva <span className="pm-optional">(nepovinné)</span>
                 </label>
                 <textarea
                   id="pm-message"
                   className="pm-input pm-textarea"
-                  placeholder="Napiste nam cokoliv..."
+                  placeholder="Napište nám cokoliv..."
                   rows={4}
                   value={form.message}
                   onChange={e => setForm(f => ({ ...f, message: e.target.value }))}
@@ -608,9 +608,9 @@ export default function ProMajiteleClient({ gymCount }: Props) {
                 type="submit"
                 disabled={submitting}
                 className="pm-submit pm-pulse"
-                aria-label="Odeslat formular"
+                aria-label="Odeslat formulář"
               >
-                {submitting ? 'Odesilam...' : 'Odeslat'}
+                {submitting ? 'Odesílám...' : 'Odeslat'}
               </button>
 
             </form>
