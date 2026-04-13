@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Barlow, Barlow_Condensed } from 'next/font/google';
 import Script from 'next/script';
 import './globals.css';
+import { getGymCount } from '@/lib/stats';
 import { LangProvider } from '@/lib/i18n';
 import { ModalProvider } from '@/components/ModalContext';
 import IronNav from '@/components/IronNav';
@@ -27,27 +28,30 @@ const barlowCondensed = Barlow_Condensed({
   display: 'swap',
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: 'IRON — Největší adresář posiloven v České republice',
-    template: '%s | IRON',
-  },
-  description:
-    'Najděte nejlepší posilovnu ve vašem městě. 864 gymů, otevírací doby, kontakty a hodnocení po celé ČR.',
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL ?? 'https://www.ironmap.cz'),
-  openGraph: {
-    siteName: 'IRON',
-    locale: 'cs_CZ',
-    type: 'website',
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: { index: true, follow: true },
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const gymCount = await getGymCount();
+  return {
+    title: {
+      default: 'IRON — Největší adresář posiloven v České republice',
+      template: '%s | IRON',
+    },
+    description:
+      `Najděte nejlepší posilovnu ve vašem městě. ${gymCount} gymů, otevírací doby, kontakty a hodnocení po celé ČR.`,
+    metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL ?? 'https://www.ironmap.cz'),
+    openGraph: {
+      siteName: 'IRON',
+      locale: 'cs_CZ',
+      type: 'website',
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: { index: true, follow: true },
+    },
+  };
+}
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="cs"
