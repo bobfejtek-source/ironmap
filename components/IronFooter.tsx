@@ -44,6 +44,7 @@ export default function IronFooter() {
           { label: t.footer.gyms, href: '/posilovny' },
           { label: t.footer.about, href: '/o-projektu' },
           { label: t.footer.forOwners, href: '/pro-majitele' },
+          { label: 'Pro trenéry', href: '/treneri' },
           { label: t.footer.contact, href: '/kontakt' },
           { label: t.footer.privacy, href: '/ochrana-soukromi' },
           { label: t.footer.terms, href: '/obchodni-podminky' },
