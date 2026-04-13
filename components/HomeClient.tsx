@@ -120,7 +120,7 @@ export default function HomeClient({ topCities, total, allCities }: Props) {
         body: JSON.stringify({ source: 'entry-waitlist', type: 'jednorázový-vstup', email: entryEmail }),
       });
     } catch { /* show success anyway */ }
-    trackEvent('daily_entry_click', { gym_id: String(selectedGym?.id ?? '') });
+    trackEvent('daily_entry_click');
     setEntryLoading(false);
     setEntrySent(true);
   };
@@ -141,7 +141,7 @@ export default function HomeClient({ topCities, total, allCities }: Props) {
         }),
       });
     } catch { /* show success anyway */ }
-    trackEvent('trainer_lead_submit', { gym_id: String(selectedGym?.id ?? '') });
+    trackEvent('trainer_lead_submit');
     setTrainerLoading(false);
     setTrainerSent(true);
   };
