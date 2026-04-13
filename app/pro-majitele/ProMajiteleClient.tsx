@@ -428,12 +428,12 @@ export default function ProMajiteleClient({ gymCount }: Props) {
                 <SlotCard
                   tier="silver" name="Silver Město" price="1 999 Kč"
                   proPrice="1 699 Kč" elitePrice="1 499 Kč"
-                  features={['Pozice #2 ve vašem městě ve vaší kategorii']}
+                  features={['Pozice #2 ve vašem městě ve vaší kategorii', 'Silver badge na profilu po dobu kampaně']}
                 />
                 <SlotCard
                   tier="bronze" name="Bronze Město" price="1 499 Kč"
                   proPrice="1 274 Kč" elitePrice="1 124 Kč"
-                  features={['Pozice #3 ve vašem městě ve vaší kategorii']}
+                  features={['Pozice #3 ve vašem městě ve vaší kategorii', 'Bronze badge na profilu po dobu kampaně']}
                   last
                 />
               </div>
