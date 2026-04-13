@@ -241,6 +241,16 @@ export default function HomeClient({ topCities, total, allCities }: Props) {
           position: 'relative',
         }}>
           {t.hero.sub}
+          <span style={{
+            display: 'block',
+            marginTop: '0.6rem',
+            fontSize: '0.75rem',
+            color: 'var(--muted)',
+            opacity: 0.7,
+          }}>
+            <span style={{ color: 'var(--lime)', marginRight: '0.35rem' }}>›</span>
+            {t.hero.subComingSoon}
+          </span>
         </p>
 
         {/* Search bar */}
