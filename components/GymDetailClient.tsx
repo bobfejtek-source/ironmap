@@ -198,6 +198,73 @@ export default function GymDetailClient({ gym, similarGyms }: Props) {
         )}
       </div>
 
+      {/* Amenities */}
+      {(() => {
+        const amenities = [
+          { field: gym.has_weights,  emoji: '🏋️', label: 'Činky & stroje' },
+          { field: gym.has_cardio,   emoji: '🚴', label: 'Kardio' },
+          { field: gym.has_classes,  emoji: '👥', label: 'Skupinové lekce' },
+          { field: gym.has_showers,  emoji: '🚿', label: 'Sprchy' },
+          { field: gym.has_lockers,  emoji: '🔒', label: 'Šatny' },
+          { field: gym.has_parking,  emoji: '🅿️', label: 'Parkování' },
+          { field: gym.has_sauna,    emoji: '🧖', label: 'Sauna' },
+          { field: gym.has_pool,     emoji: '🏊', label: 'Bazén' },
+          { field: gym.is_24_7,      emoji: '🕐', label: 'Otevřeno 24/7' },
+        ].filter(a => a.field === true);
+
+        const showMultisport = gym.multisport === true;
+        if (amenities.length === 0 && !showMultisport) return null;
+
+        return (
+          <div style={{
+            background: 'var(--card-bg)',
+            border: '1px solid var(--border)',
+            padding: 'clamp(1rem, 3vw, 1.75rem) clamp(0.875rem, 3vw, 2rem)',
+            marginBottom: '1.5rem',
+          }}>
+            <SectionTitle>Vybavení a služby</SectionTitle>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+              {amenities.map(a => (
+                <span key={a.label} style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  background: '#1a1a1a',
+                  border: '1px solid var(--border)',
+                  padding: '0.35rem 0.75rem',
+                  fontSize: '0.78rem',
+                  color: 'var(--muted)',
+                  fontWeight: 300,
+                  lineHeight: 1,
+                }}>
+                  <span>{a.emoji}</span>
+                  <span>{a.label}</span>
+                </span>
+              ))}
+              {showMultisport && (
+                <span style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  background: '#0d1f13',
+                  border: '1px solid #22c55e',
+                  padding: '0.35rem 0.75rem',
+                  fontSize: '0.78rem',
+                  color: '#22c55e',
+                  fontFamily: 'var(--font-display)',
+                  fontWeight: 700,
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                  lineHeight: 1,
+                }}>
+                  MultiSport ✓
+                </span>
+              )}
+            </div>
+          </div>
+        );
+      })()}
+
       {/* Grid: contact + hours */}
       <div style={{
         display: 'grid',

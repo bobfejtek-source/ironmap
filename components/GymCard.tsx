@@ -82,6 +82,21 @@ export default function GymCard({ gym, hideCity = false, distanceKm }: Props) {
           }}>
             {categoryLabel}
           </span>
+          {gym.multisport === true && (
+            <span style={{
+              fontSize: '0.6rem',
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase',
+              border: '1px solid #22c55e',
+              padding: '0.15rem 0.5rem',
+              color: '#22c55e',
+              fontFamily: 'var(--font-display)',
+              fontWeight: 700,
+              flexShrink: 0,
+            }}>
+              MultiSport ✓
+            </span>
+          )}
           {distanceKm != null && (
             <span style={{
               fontSize: '0.6rem',

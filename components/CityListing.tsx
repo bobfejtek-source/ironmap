@@ -30,6 +30,16 @@ const MapView = dynamic(() => import('./MapView'), {
 // Czech DB values used for filtering — display labels come from t.categories
 const CATEGORY_VALUES = ['Vše', 'Posilovna', 'CrossFit', 'Jóga', 'Pilates', 'Outdoor', 'Bojové sporty', 'Spinning', 'Bazén'];
 
+const AMENITY_FILTERS: { key: string; label: string; field: keyof import('@/lib/db').Gym }[] = [
+  { key: 'multisport', label: 'MultiSport', field: 'multisport' },
+  { key: '247',        label: '24/7',       field: 'is_24_7' },
+  { key: 'sprchy',     label: 'Sprchy',     field: 'has_showers' },
+  { key: 'parking',    label: 'Parking',    field: 'has_parking' },
+  { key: 'sauna',      label: 'Sauna',      field: 'has_sauna' },
+  { key: 'bazen',      label: 'Bazén',      field: 'has_pool' },
+  { key: 'lekce',      label: 'Skupin. lekce', field: 'has_classes' },
+];
+
 function isOpenNow(raw: string | null): boolean | null {
   if (!raw) return null;
   try {
@@ -70,13 +80,29 @@ export default function CityListing({ gyms, cityName, initialCategory, userLat, 
   const [category, setCategory] = useState(initialCategory ?? 'Vše');
   const [openNow, setOpenNow] = useState(false);
   const [mapOpen, setMapOpen] = useState(false);
+  const [amenities, setAmenities] = useState<Set<string>>(new Set());
+
+  function buildParams(cat: string, amenSet: Set<string>): string {
+    const params = new URLSearchParams();
+    if (cat !== 'Vše') params.set('kategorie', cat);
+    if (amenSet.size > 0) params.set('vybaveni', [...amenSet].join(','));
+    return params.toString();
+  }
 
   function selectCategory(cat: string) {
     setCategory(cat);
-    const params = new URLSearchParams();
-    if (cat !== 'Vše') params.set('kategorie', cat);
-    const qs = params.toString();
+    const qs = buildParams(cat, amenities);
     router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+  }
+
+  function toggleAmenity(key: string) {
+    setAmenities(prev => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key); else next.add(key);
+      const qs = buildParams(category, next);
+      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+      return next;
+    });
   }
   const [activeId, setActiveId] = useState<string | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
@@ -101,6 +127,10 @@ export default function CityListing({ gyms, cityName, initialCategory, userLat, 
       if (openNow) {
         const open = isOpenNow(g.opening_hours);
         if (open === false) return false;
+      }
+      for (const key of amenities) {
+        const def = AMENITY_FILTERS.find(a => a.key === key);
+        if (def && g[def.field] !== true) return false;
       }
       return true;
     });
@@ -127,7 +157,7 @@ export default function CityListing({ gyms, cityName, initialCategory, userLat, 
       .filter(Boolean) as MapPin[]
   , [filtered]);
 
-  const hasFilters = category !== 'Vše' || openNow;
+  const hasFilters = category !== 'Vše' || openNow || amenities.size > 0;
 
   const handlePinClick = (id: string) => {
     setActiveId(id);
@@ -184,9 +214,22 @@ export default function CityListing({ gyms, cityName, initialCategory, userLat, 
           {t.listing.filters.openNow}
         </button>
 
+        <div style={{ width: '1px', height: '20px', background: 'var(--border)', flexShrink: 0, margin: '0 0.5rem' }} />
+
+        {AMENITY_FILTERS.map(a => (
+          <button
+            key={a.key}
+            className={`chip${amenities.has(a.key) ? ' active' : ''}`}
+            onClick={() => toggleAmenity(a.key)}
+            style={{ flexShrink: 0 }}
+          >
+            {a.label}
+          </button>
+        ))}
+
         {hasFilters && (
           <button
-            onClick={() => { selectCategory('Vše'); setOpenNow(false); }}
+            onClick={() => { selectCategory('Vše'); setOpenNow(false); setAmenities(new Set()); }}
             style={{
               fontSize: '0.65rem',
               letterSpacing: '0.12em',

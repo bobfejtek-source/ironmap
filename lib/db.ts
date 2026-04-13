@@ -32,6 +32,20 @@ export type Gym = {
   discovery_batch: string | null;
   confidence: number | null;
   staging: boolean;
+  multisport: boolean | null;
+  gopass: boolean | null;
+  benefit_plus: boolean | null;
+  is_24_7: boolean | null;
+  has_sauna: boolean | null;
+  has_pool: boolean | null;
+  has_parking: boolean | null;
+  has_showers: boolean | null;
+  has_lockers: boolean | null;
+  has_cardio: boolean | null;
+  has_weights: boolean | null;
+  has_classes: boolean | null;
+  photos: string | null;
+  enriched_at: string | null;
 };
 
 // ─── Queries ──────────────────────────────────────────────────────────────────

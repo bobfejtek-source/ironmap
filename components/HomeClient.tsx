@@ -364,7 +364,7 @@ export default function HomeClient({ topCities, total, allCities }: Props) {
         }}>
           <Stat number={`${total}+`} label={t.hero.gymsCount} />
           <div style={{ width: '1px', background: 'var(--border)' }} />
-          <Stat number="190+" label={t.hero.citiesCount} />
+          <Stat number={`${allCities.length}+`} label={t.hero.citiesCount} />
         </div>
       </section>
 
