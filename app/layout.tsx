@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Barlow, Barlow_Condensed } from 'next/font/google';
-import Script from 'next/script';
 import './globals.css';
+import GA4Loader from '@/components/GA4Loader';
 import { getGymCount } from '@/lib/stats';
 import { LangProvider } from '@/lib/i18n';
 import { ModalProvider } from '@/components/ModalContext';
@@ -75,17 +75,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             }),
           }}
         />
-        {process.env.NEXT_PUBLIC_GA_ID && (
-          <>
-            <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
-              strategy="afterInteractive"
-            />
-            <Script id="ga4-init" strategy="afterInteractive">
-              {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${process.env.NEXT_PUBLIC_GA_ID}');`}
-            </Script>
-          </>
-        )}
+        <GA4Loader />
         <Providers>
           <LangProvider>
             <ModalProvider>

@@ -30,7 +30,12 @@ export default function OchranaPage() {
         </Section>
 
         <Section title="Cookies">
-          Používáme výhradně <strong style={{ color: 'var(--text)' }}>nezbytné cookies</strong> pro správu přihlášené relace (session token). Tyto cookies jsou httpOnly a nezpřístupňujeme je skriptům třetích stran. Nepoužíváme analytické, reklamní ani sledovací cookies.
+          Používáme dva typy cookies:
+          <ul style={{ margin: '0.5rem 0 0', paddingLeft: '1.25rem' }}>
+            <li><strong style={{ color: 'var(--text)' }}>Nezbytné cookies</strong> - pro správu přihlášené relace (session token). Tyto cookies jsou httpOnly a nezpřístupňujeme je skriptům třetích stran.</li>
+            <li><strong style={{ color: 'var(--text)' }}>Analytické cookies</strong> - Google Analytics (GA4) pro anonymní měření návštěvnosti. Načítají se pouze pokud udělíte souhlas. Nepoužíváme reklamní ani jiné sledovací cookies třetích stran.</li>
+          </ul>
+          Svůj souhlas s analytickými cookies můžete kdykoliv odvolat vymazáním dat prohlížeče pro tuto stránku.
         </Section>
 
         <Section title="Účel a právní základ">
