@@ -46,6 +46,9 @@ export default function IronFooter() {
           { label: t.footer.forOwners, href: '/pro-majitele' },
           { label: t.footer.contact, href: '/kontakt' },
           { label: t.footer.privacy, href: '/ochrana-soukromi' },
+          { label: t.footer.terms, href: '/obchodni-podminky' },
+          { label: t.footer.termsOfUse, href: '/podminky-pouziti' },
+          { label: t.footer.cookiePolicy, href: '/cookies' },
         ].map(({ label, href }) => (
           <li key={label}>
             <Link
