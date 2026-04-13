@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import { useSession, signIn } from 'next-auth/react';
 import { useT } from '@/lib/i18n';
+import { trackEvent } from '@/lib/gtag';
 
 function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const R = 6_371_000; // metres
@@ -61,6 +62,7 @@ export default function CheckinButton({ gymSlug, gymLat, gymLng }: Props) {
   }
 
   async function handleCheckinClick() {
+    trackEvent('checkin_attempt', { gym_id: gymSlug });
     if (status === 'loading') return;
     if (!session) {
       signIn(undefined, { callbackUrl: `/posilovny/${gymSlug}` });

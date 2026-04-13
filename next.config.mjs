@@ -3,13 +3,13 @@
 const CSP = [
   "default-src 'self'",
   // Next.js requires unsafe-inline for its runtime scripts/styles
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com",
   // Google profile pictures + map tiles (Leaflet: OSM primary, CartoDB fallback)
-  "img-src 'self' data: blob: https://lh3.googleusercontent.com https://*.googleusercontent.com https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com",
+  "img-src 'self' data: blob: https://lh3.googleusercontent.com https://*.googleusercontent.com https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com https://www.google-analytics.com",
   // API calls: Formspree forms (client-side fetch), weather API is server-side only
-  "connect-src 'self' https://formspree.io",
+  "connect-src 'self' https://formspree.io https://*.google-analytics.com https://www.googletagmanager.com",
   "frame-ancestors 'none'",
   "object-src 'none'",
   "base-uri 'self'",

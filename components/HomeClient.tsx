@@ -7,6 +7,7 @@ import { useT } from '@/lib/i18n';
 import { useModal } from './ModalContext';
 import { cityUrl } from '@/lib/utils';
 import { CATEGORIES } from '@/lib/categories';
+import { trackEvent } from '@/lib/gtag';
 
 interface Props {
   topCities: { city: string; count: number }[];
@@ -119,6 +120,7 @@ export default function HomeClient({ topCities, total, allCities }: Props) {
         body: JSON.stringify({ source: 'entry-waitlist', type: 'jednorázový-vstup', email: entryEmail }),
       });
     } catch { /* show success anyway */ }
+    trackEvent('daily_entry_click', { gym_id: String(selectedGym?.id ?? '') });
     setEntryLoading(false);
     setEntrySent(true);
   };
@@ -139,6 +141,7 @@ export default function HomeClient({ topCities, total, allCities }: Props) {
         }),
       });
     } catch { /* show success anyway */ }
+    trackEvent('trainer_lead_submit', { gym_id: String(selectedGym?.id ?? '') });
     setTrainerLoading(false);
     setTrainerSent(true);
   };

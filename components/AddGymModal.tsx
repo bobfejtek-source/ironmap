@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useModal } from './ModalContext';
 import { useT } from '@/lib/i18n';
+import { trackEvent } from '@/lib/gtag';
 
 const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xgopqqvz';
 
@@ -42,6 +43,7 @@ export default function AddGymModal() {
         headers: { Accept: 'application/json' },
       });
       if (res.ok) {
+        trackEvent('add_gym_submit');
         setSuccess(true);
       } else {
         setError(true);

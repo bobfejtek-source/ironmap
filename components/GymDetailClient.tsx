@@ -7,6 +7,7 @@ import type { Gym } from '@/lib/db';
 import { cityUrl, getDayLabel, parseOpeningHours, parseCoordinates, formatHoursShort } from '@/lib/utils';
 import { useModal } from './ModalContext';
 import { useT } from '@/lib/i18n';
+import { trackEvent } from '@/lib/gtag';
 import GymCard from './GymCard';
 import CheckinButton from './CheckinButton';
 
@@ -216,7 +217,7 @@ export default function GymDetailClient({ gym, similarGyms }: Props) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
               {gym.phone && (
                 <ContactRow icon={<Phone size={14} />} label={t.detail.phone}>
-                  <a href={`tel:${gym.phone}`} style={{ color: 'var(--lime)', fontWeight: 400 }}>
+                  <a href={`tel:${gym.phone}`} style={{ color: 'var(--lime)', fontWeight: 400 }} onClick={() => trackEvent('intent_click', { type: 'phone' })}>
                     {gym.phone}
                   </a>
                 </ContactRow>
@@ -228,6 +229,7 @@ export default function GymDetailClient({ gym, similarGyms }: Props) {
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{ color: 'var(--lime)', fontWeight: 400 }}
+                    onClick={() => trackEvent('intent_click', { type: 'website' })}
                   >
                     {websiteDomain}
                   </a>
