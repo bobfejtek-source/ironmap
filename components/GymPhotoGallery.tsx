@@ -5,16 +5,17 @@ import { useState } from 'react';
 interface Props {
   photos: string; // JSON array of Places API v1 photo refs
   gymName: string;
+  gymId: number;
 }
 
-export default function GymPhotoGallery({ photos, gymName }: Props) {
+export default function GymPhotoGallery({ photos, gymName, gymId }: Props) {
   const [lightbox, setLightbox] = useState<number | null>(null);
 
   let refs: string[] = [];
   try { refs = (JSON.parse(photos) as string[]).slice(0, 5); } catch { return null; }
   if (refs.length === 0) return null;
 
-  const photoUrl = (ref: string) => `/api/photo?ref=${encodeURIComponent(ref)}`;
+  const photoUrl = (_ref: string, idx: number) => `/photos/${gymId}_${idx + 1}.jpg`;
 
   const prev = () => setLightbox(i => i != null ? (i - 1 + refs.length) % refs.length : null);
   const next = () => setLightbox(i => i != null ? (i + 1) % refs.length : null);
@@ -50,7 +51,7 @@ export default function GymPhotoGallery({ photos, gymName }: Props) {
             aria-label={`Foto ${i + 1} — ${gymName}`}
           >
             <img
-              src={photoUrl(ref)}
+              src={photoUrl(ref, i)}
               alt={`${gymName} foto ${i + 1}`}
               loading="lazy"
               style={{
@@ -78,7 +79,7 @@ export default function GymPhotoGallery({ photos, gymName }: Props) {
           }}
         >
           <img
-            src={photoUrl(refs[lightbox])}
+            src={photoUrl(refs[lightbox], lightbox)}
             alt={`${gymName} foto ${lightbox + 1}`}
             onClick={e => e.stopPropagation()}
             style={{

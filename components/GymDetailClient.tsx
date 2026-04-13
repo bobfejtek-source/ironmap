@@ -200,7 +200,7 @@ export default function GymDetailClient({ gym, similarGyms }: Props) {
       </div>
 
       {/* Photo gallery */}
-      {gym.photos && <GymPhotoGallery photos={gym.photos} gymName={gym.name} />}
+      {gym.photos && <GymPhotoGallery photos={gym.photos} gymName={gym.name} gymId={gym.id} />}
 
       {/* Amenities */}
       {(() => {
