@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useModal } from '@/components/ModalContext';
 
 interface Props { gymCount: number; }
 
@@ -94,6 +95,7 @@ function SlotCard({ tier, name, price, proPrice, elitePrice, features, last }: S
 
 // ── Main component ─────────────────────────────────────────────────────────
 export default function ProMajiteleClient({ gymCount }: Props) {
+  const { openAddGym } = useModal();
 
   // Count-up
   const statsRef = useRef<HTMLDivElement>(null);
@@ -220,9 +222,9 @@ export default function ProMajiteleClient({ gymCount }: Props) {
             Buďte tam kde hledají.
           </p>
           <div className="pm-hero-ctas pm-anim-5">
-            <a href="/pridat-gym" className="iron-btn iron-btn-primary pm-pulse">
+            <button onClick={openAddGym} className="iron-btn iron-btn-primary pm-pulse">
               Přidat gym zdarma
-            </a>
+            </button>
             <a href="#cenik" className="iron-btn iron-btn-ghost">
               Zobrazit ceník
             </a>
@@ -279,9 +281,9 @@ export default function ProMajiteleClient({ gymCount }: Props) {
                 {['Základní profil s adresou','Zobrazení na mapě','Otevírací doba','Kontaktní údaje']
                   .map(f => <FeatItem key={f}>{f}</FeatItem>)}
               </ul>
-              <a href="/pridat-gym" className="pm-plan-btn pm-plan-btn-outline">
+              <button onClick={openAddGym} className="pm-plan-btn pm-plan-btn-outline">
                 Přidat gym zdarma
-              </a>
+              </button>
             </article>
 
             {/* PRO - featured */}
