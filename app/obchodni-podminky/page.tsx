@@ -26,10 +26,10 @@ export default function ObchodniPodminkyPage() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', color: 'var(--muted)', fontSize: '0.9rem', fontWeight: 300, lineHeight: 1.7 }}>
 
         <Section title="1. Uvodní ustanovení">
-          Tyto obchodní podmínky (dále jen "podmínky") upravují vzájemná práva a povinnosti mezi
+          Tyto obchodní podmínky (dále jen &ldquo;podmínky&rdquo;) upravují vzájemná práva a povinnosti mezi
           provozovatelem platformy IRONMAP a fyzickými nebo právnickými osobami, které využívají
-          služby platformy (dále jen "uživatel" nebo "majitel gymu"). Podmínky jsou vydány v souladu
-          s ustanovením § 1751 odst. 1 zákona c. 89/2012 Sb., obcanský zákoník (dále jen "NOZ").
+          služby platformy (dále jen &ldquo;uživatel&rdquo; nebo &ldquo;majitel gymu&rdquo;). Podmínky jsou vydány v souladu
+          s ustanovením § 1751 odst. 1 zákona c. 89/2012 Sb., obcanský zákoník (dále jen &ldquo;NOZ&rdquo;).
           Uzavřením smlouvy o využívání placených služeb uživatel potvrzuje, že se s těmito
           podmínkami seznámil a souhlasí s nimi.
         </Section>

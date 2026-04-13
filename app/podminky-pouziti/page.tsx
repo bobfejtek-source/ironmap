@@ -27,9 +27,9 @@ export default function PodminkyPouzitiPage() {
 
         <Section title="1. Úvodní ustanovení">
           Tyto podmínky použití upravují pravidla přístupu a užívání webové platformy IRONMAP dostupné
-          na adrese <strong style={{ color: 'var(--text)' }}>ironmap.cz</strong> (dále jen „platforma").
+          na adrese <strong style={{ color: 'var(--text)' }}>ironmap.cz</strong> (dále jen &bdquo;platforma&ldquo;).
           Platformu provozuje společnost Agile House s.r.o., IČO: 06913903, se sídlem Jičínská 226/17,
-          Žižkov, 130 00 Praha 3 (dále jen „provozovatel"). Přístupem na platformu vyjadřujete souhlas
+          Žižkov, 130 00 Praha 3 (dále jen &bdquo;provozovatel&ldquo;). Přístupem na platformu vyjadřujete souhlas
           s těmito podmínkami. Pokud s podmínkami nesouhlasíte, platformu prosím nepoužívejte.
         </Section>
 
@@ -106,7 +106,7 @@ export default function PodminkyPouzitiPage() {
         </Section>
 
         <Section title="10. Omezení odpovědnosti">
-          Platforma je poskytována „tak jak je" bez jakýchkoli záruk. Provozovatel neodpovídá za
+          Platforma je poskytována &bdquo;tak jak je&ldquo; bez jakýchkoli záruk. Provozovatel neodpovídá za
           přímé ani nepřímé škody vzniklé v souvislosti s použitím nebo nemožností použití platformy,
           včetně ušlého zisku, ztráty dat nebo poškození zařízení. Toto omezení se neuplatní v případech,
           kdy tak stanoví kogentní ustanovení právních předpisů (např. v případě úmyslného jednání nebo
