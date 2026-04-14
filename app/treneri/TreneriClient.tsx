@@ -276,7 +276,98 @@ export default function TreneriClient() {
       </section>
 
       {/* ════════════════════════════════════════════════════════════ */}
-      {/* 4. PRE-REGISTRATION FORM                                     */}
+      {/* 4. CENÍK                                                     */}
+      {/* ════════════════════════════════════════════════════════════ */}
+      <section className="tr-section" aria-label="Ceník pro trenéry" id="cenik">
+        <div className="tr-inner">
+          <p className="iron-label">Ceník</p>
+          <h2 className="tr-h2" style={{ marginTop: '1.5rem' }}>Vyberte svůj plán</h2>
+          <p className="tr-sub" style={{ marginTop: '1rem' }}>
+            Začněte zdarma. Upgradujte kdykoliv. Žádné závazky.
+          </p>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+            gap: '1.5rem',
+            marginTop: '3rem',
+            maxWidth: 680,
+          }}>
+
+            {/* FREE */}
+            <article style={{
+              border: '1px solid var(--border)',
+              padding: '2rem',
+              background: 'var(--black)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1.25rem',
+            }}>
+              <div>
+                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '1.1rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--text)' }}>Free</div>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.3rem', marginTop: '0.75rem' }}>
+                  <span style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '2.2rem', color: 'var(--text)' }}>0 Kč</span>
+                  <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.85rem', color: 'var(--muted)', fontWeight: 300 }}>/měs</span>
+                </div>
+              </div>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.6rem', flex: 1 }}>
+                {['Základní profil trenéra', 'Kontaktní údaje', 'Specializace a bio'].map(f => (
+                  <li key={f} style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-start', fontFamily: 'var(--font-body)', fontSize: '0.93rem', color: 'var(--muted)', fontWeight: 300 }}>
+                    <span style={{ color: 'var(--lime)', fontWeight: 700, flexShrink: 0 }}>+</span>{f}
+                  </li>
+                ))}
+              </ul>
+              <a href="#registrace" className="iron-btn iron-btn-ghost" style={{ textAlign: 'center', textDecoration: 'none' }}>
+                Vytvořit profil trenéra
+              </a>
+            </article>
+
+            {/* PRO */}
+            <article style={{
+              border: '1px solid var(--lime)',
+              padding: '2rem',
+              background: '#0d110a',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1.25rem',
+              position: 'relative',
+            }}>
+              <div style={{
+                position: 'absolute', top: '-1px', left: '1.5rem',
+                background: 'var(--lime)', color: 'var(--black)',
+                fontFamily: 'var(--font-display)', fontWeight: 900,
+                fontSize: '0.6rem', letterSpacing: '0.12em', textTransform: 'uppercase',
+                padding: '0.2rem 0.6rem',
+              }}>Doporučeno</div>
+              <div>
+                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '1.1rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--lime)' }}>Trenér Pro</div>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.3rem', marginTop: '0.75rem' }}>
+                  <span style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '2.2rem', color: 'var(--text)' }}>299 Kč</span>
+                  <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.85rem', color: 'var(--muted)', fontWeight: 300 }}>/měs</span>
+                </div>
+              </div>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.6rem', flex: 1 }}>
+                {['Vše z Free', 'Zvýraznění ve vyhledávání', 'Statistiky zobrazení profilu', 'Booking link na váš kalendář'].map(f => (
+                  <li key={f} style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-start', fontFamily: 'var(--font-body)', fontSize: '0.93rem', color: 'var(--muted)', fontWeight: 300 }}>
+                    <span style={{ color: 'var(--lime)', fontWeight: 700, flexShrink: 0 }}>+</span>{f}
+                  </li>
+                ))}
+              </ul>
+              <a href="#registrace" className="iron-btn iron-btn-primary tr-pulse" style={{ textAlign: 'center', textDecoration: 'none' }}>
+                Vytvořit profil trenéra
+              </a>
+            </article>
+
+          </div>
+
+          <p style={{ marginTop: '2rem', fontFamily: 'var(--font-body)', fontSize: '0.8rem', color: 'var(--muted)', fontWeight: 300, opacity: 0.7 }}>
+            Plaťte měsíčně. Bez závazků. Zrušení kdykoliv jedním klikem.
+          </p>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════════ */}
+      {/* 5. PRE-REGISTRATION FORM                                     */}
       {/* ════════════════════════════════════════════════════════════ */}
       <section
         id="registrace"

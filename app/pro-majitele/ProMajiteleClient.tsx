@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import Link from 'next/link';
 import { useModal } from '@/components/ModalContext';
 
 interface Props { gymCount: number; }
@@ -60,14 +61,12 @@ export default function ProMajiteleClient({ gymCount }: Props) {
   const [counts, setCounts] = useState({ gym: 0, cities: 0, pct: 0, members: 0, membership: 0 });
 
   // Scroll reveals
-  const pricingRef  = useRef<HTMLElement>(null);
-  const trainersRef = useRef<HTMLElement>(null);
-  const whyRef      = useRef<HTMLElement>(null);
-  const contactRef  = useRef<HTMLElement>(null);
-  const [pricingVis,  setPricingVis]  = useState(false);
-  const [trainersVis, setTrainersVis] = useState(false);
-  const [whyVis,      setWhyVis]      = useState(false);
-  const [contactVis,  setContactVis]  = useState(false);
+  const pricingRef = useRef<HTMLElement>(null);
+  const whyRef     = useRef<HTMLElement>(null);
+  const contactRef = useRef<HTMLElement>(null);
+  const [pricingVis, setPricingVis] = useState(false);
+  const [whyVis,     setWhyVis]     = useState(false);
+  const [contactVis, setContactVis] = useState(false);
 
   // Form
   const [form, setForm] = useState({ gymName: '', name: '', email: '', phone: '', interest: '', message: '' });
@@ -113,12 +112,11 @@ export default function ProMajiteleClient({ gymCount }: Props) {
   // Scroll reveals
   useEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduced) { setPricingVis(true); setTrainersVis(true); setWhyVis(true); setContactVis(true); return; }
+    if (reduced) { setPricingVis(true); setWhyVis(true); setContactVis(true); return; }
     const pairs: [React.RefObject<HTMLElement | null>, (v: boolean) => void][] = [
-      [pricingRef,  setPricingVis],
-      [trainersRef, setTrainersVis],
-      [whyRef,      setWhyVis],
-      [contactRef,  setContactVis],
+      [pricingRef, setPricingVis],
+      [whyRef,     setWhyVis],
+      [contactRef, setContactVis],
     ];
     const observers = pairs.map(([ref, setter]) => {
       const el = ref.current;
@@ -312,73 +310,39 @@ export default function ProMajiteleClient({ gymCount }: Props) {
           <p className="pm-plans-note">
             Plaťte měsíčně. Bez závazků. Zrušení kdykoliv jedním klikem.
           </p>
-        </div>
-      </section>
 
-      {/* ════════════════════════════════════════════════════════════ */}
-      {/* 4. TRENÉŘI                                                   */}
-      {/* ════════════════════════════════════════════════════════════ */}
-      <section
-        ref={trainersRef}
-        className={`pm-section pm-section-alt pm-reveal${trainersVis ? ' is-visible' : ''}`}
-        aria-label="Pro trenéry"
-      >
-        <div className="pm-inner pm-wide">
-          <p className="iron-label">Pro trenéry</p>
-          <h2 className="pm-h2" style={{ marginTop: '1.5rem' }}>Profil trenéra</h2>
-          <p className="pm-sub" style={{ marginTop: '1rem' }}>
-            Nezávislí trenéři. Fitness koučové. Instruktoři. Buďte vidět kde vás hledají.
-          </p>
-
-          <div className="pm-plans" style={{ marginTop: '3rem' }}>
-
-            {/* TRENÉR FREE */}
-            <article className="pm-plan" aria-label="Trenér Free">
-              <header className="pm-plan-head">
-                <div className="pm-plan-tier">Free</div>
-                <div className="pm-price-row">
-                  <span className="pm-price">0 Kč</span>
-                  <span className="pm-per">/měs</span>
-                </div>
-              </header>
-              <ul className="pm-feat-list">
-                {['Základní profil trenéra', 'Kontaktní údaje', 'Specializace a bio']
-                  .map(f => <FeatItem key={f}>{f}</FeatItem>)}
-              </ul>
-              <a href="#kontakt" className="pm-plan-btn pm-plan-btn-outline">
-                Vytvořit profil trenéra
-              </a>
-            </article>
-
-            {/* TRENÉR PRO */}
-            <article className="pm-plan pm-plan-pro" aria-label="Trenér Pro">
-              <div className="pm-plan-badge pm-badge-lime">Doporučeno</div>
-              <header className="pm-plan-head">
-                <div className="pm-plan-tier" style={{ color: 'var(--lime)' }}>Trenér Pro</div>
-                <div className="pm-price-row" style={{ marginTop: '0.75rem' }}>
-                  <span className="pm-price">299 Kč</span>
-                  <span className="pm-per">/měs</span>
-                </div>
-              </header>
-              <ul className="pm-feat-list">
-                {[
-                  'Vše z Free',
-                  'Zvýraznění ve vyhledávání',
-                  'Statistiky zobrazení profilu',
-                  'Booking link na váš kalendář',
-                ].map(f => <FeatItem key={f}>{f}</FeatItem>)}
-              </ul>
-              <a href="#kontakt" className="pm-plan-btn pm-plan-btn-primary pm-pulse">
-                Vytvořit profil trenéra
-              </a>
-            </article>
-
+          <div style={{ marginTop: '2rem', textAlign: 'center' }}>
+            <Link
+              href="/treneri"
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontWeight: 700,
+                fontSize: '0.78rem',
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                color: 'var(--muted)',
+                textDecoration: 'none',
+                borderBottom: '1px solid var(--border)',
+                paddingBottom: '0.1em',
+                transition: 'color 0.15s, border-color 0.15s',
+              }}
+              onMouseEnter={e => {
+                (e.currentTarget as HTMLElement).style.color = 'var(--lime)';
+                (e.currentTarget as HTMLElement).style.borderBottomColor = 'var(--lime)';
+              }}
+              onMouseLeave={e => {
+                (e.currentTarget as HTMLElement).style.color = 'var(--muted)';
+                (e.currentTarget as HTMLElement).style.borderBottomColor = 'var(--border)';
+              }}
+            >
+              Jste trenér? Podívejte se na nabídku pro trenéry →
+            </Link>
           </div>
         </div>
       </section>
 
       {/* ════════════════════════════════════════════════════════════ */}
-      {/* 5. PROC IRONMAP                                              */}
+      {/* 4. PROC IRONMAP                                              */}
       {/* ════════════════════════════════════════════════════════════ */}
       <section
         ref={whyRef}
