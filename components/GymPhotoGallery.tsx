@@ -1,27 +1,89 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 
 interface Props {
-  photos: string; // JSON array of Places API v1 photo refs
+  photos: string | null;
   gymName: string;
   gymId: number;
 }
 
+const R2_BASE = process.env.NEXT_PUBLIC_R2_PUBLIC_URL ?? 'https://pub-06c0095bbd6747039db9b7f302a13d2b.r2.dev';
+
+const CameraIcon = () => (
+  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter">
+    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+    <circle cx="12" cy="13" r="4"/>
+  </svg>
+);
+
 export default function GymPhotoGallery({ photos, gymName, gymId }: Props) {
-  console.log('[GymPhotoGallery] gymId:', gymId, '| photos type:', typeof photos, '| photos length:', photos?.length);
   const [lightbox, setLightbox] = useState<number | null>(null);
 
   let refs: string[] = [];
-  try { refs = (JSON.parse(photos) as string[]).slice(0, 5); } catch (e) { console.log('[GymPhotoGallery] JSON.parse FAILED:', e); return null; }
-  console.log('[GymPhotoGallery] refs.length:', refs.length, '| first URL will be:', `https://pub-06c0095bbd6747039db9b7f302a13d2b.r2.dev/photos/${gymId}_1.jpg`);
-  if (refs.length === 0) return null;
+  try {
+    if (photos) refs = (JSON.parse(photos) as string[]).slice(0, 5);
+  } catch { /* invalid JSON → treat as no photos */ }
 
-  const R2_BASE = process.env.NEXT_PUBLIC_R2_PUBLIC_URL ?? 'https://pub-06c0095bbd6747039db9b7f302a13d2b.r2.dev';
   const photoUrl = (_ref: string, idx: number) => `${R2_BASE}/photos/${gymId}_${idx + 1}.jpg`;
-
   const prev = () => setLightbox(i => i != null ? (i - 1 + refs.length) % refs.length : null);
   const next = () => setLightbox(i => i != null ? (i + 1) % refs.length : null);
+
+  // ── Case 1: No photos → full-width CTA placeholder ────────────────────────
+  if (refs.length === 0) {
+    return (
+      <div style={{
+        marginBottom: '1.5rem',
+        height: 220,
+        background: '#1a1a1a',
+        border: '1px solid var(--border)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '0.5rem',
+      }}>
+        <div style={{ color: 'var(--muted)', marginBottom: '0.25rem' }}>
+          <CameraIcon />
+        </div>
+        <div style={{
+          fontFamily: 'var(--font-display)',
+          fontWeight: 700,
+          fontSize: '0.65rem',
+          letterSpacing: '0.15em',
+          textTransform: 'uppercase',
+          color: 'var(--muted)',
+        }}>
+          Jste majitel tohoto gymu?
+        </div>
+        <div style={{
+          fontSize: '0.78rem',
+          fontWeight: 300,
+          color: 'var(--muted)',
+          opacity: 0.7,
+        }}>
+          Přidejte fotky a přilákejte nové zákazníky
+        </div>
+        <Link
+          href="/pro-majitele"
+          className="iron-btn-ghost"
+          style={{
+            marginTop: '0.5rem',
+            fontSize: '0.68rem',
+            letterSpacing: '0.1em',
+            padding: '0.4rem 1rem',
+            textDecoration: 'none',
+          }}
+        >
+          Přidat fotky →
+        </Link>
+      </div>
+    );
+  }
+
+  // ── Case 2: Has photos ─────────────────────────────────────────────────────
+  const showAddCard = refs.length < 3;
 
   return (
     <>
@@ -69,6 +131,57 @@ export default function GymPhotoGallery({ photos, gymName, gymId }: Props) {
             />
           </button>
         ))}
+
+        {/* "+" add card for gyms with < 3 photos */}
+        {showAddCard && (
+          <Link
+            href="/pro-majitele"
+            style={{
+              flexShrink: 0,
+              width: 148,
+              height: 148,
+              border: '1px solid var(--border)',
+              background: '#1a1a1a',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.35rem',
+              textDecoration: 'none',
+              transition: 'border-color 0.15s, color 0.15s',
+              cursor: 'crosshair',
+            }}
+            onMouseEnter={e => {
+              (e.currentTarget as HTMLElement).style.borderColor = 'var(--lime)';
+            }}
+            onMouseLeave={e => {
+              (e.currentTarget as HTMLElement).style.borderColor = 'var(--border)';
+            }}
+            aria-label="Přidat fotky — claimněte profil"
+          >
+            <span style={{
+              fontSize: '1.5rem',
+              lineHeight: 1,
+              color: 'var(--muted)',
+              fontFamily: 'var(--font-display)',
+              fontWeight: 300,
+            }}>+</span>
+            <span style={{
+              fontFamily: 'var(--font-display)',
+              fontWeight: 700,
+              fontSize: '0.6rem',
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase',
+              color: 'var(--muted)',
+            }}>Další fotky?</span>
+            <span style={{
+              fontSize: '0.68rem',
+              fontWeight: 300,
+              color: 'var(--muted)',
+              opacity: 0.7,
+            }}>Claimněte profil</span>
+          </Link>
+        )}
       </div>
 
       {/* Lightbox */}
@@ -94,7 +207,6 @@ export default function GymPhotoGallery({ photos, gymName, gymId }: Props) {
             }}
           />
 
-          {/* Counter */}
           <div style={{
             position: 'fixed', bottom: '2rem', left: '50%', transform: 'translateX(-50%)',
             fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.7rem',
@@ -103,23 +215,13 @@ export default function GymPhotoGallery({ photos, gymName, gymId }: Props) {
             {lightbox + 1} / {refs.length}
           </div>
 
-          {/* Prev / Next */}
           {refs.length > 1 && (
             <>
-              <button
-                onClick={e => { e.stopPropagation(); prev(); }}
-                style={navBtnStyle('left')}
-                aria-label="Předchozí"
-              >‹</button>
-              <button
-                onClick={e => { e.stopPropagation(); next(); }}
-                style={navBtnStyle('right')}
-                aria-label="Další"
-              >›</button>
+              <button onClick={e => { e.stopPropagation(); prev(); }} style={navBtnStyle('left')} aria-label="Předchozí">‹</button>
+              <button onClick={e => { e.stopPropagation(); next(); }} style={navBtnStyle('right')} aria-label="Další">›</button>
             </>
           )}
 
-          {/* Close */}
           <button
             onClick={() => setLightbox(null)}
             style={{
