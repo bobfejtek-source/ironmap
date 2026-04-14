@@ -83,7 +83,7 @@ export default function GymPhotoGallery({ photos, gymName, gymId }: Props) {
   }
 
   // ── Case 2: Has photos ─────────────────────────────────────────────────────
-  const showAddCard = refs.length < 3;
+  const showAddCard = refs.length < 5;
 
   return (
     <>
