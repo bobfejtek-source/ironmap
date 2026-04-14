@@ -41,3 +41,9 @@ next-env.d.ts
 /data/gymie.db-wal
 scripts/enrich-google-places-progress.json
 scripts/multisport_facilities.json
+
+# Photos (stored in Vercel Blob)
+/public/photos/
+
+.vercel
+.env*.local

@@ -15,7 +15,8 @@ export default function GymPhotoGallery({ photos, gymName, gymId }: Props) {
   try { refs = (JSON.parse(photos) as string[]).slice(0, 5); } catch { return null; }
   if (refs.length === 0) return null;
 
-  const photoUrl = (_ref: string, idx: number) => `/photos/${gymId}_${idx + 1}.jpg`;
+  const BLOB_BASE = 'https://b3njh8wbkaewj0oq.public.blob.vercel-storage.com';
+  const photoUrl = (_ref: string, idx: number) => `${BLOB_BASE}/photos/${gymId}_${idx + 1}.jpg`;
 
   const prev = () => setLightbox(i => i != null ? (i - 1 + refs.length) % refs.length : null);
   const next = () => setLightbox(i => i != null ? (i + 1) % refs.length : null);
