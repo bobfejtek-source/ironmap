@@ -4,7 +4,8 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { Phone, Globe, MapPin } from 'lucide-react';
 import type { Gym } from '@/lib/db';
-import { cityUrl, getDayLabel, parseOpeningHours, parseCoordinates, formatHoursShort } from '@/lib/utils';
+import { cityUrl, parseCoordinates, getDisplayCity } from '@/lib/utils';
+import { parseOpeningHours } from '@/lib/parseOpeningHours';
 import { useModal } from './ModalContext';
 import { useT } from '@/lib/i18n';
 import { trackEvent } from '@/lib/gtag';
@@ -31,7 +32,6 @@ const MapView = dynamic(() => import('./MapView'), {
   loading: MapLoader,
 });
 
-const DAY_ORDER = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
 interface Props {
   gym: Gym;
@@ -44,6 +44,7 @@ export default function GymDetailClient({ gym, similarGyms }: Props) {
   const hours = parseOpeningHours(gym.opening_hours);
   const coords = parseCoordinates(gym.coordinates);
   const category = gym.category ?? 'Posilovna';
+  const displayCity = getDisplayCity(gym);
 
   const mapPins = coords ? [{ lat: coords.lat, lng: coords.lng, name: gym.name }] : [];
 
@@ -75,8 +76,8 @@ export default function GymDetailClient({ gym, similarGyms }: Props) {
         <span style={{ color: 'var(--border-mid)' }}>—</span>
         <Link href="/posilovny" onMouseEnter={e => e.currentTarget.style.color='var(--text)'} onMouseLeave={e => e.currentTarget.style.color='var(--muted)'}>Posilovny</Link>
         <span style={{ color: 'var(--border-mid)' }}>—</span>
-        <Link href={cityUrl(gym.city)} onMouseEnter={e => e.currentTarget.style.color='var(--text)'} onMouseLeave={e => e.currentTarget.style.color='var(--muted)'}>{gym.city}</Link>
-        <span style={{ color: 'var(--border-mid)' }}>—</span>
+        {displayCity && <Link href={cityUrl(gym.city)} onMouseEnter={e => e.currentTarget.style.color='var(--text)'} onMouseLeave={e => e.currentTarget.style.color='var(--muted)'}>{displayCity}</Link>}
+        {displayCity && <span style={{ color: 'var(--border-mid)' }}>—</span>}
         <span style={{ color: 'var(--text)' }}>{gym.name}</span>
       </nav>
 
@@ -91,18 +92,20 @@ export default function GymDetailClient({ gym, similarGyms }: Props) {
           <div style={{ flex: 1, minWidth: 0 }}>
             {/* Badges */}
             <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
-              <span style={{
-                fontSize: '0.62rem',
-                letterSpacing: '0.12em',
-                textTransform: 'uppercase',
-                border: '1px solid var(--lime)',
-                padding: '0.2rem 0.6rem',
-                color: 'var(--lime)',
-                fontFamily: 'var(--font-display)',
-                fontWeight: 700,
-              }}>
-                📍 {gym.city}
-              </span>
+              {displayCity && (
+                <span style={{
+                  fontSize: '0.62rem',
+                  letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
+                  border: '1px solid var(--lime)',
+                  padding: '0.2rem 0.6rem',
+                  color: 'var(--lime)',
+                  fontFamily: 'var(--font-display)',
+                  fontWeight: 700,
+                }}>
+                  📍 {displayCity}
+                </span>
+              )}
               <span style={{
                 fontSize: '0.62rem',
                 letterSpacing: '0.12em',
@@ -344,11 +347,9 @@ export default function GymDetailClient({ gym, similarGyms }: Props) {
           {hours ? (
             <table style={{ width: '100%', fontSize: '0.85rem', borderCollapse: 'collapse' }}>
               <tbody>
-                {DAY_ORDER.map(day => {
-                  const raw = hours[day];
-                  const fmt = raw ? formatHoursShort(raw) : null;
-                  const isNonstop = fmt === 'Nonstop';
-                  const isClosed = fmt === null || fmt === 'Zavřeno';
+                {hours.map(({ day, hours: h }) => {
+                  const isNonstop = h === 'Nonstop';
+                  const isClosed = h === 'Zavřeno';
                   return (
                     <tr key={day} style={{ borderBottom: '1px solid var(--border)' }}>
                       <td style={{
@@ -361,7 +362,7 @@ export default function GymDetailClient({ gym, similarGyms }: Props) {
                         color: 'var(--muted)',
                         width: 90,
                       }}>
-                        {getDayLabel(day)}
+                        {day}
                       </td>
                       <td style={{
                         padding: '0.5rem 0',
@@ -370,7 +371,7 @@ export default function GymDetailClient({ gym, similarGyms }: Props) {
                         fontWeight: isNonstop ? 700 : 300,
                         fontVariantNumeric: 'tabular-nums',
                       }}>
-                        {fmt ?? 'Zavřeno'}
+                        {h}
                       </td>
                     </tr>
                   );
@@ -381,7 +382,7 @@ export default function GymDetailClient({ gym, similarGyms }: Props) {
             <>
               <table style={{ width: '100%', fontSize: '0.85rem', borderCollapse: 'collapse' }}>
                 <tbody>
-                  {DAY_ORDER.map(day => (
+                  {['Pondělí','Úterý','Středa','Čtvrtek','Pátek','Sobota','Neděle'].map(day => (
                     <tr key={day} style={{ borderBottom: '1px solid var(--border)' }}>
                       <td style={{
                         padding: '0.5rem 0',
@@ -393,7 +394,7 @@ export default function GymDetailClient({ gym, similarGyms }: Props) {
                         color: 'var(--muted)',
                         width: 90,
                       }}>
-                        {getDayLabel(day)}
+                        {day}
                       </td>
                       <td style={{
                         padding: '0.5rem 0',

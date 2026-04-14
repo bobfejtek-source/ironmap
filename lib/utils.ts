@@ -76,6 +76,38 @@ export function getDayLabel(day: string): string {
   return DAY_LABELS[day.toLowerCase()] ?? day;
 }
 
+// ── City display ──────────────────────────────────────────────────────────────
+
+const BAD_CITY_NAMES = new Set(['česko', 'czechia', 'czech republic', 'cz']);
+
+function extractCityFromAddress(address: string): string | null {
+  const parts = address.split(',').map(p => p.trim()).filter(Boolean);
+  if (parts.length < 2) return null;
+  // Walk from second-to-last inward; skip country-level names
+  for (let i = parts.length - 2; i >= 0; i--) {
+    // Strip leading Czech postal code ("160 00 " or "16000 ")
+    const stripped = parts[i].replace(/^\d{3}\s?\d{2}\s*/, '').trim();
+    if (stripped && !BAD_CITY_NAMES.has(stripped.toLowerCase())) return stripped;
+  }
+  return null;
+}
+
+/**
+ * Returns the best city label for display purposes.
+ * 1. gym.city if non-empty and not a country name
+ * 2. City extracted from gym.address
+ * 3. Empty string (caller should hide the element)
+ */
+export function getDisplayCity(gym: Pick<Gym, 'city' | 'address'>): string {
+  const city = (gym.city ?? '').trim();
+  if (city && !BAD_CITY_NAMES.has(city.toLowerCase())) return city;
+  if (gym.address) {
+    const extracted = extractCityFromAddress(gym.address);
+    if (extracted) return extracted;
+  }
+  return '';
+}
+
 export function gymDetailUrl(gym: Pick<Gym, 'city' | 'slug'>): string {
   return `/posilovny/${cityToSlug(gym.city)}/${gym.slug}`;
 }

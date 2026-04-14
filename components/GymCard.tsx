@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import type { Gym } from '@/lib/db';
 import {
-  gymDetailUrl, getInitials, getNeighborhood,
+  gymDetailUrl, getInitials, getNeighborhood, getDisplayCity,
   parseOpeningHours, getTodayKey, getOpenStatus, formatHoursShort,
 } from '@/lib/utils';
 import { useT } from '@/lib/i18n';
@@ -33,7 +33,8 @@ export default function GymCard({ gym, hideCity = false, distanceKm }: Props) {
   const initials = getInitials(gym.name);
 
   // Neighborhood
-  const neighborhood = getNeighborhood(gym.address, gym.city);
+  const displayCity = getDisplayCity(gym);
+  const neighborhood = getNeighborhood(gym.address, displayCity);
 
   // Today's hours + open status
   const hours    = parseOpeningHours(gym.opening_hours);
@@ -233,7 +234,7 @@ export default function GymCard({ gym, hideCity = false, distanceKm }: Props) {
         paddingTop: '0.75rem',
         borderTop: '1px solid var(--border)',
       }}>
-        {!hideCity && (
+        {!hideCity && displayCity && (
           <span style={{
             fontSize: '0.68rem',
             letterSpacing: '0.1em',
@@ -242,7 +243,7 @@ export default function GymCard({ gym, hideCity = false, distanceKm }: Props) {
             fontFamily: 'var(--font-display)',
             fontWeight: 700,
           }}>
-            {gym.city}
+            {displayCity}
             {gym.verified === 1 && (
               <span style={{ color: 'var(--lime)', marginLeft: '0.4rem' }}>✓</span>
             )}
