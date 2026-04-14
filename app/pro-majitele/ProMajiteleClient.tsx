@@ -50,49 +50,6 @@ function FeatItem({ children }: { children: React.ReactNode }) {
   );
 }
 
-// ── Metal slot card ────────────────────────────────────────────────────────
-interface SlotCardProps {
-  tier: 'gold' | 'silver' | 'bronze';
-  name: string;
-  price: string;
-  proPrice: string;
-  elitePrice: string;
-  features: string[];
-  last?: boolean;
-}
-function SlotCard({ tier, name, price, proPrice, elitePrice, features, last }: SlotCardProps) {
-  const colors = {
-    gold:   { text: '#FFD700', glow: 'rgba(255,215,0,0.12)',  border: 'rgba(255,215,0,0.4)',  medal: '#FFD700', mGlow: 'rgba(255,215,0,0.7)'  },
-    silver: { text: '#C8C8C8', glow: 'rgba(192,192,192,0.09)',border: 'rgba(192,192,192,0.35)',medal: '#C0C0C0', mGlow: 'rgba(192,192,192,0.6)' },
-    bronze: { text: '#D4894A', glow: 'rgba(205,127,50,0.09)', border: 'rgba(205,127,50,0.35)',medal: '#CD7F32', mGlow: 'rgba(205,127,50,0.6)'  },
-  }[tier];
-  return (
-    <div
-      className={`pm-slot-card pm-slot-card-${tier}${last ? ' pm-slot-last' : ''}`}
-      style={{ ['--slot-border' as string]: colors.border, ['--slot-glow' as string]: colors.glow }}
-    >
-      <div className="pm-slot-top">
-        <div
-          className="pm-slot-medal"
-          aria-hidden="true"
-          style={{ background: colors.medal, boxShadow: `0 0 10px ${colors.mGlow}` }}
-        />
-        <div style={{ flex: 1 }}>
-          <div className="pm-slot-name" style={{ color: colors.text }}>{name}</div>
-          <div className="pm-slot-price">{price}</div>
-          <div className="pm-slot-discounts">
-            <span>Pro: {proPrice}</span>
-            <span style={{ color: colors.text }}>Elite: {elitePrice}</span>
-          </div>
-        </div>
-      </div>
-      <ul className="pm-slot-features">
-        {features.map(f => <FeatItem key={f}>{f}</FeatItem>)}
-      </ul>
-    </div>
-  );
-}
-
 // ── Main component ─────────────────────────────────────────────────────────
 export default function ProMajiteleClient({ gymCount }: Props) {
   const { openAddGym } = useModal();
@@ -103,14 +60,14 @@ export default function ProMajiteleClient({ gymCount }: Props) {
   const [counts, setCounts] = useState({ gym: 0, cities: 0, pct: 0, members: 0, membership: 0 });
 
   // Scroll reveals
-  const pricingRef = useRef<HTMLElement>(null);
-  const slotsRef   = useRef<HTMLElement>(null);
-  const whyRef     = useRef<HTMLElement>(null);
-  const contactRef = useRef<HTMLElement>(null);
-  const [pricingVis, setPricingVis] = useState(false);
-  const [slotsVis,   setSlotsVis]   = useState(false);
-  const [whyVis,     setWhyVis]     = useState(false);
-  const [contactVis, setContactVis] = useState(false);
+  const pricingRef  = useRef<HTMLElement>(null);
+  const trainersRef = useRef<HTMLElement>(null);
+  const whyRef      = useRef<HTMLElement>(null);
+  const contactRef  = useRef<HTMLElement>(null);
+  const [pricingVis,  setPricingVis]  = useState(false);
+  const [trainersVis, setTrainersVis] = useState(false);
+  const [whyVis,      setWhyVis]      = useState(false);
+  const [contactVis,  setContactVis]  = useState(false);
 
   // Form
   const [form, setForm] = useState({ gymName: '', name: '', email: '', phone: '', interest: '', message: '' });
@@ -133,7 +90,7 @@ export default function ProMajiteleClient({ gymCount }: Props) {
   useEffect(() => {
     if (!statsActive) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      setCounts({ gym: gymCount, cities: 190, pct: 12, members: 450, membership: 850 });
+      setCounts({ gym: gymCount, cities: 400, pct: 12, members: 450, membership: 850 });
       return;
     }
     const duration = 1800;
@@ -143,7 +100,7 @@ export default function ProMajiteleClient({ gymCount }: Props) {
       const e = easeOutQuart(t);
       setCounts({
         gym:        Math.floor(e * gymCount),
-        cities:     Math.floor(e * 190),
+        cities:     Math.floor(e * 400),
         pct:        Math.floor(e * 12),
         members:    Math.floor(e * 450),
         membership: Math.floor(e * 850),
@@ -156,12 +113,12 @@ export default function ProMajiteleClient({ gymCount }: Props) {
   // Scroll reveals
   useEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduced) { setPricingVis(true); setSlotsVis(true); setWhyVis(true); setContactVis(true); return; }
+    if (reduced) { setPricingVis(true); setTrainersVis(true); setWhyVis(true); setContactVis(true); return; }
     const pairs: [React.RefObject<HTMLElement | null>, (v: boolean) => void][] = [
-      [pricingRef, setPricingVis],
-      [slotsRef,   setSlotsVis],
-      [whyRef,     setWhyVis],
-      [contactRef, setContactVis],
+      [pricingRef,  setPricingVis],
+      [trainersRef, setTrainersVis],
+      [whyRef,      setWhyVis],
+      [contactRef,  setContactVis],
     ];
     const observers = pairs.map(([ref, setter]) => {
       const el = ref.current;
@@ -237,7 +194,7 @@ export default function ProMajiteleClient({ gymCount }: Props) {
       {/* ════════════════════════════════════════════════════════════ */}
       <div ref={statsRef} className="pm-stats" role="region" aria-label="Statistiky trhu">
         {[
-          { val: `${fmtGym(counts.gym)}+`,             lbl: 'posiloven v ČR'                  },
+          { val: `${fmtGym(counts.gym)}+`,             lbl: 'fitness center v databázi'       },
           { val: `${counts.cities}+`,                   lbl: 'měst pokryto'                    },
           { val: `${counts.pct} %`,                     lbl: 'roční růst fitness trhu'          },
           { val: `${counts.members} 000+`,              lbl: 'aktivních členů'                 },
@@ -291,52 +248,58 @@ export default function ProMajiteleClient({ gymCount }: Props) {
               <div className="pm-plan-badge pm-badge-lime">Nejpopulárnější</div>
               <header className="pm-plan-head">
                 <div className="pm-plan-tier" style={{ color: 'var(--lime)' }}>Pro</div>
-                <span className="pm-pilot-tag">Pilot cena</span>
-                <div className="pm-price-row" style={{ marginTop: '0.5rem' }}>
-                  <span className="pm-price-old">599 Kč</span>
-                  <span className="pm-price">499 Kč</span>
+                <div className="pm-price-row" style={{ marginTop: '0.75rem' }}>
+                  <span className="pm-price">399 Kč</span>
                   <span className="pm-per">/měs</span>
                 </div>
-                <div className="pm-from">od</div>
               </header>
               <ul className="pm-feat-list">
                 {[
                   'Vše z Free',
-                  'Prioritní pozice v kategorii vašeho města',
-                  'Vlastní fotogalerie',
-                  'Statistiky zobrazení profilu',
-                  'Ověřený badge - zákazníci věří více',
-                  'Přímý odkaz na web',
-                  '15 % sleva na reklamní sloty',
+                  'Prioritní pozice ve vaší kategorii',
+                  'Vlastní fotogalerie (neomezený počet fotek)',
+                  'Statistiky prohlédnutí profilu',
+                  'Ověřený badge ✓',
+                  'Přímý odkaz na váš web',
+                  'Odpovědi na recenze',
+                  'Akční nabídky a slevy',
                 ].map(f => <FeatItem key={f}>{f}</FeatItem>)}
               </ul>
               <a href="#kontakt" className="pm-plan-btn pm-plan-btn-primary pm-pulse">
-                Začít 14 dní zdarma
+                Začít zdarma 14 dní
               </a>
+              <p style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: '0.78rem',
+                color: 'var(--muted)',
+                fontWeight: 300,
+                lineHeight: 1.55,
+                marginTop: '1rem',
+                opacity: 0.8,
+              }}>
+                399 Kč/měsíc = cena jednoho cappuccina denně.<br />
+                Jeden nový zákazník = investice zpět.
+              </p>
             </article>
 
-            {/* ELITE */}
-            <article className="pm-plan pm-plan-elite" aria-label="Elite plan">
+            {/* PREMIUM */}
+            <article className="pm-plan pm-plan-elite" aria-label="Premium plan">
               <div className="pm-plan-badge pm-badge-gold">Nejvyšší hodnota</div>
               <header className="pm-plan-head">
-                <div className="pm-plan-tier" style={{ color: '#D4944A' }}>Elite</div>
-                <span className="pm-pilot-tag" style={{ borderColor: '#D4944A', color: '#D4944A' }}>Pilot cena</span>
-                <div className="pm-price-row" style={{ marginTop: '0.5rem' }}>
-                  <span className="pm-price-old">1 590 Kč</span>
-                  <span className="pm-price">1 290 Kč</span>
+                <div className="pm-plan-tier" style={{ color: '#D4944A' }}>Premium</div>
+                <div className="pm-price-row" style={{ marginTop: '0.75rem' }}>
+                  <span className="pm-price">999 Kč</span>
                   <span className="pm-per">/měs</span>
                 </div>
-                <div className="pm-from">od</div>
               </header>
               <ul className="pm-feat-list">
                 {[
                   'Vše z Pro',
-                  'Pokročilé statistiky a konverze',
-                  'Featured badge - maximální důvěryhodnost',
-                  '25 % sleva na reklamní sloty',
-                  '3 dny Gold Město slot zdarma / měsíc (hodnota 1 499 Kč)',
-                  'Dedikovaný account manager',
-                  'Měsíční report návštěvnosti',
+                  'TOP pozice nad všemi ve vaší lokalitě',
+                  'Microsite na IRONu (rozšířený profil)',
+                  'Měsíční report s benchmarkem vůči konkurenci',
+                  'Zvýraznění na mapě',
+                  'Priority podpora',
                 ].map(f => <FeatItem key={f}>{f}</FeatItem>)}
               </ul>
               <a href="#kontakt" className="pm-plan-btn pm-plan-btn-gold">
@@ -347,106 +310,70 @@ export default function ProMajiteleClient({ gymCount }: Props) {
           </div>
 
           <p className="pm-plans-note">
-            Reklamní sloty jsou dostupné pro všechny plány.
-            Pro a Elite získávají automatickou slevu 15 % resp. 25 %.
+            Plaťte měsíčně. Bez závazků. Zrušení kdykoliv jedním klikem.
           </p>
         </div>
       </section>
 
       {/* ════════════════════════════════════════════════════════════ */}
-      {/* 4. REKLAMNI SLOTY                                            */}
+      {/* 4. TRENÉŘI                                                   */}
       {/* ════════════════════════════════════════════════════════════ */}
       <section
-        ref={slotsRef}
-        className={`pm-section pm-section-alt pm-reveal${slotsVis ? ' is-visible' : ''}`}
-        aria-label="Reklamní sloty"
+        ref={trainersRef}
+        className={`pm-section pm-section-alt pm-reveal${trainersVis ? ' is-visible' : ''}`}
+        aria-label="Pro trenéry"
       >
         <div className="pm-inner pm-wide">
-          <h2 className="pm-display-xl">
-            Buďte<br />
-            <span style={{ color: 'var(--lime)' }}>první.</span>
-          </h2>
-          <p className="pm-accent-sub">Pouze 3 dostupné pozice na kategorii. Kdo dříve přijde.</p>
-          <p className="pm-sub" style={{ marginBottom: '4rem', maxWidth: 640 }}>
-            Exkluzivní zlaté, stříbrné a bronzové pozice ve vyhledávání - národní nebo městské.
-            Jednou obsazeno, konkurence čeká.
+          <p className="iron-label">Pro trenéry</p>
+          <h2 className="pm-h2" style={{ marginTop: '1.5rem' }}>Profil trenéra</h2>
+          <p className="pm-sub" style={{ marginTop: '1rem' }}>
+            Nezávislí trenéři. Fitness koučové. Instruktoři. Buďte vidět kde vás hledají.
           </p>
 
-          <div className="pm-slots-cols">
+          <div className="pm-plans" style={{ marginTop: '3rem' }}>
 
-            {/* NATIONAL */}
-            <div>
-              <div className="pm-col-hdr">
-                <span className="iron-label">Národní sloty</span>
-                <span className="pm-duration">7 dní</span>
-              </div>
-              <p className="pm-col-desc">Top 3 v celé ČR - viditelnost napříč všemi městy</p>
-              <div className="pm-slots-stack">
-                <SlotCard
-                  tier="gold" name="Gold - Národní" price="7 999 Kč"
-                  proPrice="6 799 Kč" elitePrice="5 999 Kč"
-                  features={[
-                    'Pozice #1 ve vyhledávání vaší kategorie v celé ČR',
-                    'Gold badge na profilu po dobu kampaně',
-                    'Zmínění v měsíčním newsletteru Iron',
-                  ]}
-                />
-                <SlotCard
-                  tier="silver" name="Silver - Národní" price="5 999 Kč"
-                  proPrice="5 099 Kč" elitePrice="4 499 Kč"
-                  features={[
-                    'Pozice #2 ve vyhledávání vaší kategorie v celé ČR',
-                    'Silver badge na profilu po dobu kampaně',
-                  ]}
-                />
-                <SlotCard
-                  tier="bronze" name="Bronze - Národní" price="4 999 Kč"
-                  proPrice="4 249 Kč" elitePrice="3 749 Kč"
-                  features={[
-                    'Pozice #3 ve vyhledávání vaší kategorie v celé ČR',
-                    'Bronze badge na profilu po dobu kampaně',
-                  ]}
-                  last
-                />
-              </div>
-            </div>
+            {/* TRENÉR FREE */}
+            <article className="pm-plan" aria-label="Trenér Free">
+              <header className="pm-plan-head">
+                <div className="pm-plan-tier">Free</div>
+                <div className="pm-price-row">
+                  <span className="pm-price">0 Kč</span>
+                  <span className="pm-per">/měs</span>
+                </div>
+              </header>
+              <ul className="pm-feat-list">
+                {['Základní profil trenéra', 'Kontaktní údaje', 'Specializace a bio']
+                  .map(f => <FeatItem key={f}>{f}</FeatItem>)}
+              </ul>
+              <a href="#kontakt" className="pm-plan-btn pm-plan-btn-outline">
+                Vytvořit profil trenéra
+              </a>
+            </article>
 
-            {/* CITY */}
-            <div>
-              <div className="pm-col-hdr">
-                <span className="iron-label">Městské sloty</span>
-                <span className="pm-duration">7 dní</span>
-              </div>
-              <p className="pm-col-desc">Top 3 ve vašem městě - dominance lokálních výsledků</p>
-              <div className="pm-slots-stack">
-                <SlotCard
-                  tier="gold" name="Gold Město" price="2 999 Kč"
-                  proPrice="2 549 Kč" elitePrice="2 249 Kč"
-                  features={[
-                    'Pozice #1 ve vašem městě ve vaší kategorii',
-                    'Gold badge na profilu po dobu kampaně',
-                  ]}
-                />
-                <SlotCard
-                  tier="silver" name="Silver Město" price="1 999 Kč"
-                  proPrice="1 699 Kč" elitePrice="1 499 Kč"
-                  features={['Pozice #2 ve vašem městě ve vaší kategorii', 'Silver badge na profilu po dobu kampaně']}
-                />
-                <SlotCard
-                  tier="bronze" name="Bronze Město" price="1 499 Kč"
-                  proPrice="1 274 Kč" elitePrice="1 124 Kč"
-                  features={['Pozice #3 ve vašem městě ve vaší kategorii', 'Bronze badge na profilu po dobu kampaně']}
-                  last
-                />
-              </div>
-            </div>
+            {/* TRENÉR PRO */}
+            <article className="pm-plan pm-plan-pro" aria-label="Trenér Pro">
+              <div className="pm-plan-badge pm-badge-lime">Doporučeno</div>
+              <header className="pm-plan-head">
+                <div className="pm-plan-tier" style={{ color: 'var(--lime)' }}>Trenér Pro</div>
+                <div className="pm-price-row" style={{ marginTop: '0.75rem' }}>
+                  <span className="pm-price">299 Kč</span>
+                  <span className="pm-per">/měs</span>
+                </div>
+              </header>
+              <ul className="pm-feat-list">
+                {[
+                  'Vše z Free',
+                  'Zvýraznění ve vyhledávání',
+                  'Statistiky zobrazení profilu',
+                  'Booking link na váš kalendář',
+                ].map(f => <FeatItem key={f}>{f}</FeatItem>)}
+              </ul>
+              <a href="#kontakt" className="pm-plan-btn pm-plan-btn-primary pm-pulse">
+                Vytvořit profil trenéra
+              </a>
+            </article>
 
           </div>
-
-          <p className="pm-slots-note">
-            Ceny jsou uvedeny bez DPH. Sloty jsou exkluzivní - po obsazení není možné zakoupit
-            stejnou pozici do uplynutí kampaně.
-          </p>
         </div>
       </section>
 
@@ -578,14 +505,9 @@ export default function ProMajiteleClient({ gymCount }: Props) {
                   >
                     <option value="" disabled>Vyberte možnost</option>
                     <option value="Free listing">Free listing</option>
-                    <option value="Pro">Pro</option>
-                    <option value="Elite">Elite</option>
-                    <option value="Gold národní">Gold národní</option>
-                    <option value="Silver národní">Silver národní</option>
-                    <option value="Bronze národní">Bronze národní</option>
-                    <option value="Gold město">Gold město</option>
-                    <option value="Silver město">Silver město</option>
-                    <option value="Bronze město">Bronze město</option>
+                    <option value="Pro">Pro (399 Kč/měs)</option>
+                    <option value="Premium">Premium (999 Kč/měs)</option>
+                    <option value="Trenér Pro">Trenér Pro (299 Kč/měs)</option>
                     <option value="Chci se poradit">Chci se poradit</option>
                   </select>
                   <span className="pm-select-arr" aria-hidden="true" />
