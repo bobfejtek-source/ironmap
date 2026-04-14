@@ -28,7 +28,6 @@
     "@neondatabase/serverless": "^1.0.2",
     "@types/leaflet": "^1.9.21",
     "@vercel/blob": "^2.3.3",
-    "@vercel/postgres": "^0.10.0",
     "leaflet": "^1.9.4",
     "lucide-react": "^1.8.0",
     "next": "^15.5.15",
