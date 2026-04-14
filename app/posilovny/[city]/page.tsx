@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getCities, getGymsByCity } from '@/lib/db';
-import { cityToSlug } from '@/lib/utils';
+import { cityToSlug, gymDetailUrl } from '@/lib/utils';
 import CityListing from '@/components/CityListing';
 
 export const dynamicParams = true;
@@ -22,10 +22,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const cityName = await resolveCityName(city);
   if (!cityName) return {};
   const gyms = await getGymsByCity(cityName);
+  const title = `Posilovny ${cityName} — ${gyms.length} fitness center | IRON`;
+  const description = `Kompletní přehled ${gyms.length} posiloven a fitness center v ${cityName}. Hodnocení, otevírací doby, MultiSport akceptace, filtry podle vybavení.`;
   return {
-    title: `Posilovny ${cityName} — ${gyms.length} fitness center`,
-    description: `Najděte nejlepší posilovnu v ${cityName}. ${gyms.length} fitness center s hodnoceními, otevírací dobou a kontakty.`,
+    title,
+    description,
     alternates: { canonical: `/posilovny/${city}` },
+    openGraph: { title, description, url: `https://www.ironmap.cz/posilovny/${city}`, type: 'website' },
   };
 }
 
@@ -45,8 +48,27 @@ export default async function CityGymsPage({ params, searchParams }: Props) {
   const userLat = latStr ? parseFloat(latStr) : undefined;
   const userLng = lngStr ? parseFloat(lngStr) : undefined;
 
+  const BASE = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://www.ironmap.cz';
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'ItemList',
+            name: `Posilovny ${cityName}`,
+            numberOfItems: gyms.length,
+            itemListElement: gyms.slice(0, 20).map((g, i) => ({
+              '@type': 'ListItem',
+              position: i + 1,
+              url: `${BASE}${gymDetailUrl(g)}`,
+              name: g.name,
+            })),
+          }),
+        }}
+      />
 
       {/* Page header */}
       <div style={{

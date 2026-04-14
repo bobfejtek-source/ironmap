@@ -20,10 +20,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const cat = categoryBySlug(slug);
   if (!cat) return {};
   const gyms = await getGymsByCategory(cat.db);
+  const title = `${cat.labelCs} v České republice — ${gyms.length} studií | IRON`;
+  const description = `Najdi nejlepší ${cat.labelCs.toLowerCase()} v ČR. Kompletní seznam ${gyms.length} míst s hodnocením a kontakty.`;
   return {
-    title: `${cat.labelCs} v České republice — ${gyms.length} studií`,
-    description: `Najděte nejlepší ${cat.labelCs.toLowerCase()} v České republice. ${gyms.length} míst s hodnoceními a kontakty.`,
+    title,
+    description,
     alternates: { canonical: `/kategorie/${slug}` },
+    openGraph: { title, description, url: `https://www.ironmap.cz/kategorie/${slug}`, type: 'website' },
   };
 }
 

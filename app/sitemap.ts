@@ -12,7 +12,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     {
       url: BASE,
       lastModified: new Date(),
-      changeFrequency: 'daily',
+      changeFrequency: 'weekly',
       priority: 1,
     },
     {
@@ -39,6 +39,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly',
       priority: 0.7,
     },
+    {
+      url: `${BASE}/treneri`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    },
   ];
 
   const cityRoutes: MetadataRoute.Sitemap = cities.map(({ city }) => ({
@@ -52,7 +58,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     url: `${BASE}${gymDetailUrl(gym)}`,
     lastModified: new Date(gym.created_at),
     changeFrequency: 'monthly',
-    priority: 0.7,
+    priority: 0.6,
   }));
 
   const categoryRoutes: MetadataRoute.Sitemap = CATEGORIES.map(({ slug }) => ({
