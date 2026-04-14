@@ -61,7 +61,6 @@ function convertSegment(seg: string): string {
   const startHasPeriod = /AM|PM/i.test(parts[0]);
 
   let startMin: number | null;
-  let endMin: number | null;
 
   if (endHasPeriod && !startHasPeriod) {
     // Inherit the period from the end token for the start token
@@ -70,7 +69,7 @@ function convertSegment(seg: string): string {
   } else {
     startMin = parseToken(parts[0]);
   }
-  endMin = parseToken(parts[1]);
+  const endMin = parseToken(parts[1]);
 
   if (startMin === null || endMin === null) return seg.trim();
   return `${minutesToStr(startMin)}–${minutesToStr(endMin)}`;
