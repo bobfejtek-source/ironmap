@@ -49,3 +49,6 @@ scripts/multisport_facilities.json
 .env*.local
 
 .env*.local
+scripts/*-progress.json
+scripts/*.csv
+scripts/sample-photos/
