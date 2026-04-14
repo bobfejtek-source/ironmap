@@ -5,6 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import type { Gym } from '@/lib/db';
 import GymCard from './GymCard';
+import { parseCategories } from '@/lib/utils';
 import { useT } from '@/lib/i18n';
 import type { MapPin } from './MapView';
 
@@ -123,7 +124,7 @@ export default function CityListing({ gyms, cityName, initialCategory, userLat, 
 
   const filtered = useMemo(() => {
     let result = gyms.filter(g => {
-      if (category !== 'Vše' && (g.category ?? 'Posilovna') !== category) return false;
+      if (category !== 'Vše' && !parseCategories(g).includes(category)) return false;
       if (openNow) {
         const open = isOpenNow(g.opening_hours);
         if (open === false) return false;

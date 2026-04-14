@@ -1,5 +1,13 @@
 import type { Gym } from './db';
 
+/** Parse the `categories` JSON array, falling back to legacy `category` field */
+export function parseCategories(gym: Pick<Gym, 'categories' | 'category'>): string[] {
+  try {
+    if (gym.categories) return JSON.parse(gym.categories) as string[];
+  } catch { /* invalid JSON */ }
+  return gym.category ? [gym.category] : [];
+}
+
 /** Convert city name to URL-safe slug (Czech chars preserved where safe, else transliterated) */
 export function cityToSlug(city: string): string {
   return city

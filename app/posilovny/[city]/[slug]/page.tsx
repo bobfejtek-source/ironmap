@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getAllGyms, getGymBySlug, getSimilarGyms } from '@/lib/db';
-import { cityToSlug, gymDetailUrl, formatRating } from '@/lib/utils';
+import { cityToSlug, gymDetailUrl, formatRating, parseCategories } from '@/lib/utils';
 import GymDetailClient from '@/components/GymDetailClient';
 
 export const dynamicParams = true;
@@ -77,8 +77,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const gym = await getGymBySlug(slug);
   if (!gym) return {};
 
-  const category = gym.category ?? 'Posilovna';
-  const title = `${gym.name} — ${category} ${gym.city} | IRON`;
+  const gymCategories = parseCategories(gym);
+  const title = `${gym.name} — ${gymCategories.join(' · ')} ${gym.city} | IRON`;
 
   const amenities = [
     gym.multisport && 'MultiSport',
@@ -91,7 +91,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const description = gym.description
     ? gym.description.slice(0, 155)
-    : `${gym.name} — ${category.toLowerCase()} v ${gym.city}. ${
+    : `${gym.name} — ${gymCategories[0]?.toLowerCase() ?? 'fitness'} v ${gym.city}. ${
         formatRating(gym.rating) ? `Hodnocení ${formatRating(gym.rating)}/5. ` : ''
       }${amenities.length ? amenities.join(', ') + '. ' : ''}Otevírací doba, kontakt, fotky.`;
 

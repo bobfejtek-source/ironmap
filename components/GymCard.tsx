@@ -5,6 +5,7 @@ import type { Gym } from '@/lib/db';
 import {
   gymDetailUrl, getInitials, getNeighborhood, getDisplayCity,
   parseOpeningHours, getTodayKey, getOpenStatus, formatHoursShort,
+  parseCategories,
 } from '@/lib/utils';
 import { useT } from '@/lib/i18n';
 
@@ -27,7 +28,8 @@ interface Props {
 
 export default function GymCard({ gym, hideCity = false, distanceKm }: Props) {
   const { t } = useT();
-  const category = gym.category ?? 'Posilovna';
+  const gymCategories = parseCategories(gym);
+  const category = gymCategories[0] ?? 'Posilovna';
   const key = CATEGORY_KEY[category];
   const categoryLabel = key ? (t.categories as Record<string, string>)[key] ?? category : category;
   const initials = getInitials(gym.name);
@@ -69,20 +71,26 @@ export default function GymCard({ gym, hideCity = false, distanceKm }: Props) {
     >
       {/* Row 1: Category tag + Distance + Rating */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', minWidth: 0 }}>
-          <span style={{
-            fontSize: '0.6rem',
-            letterSpacing: '0.12em',
-            textTransform: 'uppercase',
-            border: '1px solid var(--border)',
-            padding: '0.15rem 0.5rem',
-            color: 'var(--lime)',
-            fontFamily: 'var(--font-display)',
-            fontWeight: 700,
-            flexShrink: 0,
-          }}>
-            {categoryLabel}
-          </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', minWidth: 0, flexWrap: 'wrap' }}>
+          {gymCategories.map((cat, i) => {
+            const k = CATEGORY_KEY[cat];
+            const lbl = k ? (t.categories as Record<string, string>)[k] ?? cat : cat;
+            return (
+              <span key={cat} style={{
+                fontSize: '0.6rem',
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                border: '1px solid var(--border)',
+                padding: '0.15rem 0.5rem',
+                color: i === 0 ? 'var(--lime)' : 'var(--muted)',
+                fontFamily: 'var(--font-display)',
+                fontWeight: 700,
+                flexShrink: 0,
+              }}>
+                {lbl}
+              </span>
+            );
+          })}
           {gym.multisport === true && (
             <span style={{
               fontSize: '0.6rem',

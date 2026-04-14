@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { Phone, Globe, MapPin } from 'lucide-react';
 import type { Gym } from '@/lib/db';
-import { cityUrl, parseCoordinates, getDisplayCity } from '@/lib/utils';
+import { cityUrl, parseCoordinates, getDisplayCity, parseCategories } from '@/lib/utils';
 import { parseOpeningHours } from '@/lib/parseOpeningHours';
 import { useModal } from './ModalContext';
 import { useT } from '@/lib/i18n';
@@ -43,7 +43,8 @@ export default function GymDetailClient({ gym, similarGyms }: Props) {
   const { t } = useT();
   const hours = parseOpeningHours(gym.opening_hours);
   const coords = parseCoordinates(gym.coordinates);
-  const category = gym.category ?? 'Posilovna';
+  const gymCategories = parseCategories(gym);
+  const category = gymCategories[0] ?? 'Posilovna';
   const displayCity = getDisplayCity(gym);
 
   const mapPins = coords ? [{ lat: coords.lat, lng: coords.lng, name: gym.name }] : [];
@@ -106,18 +107,20 @@ export default function GymDetailClient({ gym, similarGyms }: Props) {
                   📍 {displayCity}
                 </span>
               )}
-              <span style={{
-                fontSize: '0.62rem',
-                letterSpacing: '0.12em',
-                textTransform: 'uppercase',
-                border: '1px solid var(--border)',
-                padding: '0.2rem 0.6rem',
-                color: 'var(--muted)',
-                fontFamily: 'var(--font-display)',
-                fontWeight: 700,
-              }}>
-                {category}
-              </span>
+              {gymCategories.map((cat, i) => (
+                <span key={cat} style={{
+                  fontSize: '0.62rem',
+                  letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
+                  border: '1px solid var(--border)',
+                  padding: '0.2rem 0.6rem',
+                  color: i === 0 ? 'var(--lime)' : 'var(--muted)',
+                  fontFamily: 'var(--font-display)',
+                  fontWeight: 700,
+                }}>
+                  {cat}
+                </span>
+              ))}
               {gym.verified === 1 && (
                 <span style={{
                   fontSize: '0.62rem',

@@ -46,6 +46,7 @@ export type Gym = {
   has_classes: boolean | null;
   photos: string | null;
   enriched_at: string | null;
+  categories: string | null;
 };
 
 // ─── Queries ──────────────────────────────────────────────────────────────────
