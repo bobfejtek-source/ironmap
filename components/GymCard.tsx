@@ -32,12 +32,9 @@ export default function GymCard({ gym, hideCity = false, distanceKm }: Props) {
   const categoryLabel = key ? (t.categories as Record<string, string>)[key] ?? category : category;
   const initials = getInitials(gym.name);
 
-  // Neighborhood
+  // Location
   const displayCity = getDisplayCity(gym);
-  const rawNeighborhood = getNeighborhood(gym.address, displayCity);
-  const neighborhood = rawNeighborhood !== displayCity
-    ? `${rawNeighborhood}, ${displayCity}`
-    : displayCity;
+  const neighborhood = displayCity;
 
   // Today's hours + open status
   const hours    = parseOpeningHours(gym.opening_hours);
