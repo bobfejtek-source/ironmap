@@ -83,7 +83,7 @@ export default function GymPhotoGallery({ photos, gymName, gymId }: Props) {
   }
 
   // ── Case 2: Has photos ─────────────────────────────────────────────────────
-  const showAddCard = refs.length < 5;
+  const showAddCard = true;
 
   return (
     <>
@@ -128,6 +128,7 @@ export default function GymPhotoGallery({ photos, gymName, gymId }: Props) {
               }}
               onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.04)')}
               onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
+              onError={e => (e.currentTarget.closest('button')!.style.display = 'none')}
             />
           </button>
         ))}
