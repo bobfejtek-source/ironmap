@@ -52,3 +52,5 @@ scripts/multisport_facilities.json
 scripts/*-progress.json
 scripts/*.csv
 scripts/sample-photos/
+
+.vercel

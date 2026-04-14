@@ -7,7 +7,7 @@ const CSP = [
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com",
   // Google profile pictures + map tiles (Leaflet: OSM primary, CartoDB fallback)
-  "img-src 'self' data: blob: https://lh3.googleusercontent.com https://*.googleusercontent.com https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com https://www.google-analytics.com",
+  "img-src 'self' data: blob: https://lh3.googleusercontent.com https://*.googleusercontent.com https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com https://www.google-analytics.com https://*.r2.dev",
   // API calls: Formspree forms (client-side fetch), weather API is server-side only
   "connect-src 'self' https://formspree.io https://*.google-analytics.com https://www.googletagmanager.com",
   "frame-ancestors 'none'",
