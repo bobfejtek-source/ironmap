@@ -34,7 +34,10 @@ export default function GymCard({ gym, hideCity = false, distanceKm }: Props) {
 
   // Neighborhood
   const displayCity = getDisplayCity(gym);
-  const neighborhood = getNeighborhood(gym.address, displayCity);
+  const rawNeighborhood = getNeighborhood(gym.address, displayCity);
+  const neighborhood = rawNeighborhood !== displayCity
+    ? `${rawNeighborhood}, ${displayCity}`
+    : displayCity;
 
   // Today's hours + open status
   const hours    = parseOpeningHours(gym.opening_hours);
