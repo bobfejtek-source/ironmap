@@ -272,6 +272,91 @@ export default function GymDetailClient({ gym, similarGyms }: Props) {
         );
       })()}
 
+      {/* Ceník */}
+      <div style={{
+        background: 'var(--card-bg)',
+        border: '1px solid var(--border)',
+        padding: 'clamp(1rem, 3vw, 1.75rem) clamp(0.875rem, 3vw, 2rem)',
+        marginBottom: '1.5rem',
+      }}>
+        <SectionTitle>Ceník</SectionTitle>
+
+        {gym.daily_price || gym.monthly_price ? (
+          /* Case 1: Has prices */
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
+            {gym.daily_price && (
+              <div style={{
+                border: '1px solid var(--border)',
+                padding: '0.75rem 1.25rem',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.2rem',
+              }}>
+                <div style={{ fontSize: '0.62rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--muted)', fontFamily: 'var(--font-display)', fontWeight: 700 }}>
+                  Jednorázový vstup
+                </div>
+                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '1.6rem', color: 'var(--lime)', letterSpacing: '-0.02em', lineHeight: 1 }}>
+                  {gym.daily_price} Kč
+                </div>
+              </div>
+            )}
+            {gym.monthly_price && (
+              <div style={{
+                border: '1px solid var(--border)',
+                padding: '0.75rem 1.25rem',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.2rem',
+              }}>
+                <div style={{ fontSize: '0.62rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--muted)', fontFamily: 'var(--font-display)', fontWeight: 700 }}>
+                  Měsíční členství
+                </div>
+                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '1.6rem', color: 'var(--lime)', letterSpacing: '-0.02em', lineHeight: 1 }}>
+                  {gym.monthly_price} Kč
+                </div>
+              </div>
+            )}
+          </div>
+        ) : websiteHref ? (
+          /* Case 2: No prices but has website */
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <p style={{ color: 'var(--muted)', fontSize: '0.88rem', fontWeight: 300 }}>
+              Ceny najdete na webu fitka.
+            </p>
+            <a
+              href={websiteHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="iron-btn iron-btn-ghost"
+              style={{ display: 'inline-flex', fontSize: '0.78rem', padding: '0.55rem 1.25rem', textDecoration: 'none' }}
+              onClick={() => trackEvent('intent_click', { type: 'pricing_website' })}
+            >
+              Zobrazit ceník →
+            </a>
+            <p style={{ fontSize: '0.75rem', color: 'var(--muted)', fontWeight: 300, opacity: 0.7 }}>
+              Jste majitel?{' '}
+              <Link href="/pro-majitele" style={{ color: 'var(--lime)', textDecoration: 'none' }}>
+                Doplňte ceny přímo na IRON.
+              </Link>
+            </p>
+          </div>
+        ) : (
+          /* Case 3: No prices, no website */
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <p style={{ color: 'var(--muted)', fontSize: '0.88rem', fontWeight: 300 }}>
+              Jste majitel tohoto gymu? Přidejte ceník a přilákejte zákazníky.
+            </p>
+            <Link
+              href="/pro-majitele"
+              className="iron-btn iron-btn-ghost"
+              style={{ display: 'inline-flex', fontSize: '0.78rem', padding: '0.55rem 1.25rem', textDecoration: 'none' }}
+            >
+              Doplnit ceník →
+            </Link>
+          </div>
+        )}
+      </div>
+
       {/* Grid: contact + hours */}
       <div style={{
         display: 'grid',
@@ -431,21 +516,6 @@ export default function GymDetailClient({ gym, similarGyms }: Props) {
           )}
         </div>
       </div>
-
-      {/* Ceník link */}
-      {gym.cenik_url && (
-        <div style={{ marginBottom: '1.5rem' }}>
-          <a
-            href={gym.cenik_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="iron-btn iron-btn-outline"
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
-          >
-            {t.detail.cenikBtn}
-          </a>
-        </div>
-      )}
 
       {/* Map */}
       {coords && (
