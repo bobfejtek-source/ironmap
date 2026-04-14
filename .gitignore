@@ -47,3 +47,5 @@ scripts/multisport_facilities.json
 
 .vercel
 .env*.local
+
+.env*.local
