@@ -126,16 +126,21 @@ export function getInitials(name: string): string {
 
 // ── Neighborhood extraction ────────────────────────────────────────────────────
 
+const BAD_NEIGHBORHOOD = new Set(['czechia', 'czech republic', 'česká republika', 'česko', 'cz']);
+
 export function getNeighborhood(address: string | null, city: string): string {
   if (!address) return city;
   // Match "City X-Neighborhood" or "City-Neighborhood" e.g. "Praha 10-Vinohrady", "Brno-Žabovřesky"
   const dashMatch = address.match(/[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ][a-záčďéěíňóřšťúůýž]+(?:\s+\d+)?-([A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ][a-záčďéěíňóřšťúůýž\s-]+?)(?:,|$)/);
   if (dashMatch) return dashMatch[1].trim();
-  // Last comma segment e.g. "Korunní 810/104, Praha 2"
+  // Last comma segment — strip PSČ prefix, filter country names
   const parts = address.split(',');
   if (parts.length >= 2) {
     const last = parts[parts.length - 1].trim();
-    if (last.length > 0 && last.length < 30) return last;
+    const stripped = last.replace(/^\d{3}\s?\d{2}\s*/, '').trim();
+    if (stripped && stripped.length < 40 && !BAD_NEIGHBORHOOD.has(stripped.toLowerCase())) {
+      return stripped;
+    }
   }
   return city;
 }
