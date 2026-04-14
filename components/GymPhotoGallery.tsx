@@ -9,10 +9,12 @@ interface Props {
 }
 
 export default function GymPhotoGallery({ photos, gymName, gymId }: Props) {
+  console.log('[GymPhotoGallery] gymId:', gymId, '| photos type:', typeof photos, '| photos length:', photos?.length);
   const [lightbox, setLightbox] = useState<number | null>(null);
 
   let refs: string[] = [];
-  try { refs = (JSON.parse(photos) as string[]).slice(0, 5); } catch { return null; }
+  try { refs = (JSON.parse(photos) as string[]).slice(0, 5); } catch (e) { console.log('[GymPhotoGallery] JSON.parse FAILED:', e); return null; }
+  console.log('[GymPhotoGallery] refs.length:', refs.length, '| first URL will be:', `https://pub-06c0095bbd6747039db9b7f302a13d2b.r2.dev/photos/${gymId}_1.jpg`);
   if (refs.length === 0) return null;
 
   const R2_BASE = process.env.NEXT_PUBLIC_R2_PUBLIC_URL ?? 'https://pub-06c0095bbd6747039db9b7f302a13d2b.r2.dev';

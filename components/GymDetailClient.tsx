@@ -39,6 +39,7 @@ interface Props {
 }
 
 export default function GymDetailClient({ gym, similarGyms }: Props) {
+  console.log('[GymDetailClient] gym.id:', gym.id, '| photos type:', typeof gym.photos, '| photos truthy:', !!gym.photos, '| photos value:', gym.photos?.slice(0, 80));
   const { openDoplnit } = useModal();
   const { t } = useT();
   const hours = parseOpeningHours(gym.opening_hours);
