@@ -11,9 +11,11 @@ const WELCOME: Msg = {
     'Ahoj! Jsem asistent IRON. Poradím s hledáním posilovny, odpovím na otázky o webu nebo vysvětlím možnosti pro majitele gymů. S čím můžu pomoct?',
 };
 
-/** Convert /some/path or https://... in text into clickable links. */
+/** Autolink https URLs and IRON route paths. Allowlisted prefixes to avoid false positives on Czech text like "Kč/měsíc". */
 function renderContent(text: string) {
-  const parts = text.split(/(\bhttps?:\/\/\S+|(?<![\w.])\/[a-z0-9][a-z0-9/_-]*)/gi);
+  const parts = text.split(
+    /(https?:\/\/\S+|\/(?:posilovny|kategorie|pro-majitele|treneri|kontakt|o-projektu|obchodni-podminky|podminky-pouziti|ochrana-soukromi|prihlaseni|profil)(?:\/[a-z0-9-]+)*\/?)/gi
+  );
   return parts.map((part, i) => {
     if (!part) return null;
     if (/^https?:\/\//i.test(part)) {
@@ -43,7 +45,6 @@ export default function ChatBot() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  // Restore history from sessionStorage on mount
   useEffect(() => {
     try {
       const raw = sessionStorage.getItem(STORAGE_KEY);
@@ -51,28 +52,21 @@ export default function ChatBot() {
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed) && parsed.length) setMessages(parsed);
       }
-    } catch {
-      // ignore
-    }
+    } catch {}
   }, []);
 
-  // Persist
   useEffect(() => {
     try {
       sessionStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
-    } catch {
-      // ignore
-    }
+    } catch {}
   }, [messages]);
 
-  // Autoscroll
   useEffect(() => {
     if (open && scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages, open, loading]);
 
-  // Focus input when opened
   useEffect(() => {
     if (open) inputRef.current?.focus();
   }, [open]);
@@ -86,8 +80,6 @@ export default function ChatBot() {
     const nextMessages: Msg[] = [...messages, { role: 'user', content: text }];
     setMessages(nextMessages);
     setLoading(true);
-
-    // Placeholder assistant message we will stream into
     setMessages((m) => [...m, { role: 'assistant', content: '' }]);
 
     try {
@@ -105,7 +97,7 @@ export default function ChatBot() {
           const data = await res.json();
           if (data?.error) msg = data.error;
         } catch {}
-        setMessages((m) => m.slice(0, -1)); // remove empty assistant msg
+        setMessages((m) => m.slice(0, -1));
         setError(msg);
         return;
       }
@@ -154,7 +146,6 @@ export default function ChatBot() {
 
   return (
     <>
-      {/* Floating bubble button */}
       <button
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? 'Zavřít chat' : 'Otevřít chat'}
@@ -165,8 +156,8 @@ export default function ChatBot() {
           width: 56,
           height: 56,
           borderRadius: '50%',
-          background: 'var(--lime)',
-          color: 'var(--black)',
+          background: 'var(--lime, #C8FF00)',
+          color: 'var(--black, #080808)',
           border: 'none',
           boxShadow: '0 6px 20px rgba(0,0,0,0.45)',
           cursor: 'pointer',
@@ -188,7 +179,6 @@ export default function ChatBot() {
         )}
       </button>
 
-      {/* Chat panel */}
       {open && (
         <div
           role="dialog"
@@ -210,7 +200,6 @@ export default function ChatBot() {
             fontFamily: 'var(--font-barlow), system-ui, sans-serif',
           }}
         >
-          {/* Header */}
           <div
             style={{
               background: 'var(--off-black, #111111)',
@@ -243,7 +232,6 @@ export default function ChatBot() {
             </button>
           </div>
 
-          {/* Messages */}
           <div
             ref={scrollRef}
             style={{
@@ -281,7 +269,6 @@ export default function ChatBot() {
             )}
           </div>
 
-          {/* Input */}
           <div style={{ borderTop: '1px solid var(--border, #2a2a2a)', padding: 8, background: 'var(--off-black, #111111)' }}>
             <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end' }}>
               <textarea
