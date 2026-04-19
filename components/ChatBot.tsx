@@ -18,14 +18,14 @@ function renderContent(text: string) {
     if (!part) return null;
     if (/^https?:\/\//i.test(part)) {
       return (
-        <a key={i} href={part} target="_blank" rel="noopener noreferrer" style={{ color: '#ff3c00', textDecoration: 'underline' }}>
+        <a key={i} href={part} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--lime)', textDecoration: 'underline' }}>
           {part}
         </a>
       );
     }
     if (/^\/[a-z0-9]/i.test(part)) {
       return (
-        <a key={i} href={part} style={{ color: '#ff3c00', textDecoration: 'underline' }}>
+        <a key={i} href={part} style={{ color: 'var(--lime)', textDecoration: 'underline' }}>
           {part}
         </a>
       );
@@ -165,10 +165,10 @@ export default function ChatBot() {
           width: 56,
           height: 56,
           borderRadius: '50%',
-          background: '#ff3c00',
-          color: '#fff',
+          background: 'var(--lime)',
+          color: 'var(--black)',
           border: 'none',
-          boxShadow: '0 6px 20px rgba(0,0,0,0.25)',
+          boxShadow: '0 6px 20px rgba(0,0,0,0.45)',
           cursor: 'pointer',
           zIndex: 9998,
           display: 'flex',
@@ -199,9 +199,10 @@ export default function ChatBot() {
             bottom: 90,
             width: 'min(380px, calc(100vw - 40px))',
             height: 'min(560px, calc(100vh - 120px))',
-            background: '#fff',
+            background: 'var(--card-bg, #161616)',
+            border: '1px solid var(--border, #2a2a2a)',
             borderRadius: 12,
-            boxShadow: '0 10px 40px rgba(0,0,0,0.25)',
+            boxShadow: '0 10px 40px rgba(0,0,0,0.6)',
             display: 'flex',
             flexDirection: 'column',
             overflow: 'hidden',
@@ -212,25 +213,26 @@ export default function ChatBot() {
           {/* Header */}
           <div
             style={{
-              background: '#111',
-              color: '#fff',
+              background: 'var(--off-black, #111111)',
+              color: 'var(--text, #f0f0f0)',
               padding: '12px 16px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
+              borderBottom: '1px solid var(--border, #2a2a2a)',
             }}
           >
             <div>
-              <div style={{ fontWeight: 700, letterSpacing: 0.5 }}>IRON asistent</div>
-              <div style={{ fontSize: 12, opacity: 0.7 }}>Obvykle odpovídá během pár vteřin</div>
+              <div style={{ fontWeight: 700, letterSpacing: 0.5, color: 'var(--lime, #C8FF00)' }}>IRON asistent</div>
+              <div style={{ fontSize: 12, color: 'var(--muted, #888888)' }}>Obvykle odpovídá během pár vteřin</div>
             </div>
             <button
               onClick={reset}
               title="Nová konverzace"
               style={{
                 background: 'transparent',
-                color: '#fff',
-                border: '1px solid rgba(255,255,255,0.3)',
+                color: 'var(--text, #f0f0f0)',
+                border: '1px solid var(--border-mid, #3a3a3a)',
                 borderRadius: 6,
                 padding: '4px 10px',
                 fontSize: 12,
@@ -248,7 +250,7 @@ export default function ChatBot() {
               flex: 1,
               overflowY: 'auto',
               padding: 12,
-              background: '#f7f7f7',
+              background: 'var(--black, #080808)',
               display: 'flex',
               flexDirection: 'column',
               gap: 8,
@@ -260,9 +262,9 @@ export default function ChatBot() {
                 style={{
                   alignSelf: m.role === 'user' ? 'flex-end' : 'flex-start',
                   maxWidth: '85%',
-                  background: m.role === 'user' ? '#ff3c00' : '#fff',
-                  color: m.role === 'user' ? '#fff' : '#111',
-                  border: m.role === 'user' ? 'none' : '1px solid #e5e5e5',
+                  background: m.role === 'user' ? 'var(--lime, #C8FF00)' : 'var(--card-bg, #161616)',
+                  color: m.role === 'user' ? 'var(--black, #080808)' : 'var(--text, #f0f0f0)',
+                  border: m.role === 'user' ? 'none' : '1px solid var(--border, #2a2a2a)',
                   padding: '8px 12px',
                   borderRadius: 12,
                   fontSize: 14,
@@ -275,12 +277,12 @@ export default function ChatBot() {
               </div>
             ))}
             {error && (
-              <div style={{ alignSelf: 'center', fontSize: 12, color: '#c00', marginTop: 4 }}>{error}</div>
+              <div style={{ alignSelf: 'center', fontSize: 12, color: '#ff6a6a', marginTop: 4 }}>{error}</div>
             )}
           </div>
 
           {/* Input */}
-          <div style={{ borderTop: '1px solid #e5e5e5', padding: 8, background: '#fff' }}>
+          <div style={{ borderTop: '1px solid var(--border, #2a2a2a)', padding: 8, background: 'var(--off-black, #111111)' }}>
             <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end' }}>
               <textarea
                 ref={inputRef}
@@ -293,7 +295,9 @@ export default function ChatBot() {
                 style={{
                   flex: 1,
                   resize: 'none',
-                  border: '1px solid #ddd',
+                  border: '1px solid var(--border, #2a2a2a)',
+                  background: 'var(--card-bg, #161616)',
+                  color: 'var(--text, #f0f0f0)',
                   borderRadius: 8,
                   padding: '8px 10px',
                   fontSize: 14,
@@ -307,8 +311,8 @@ export default function ChatBot() {
                 disabled={loading || !input.trim()}
                 aria-label="Odeslat"
                 style={{
-                  background: loading || !input.trim() ? '#ccc' : '#ff3c00',
-                  color: '#fff',
+                  background: loading || !input.trim() ? 'var(--border, #2a2a2a)' : 'var(--lime, #C8FF00)',
+                  color: loading || !input.trim() ? 'var(--muted, #888888)' : 'var(--black, #080808)',
                   border: 'none',
                   borderRadius: 8,
                   padding: '10px 14px',
@@ -320,7 +324,7 @@ export default function ChatBot() {
                 {loading ? '...' : 'Poslat'}
               </button>
             </div>
-            <div style={{ fontSize: 10, color: '#888', marginTop: 6, textAlign: 'center' }}>
+            <div style={{ fontSize: 10, color: 'var(--muted, #888888)', marginTop: 6, textAlign: 'center' }}>
               AI asistent může chybovat. Ověř si důležité informace.
             </div>
           </div>
