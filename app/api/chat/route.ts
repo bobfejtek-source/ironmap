@@ -3,6 +3,8 @@ import Anthropic from '@anthropic-ai/sdk';
 import { rateLimit } from '@/lib/rate-limit';
 import { getGymCount } from '@/lib/stats';
 import { sql, HAS_DB } from '@/lib/postgres';
+import { buildSystemPrompt } from '@/lib/chat-prompt';
+import { getCached, setCached } from '@/lib/chat-cache';
 
 export const runtime = 'nodejs';
 export const maxDuration = 30;
@@ -122,44 +124,6 @@ function clientKey(req: NextRequest): string {
   return `chat:${ip}`;
 }
 
-function buildSystemPrompt(gymCount: number): string {
-  return [
-    `Jsi chatbot na webu IRON (ironmap.cz) - nejvetsim adresari posiloven v Ceske republice. V databazi mame ${gymCount} gymu.`,
-    '',
-    'TVUJ UKOL:',
-    '- Pomahas navstevnikum najit vhodnou posilovnu/fitness centrum',
-    '- Odpovidas na dotazy o fungovani webu (FAQ, kontakt, doplneni gymu)',
-    '- Vysvetlujes majitelum gymu placene tiery a smerujes je k registraci',
-    '',
-    'HLEDANI GYMU (DULEZITE):',
-    '- Kdyz se uzivatel pta na konkretni gymy (v Praze, Brne, na Vinohradech, CrossFit v Brne atd.), VZDY zavolej nastroj "search_gyms". Nevymyslej si gymy ani nerikej "podivej se sam" - zavolej tool.',
-    '- Vysledky z toolu pouzij v odpovedi: jmeno gymu, odkaz (url), pripadne hodnoceni. Vypis 2-3 konkretni tipy.',
-    '- Kategorie v IRONu: Posilovna, CrossFit, Joga, Pilates, Outdoor, Bojove sporty, Spinning, Bazen.',
-    '- Pokud tool vrati 0 vysledku, priznej to a nabidni sirsi kategorii/oblast nebo odkaz na /posilovny/[mesto].',
-    '',
-    'OBECNE ODKAZY:',
-    '- Vypis podle mesta: /posilovny/[mesto] (napr. /posilovny/praha)',
-    '- Kategorie: /kategorie/[slug] (posilovna, crossfit, joga, pilates, outdoor, bojove-sporty, spinning, bazen)',
-    '- Detail gymu dostanes z toolu jako url',
-    '',
-    'PRICING (pro majitele gymu):',
-    '- Free: zakladni listing zdarma',
-    '- Pro: 399 Kc/mesic - vice fotek, kontakt, statistiky',
-    '- Premium: 999 Kc/mesic - top pozice, vlastni branding',
-    '- Treneri: 299 Kc/mesic - profil trenera',
-    '- Registrace: /pro-majitele',
-    '',
-    'DALSI STRANKY: /pro-majitele, /kontakt, /o-projektu, /treneri',
-    '',
-    'JAZYK A STYL - ABSOLUTNE KLICOVE:',
-    '- Odpovidej VYHRADNE cesky latinkou s ceskou diakritikou (a e i o u y e s c r z t d n u). NIKDY nepouzivej azbuku/cyrilici ani ruske znaky. Pouze ceska latinka.',
-    '- Bez em-dashu ani en-dashu, pouzivej klasicke pomlcky (-).',
-    '- Strucne, lidsky, max 3-5 vet na odpoved.',
-    '- Kdyz posilas odkaz, pis ho jako relativni cestu v textu (/posilovny/praha) - chatove UI ho zformatuje.',
-    '- Kdyz nevis, priznej to a odkaz na /kontakt. Nic si nevymyslej.',
-  ].join('\n');
-}
-
 export async function POST(req: NextRequest) {
   const key = process.env.ANTHROPIC_API_KEY;
   if (!key) {
@@ -214,13 +178,42 @@ export async function POST(req: NextRequest) {
   const systemPrompt = buildSystemPrompt(gymCount);
   const client = new Anthropic({ apiKey: key });
 
+  // FAQ cache: pouze single-turn dotazy (prvni zprava uzivatele)
+  // kontextove follow-up dotazy NEcachujeme, protoze by ztratily kontext
+  const isSingleTurn = trimmed.length === 1 && trimmed[0].role === 'user';
+  const userMessage = isSingleTurn ? trimmed[0].content : '';
+
   const encoder = new TextEncoder();
+
+  // Cache hit - vratime okamzite
+  if (isSingleTurn) {
+    const cached = getCached(userMessage);
+    if (cached) {
+      const hitStream = new ReadableStream({
+        start(controller) {
+          controller.enqueue(encoder.encode(cached));
+          controller.close();
+        },
+      });
+      return new Response(hitStream, {
+        headers: {
+          'Content-Type': 'text/plain; charset=utf-8',
+          'Cache-Control': 'no-store',
+          'X-Cache': 'HIT',
+        },
+      });
+    }
+  }
+
   const readable = new ReadableStream({
     async start(controller) {
       const convo: Anthropic.Messages.MessageParam[] = trimmed.map((m) => ({
         role: m.role,
         content: m.content,
       }));
+
+      let accumulatedText = '';
+      let usedTool = false;
 
       try {
         for (let turn = 0; turn < MAX_TURNS; turn++) {
@@ -234,6 +227,7 @@ export async function POST(req: NextRequest) {
 
           for await (const event of stream) {
             if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
+              accumulatedText += event.delta.text;
               controller.enqueue(encoder.encode(event.delta.text));
             }
           }
@@ -241,6 +235,7 @@ export async function POST(req: NextRequest) {
           const finalMsg = await stream.finalMessage();
           if (finalMsg.stop_reason !== 'tool_use') break;
 
+          usedTool = true;
           const toolResults: Anthropic.Messages.ToolResultBlockParam[] = [];
           for (const block of finalMsg.content) {
             if (block.type === 'tool_use') {
@@ -265,6 +260,11 @@ export async function POST(req: NextRequest) {
 
           convo.push({ role: 'assistant', content: finalMsg.content });
           convo.push({ role: 'user', content: toolResults });
+        }
+
+        // Ulozime do cache jen single-turn bez tool-use a s rozumnou delkou odpovedi
+        if (isSingleTurn && !usedTool && accumulatedText.trim().length > 20) {
+          setCached(userMessage, accumulatedText);
         }
 
         controller.close();

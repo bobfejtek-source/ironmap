@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { trackEvent } from '@/lib/gtag';
 
 type Msg = { role: 'user' | 'assistant'; content: string };
 
@@ -81,6 +82,12 @@ export default function ChatBot() {
     setMessages(nextMessages);
     setLoading(true);
     setMessages((m) => [...m, { role: 'assistant', content: '' }]);
+
+    // GA4: track chat usage (respektuje cookie consent v GA4Loader)
+    trackEvent('chat_message_sent', {
+      message_length: text.length,
+      turn_index: nextMessages.filter((m) => m.role === 'user').length,
+    });
 
     try {
       const res = await fetch('/api/chat', {
