@@ -12,6 +12,7 @@ import AddGymModal from '@/components/AddGymModal';
 import FeedbackModal from '@/components/FeedbackModal';
 import DoplnitModal from '@/components/DoplnitModal';
 import CookieBanner from '@/components/CookieBanner';
+import ChatBot from '@/components/ChatBot';
 import Providers from './providers';
 
 const barlow = Barlow({
@@ -32,7 +33,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const gymCount = await getGymCount();
   return {
     title: {
-      default: 'IRON — Největší adresář posiloven v České republice',
+      default: 'IRON - Největší adresář posiloven v České republice',
       template: '%s | IRON',
     },
     description:
@@ -89,6 +90,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               <FeedbackModal />
               <DoplnitModal />
               <CookieBanner />
+              <ChatBot />
             </ModalProvider>
           </LangProvider>
         </Providers>
